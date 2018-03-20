@@ -1,4 +1,4 @@
-var socket = io('http://localhost:3000/');
+var socket = io();
 
 // to check connection status with the server
 socket.on('connect', function () {
