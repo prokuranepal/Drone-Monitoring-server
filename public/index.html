@@ -153,10 +153,11 @@
 
 <script>
     var map;
+    var i = 0;
     var marker = "undefined";
     var myLatLng = 0;
     window.onload = load;
-    
+
     var socket = io();
 
     // to check connection status with the server
@@ -165,8 +166,7 @@
     });
 
     socket.on('copter-data', function (data) {
-
-        console.log(data);
+       // console.log(data);
         var firmware = data.firm || 0;
         var is_connected = data.conn || 0;
         var is_armed = data.arm || 0;
@@ -196,20 +196,24 @@
         document.getElementById("pitch").innerHTML = pitch;
         myLatLng = {lat: _lat, lng: _long};
         console.log(myLatLng);
+        //console.log(map.getCenter());
+       // console.log(marker);
         if(marker !== "undefined") {
             marker.setPosition(myLatLng);
+            map.panTo(myLatLng);
         }
 
     });
 
 
     function load() {
+
         var lat = new google.maps.LatLng(27.67022157595957,85.33891081809998);
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 18,
             center: lat
         });
-        map.setMapTypeId('satellite');
+        map.setMapTypeId('hybrid');
         map.setTilt(45);
         marker = new google.maps.Marker({
             position: lat,
