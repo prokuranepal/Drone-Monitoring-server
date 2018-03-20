@@ -28,7 +28,127 @@
 
 <body>
 
-<ol id ="datas"></ol>
+<div class="row">
+    <div class="col-2" style="background-color:lavender;">
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-2">Firm:</div>
+                <div class="col-10" id="firm"></div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col" style="background-color:lavendar;">.col</div> -->
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Is_Connected: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-8">Is Connected:</div>
+                <div class="col-4" id="conn"></div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-4">Mode:</div>
+                <div class="col-8" id="mode"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Is_Armed: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-6">Is Armed:</div>
+                <div class="col-6" id="arm"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Is_EKF_Ok: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-6">EKF OK:</div>
+                <div class="col-4" id="ekf"></div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col" style="background-color:lavendar;">.col</div> -->
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">System Status: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-4">Status:</div>
+                <div class="col-8" id="stat"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Altitude: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-4">Altitude:</div>
+                <div class="col-2" id="alt"></div>
+                <div class="col-1">m</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Heading: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-4">Heading:</div>
+                <div class="col-8" id="head"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">RangeFinder: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-4">LiDar:</div>
+                <div class="col-2" id="lidar"></div>
+                <div class="col-2">m</div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col" style="background-color:lavendar;">.col</div> -->
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">GroundSpeed: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-6">GroundSpeed:</div>
+                <div class="col-2" id="gs"></div>
+                <div class="col-3">m/s</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">AirSpeed: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-6">Roll:</div>
+                <div class="col-6" id="roll"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="background-color:lavender;">
+        <!-- <div class="classWithPad">Velocity: </div> -->
+        <div class="classWithPad">
+            <div class= "row">
+                <div class="col-6">Pitch:</div>
+                <div class="col-6" id="pitch"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
 
 
 <script>
