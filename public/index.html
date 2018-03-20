@@ -152,6 +152,11 @@
 
 
 <script>
+    var map;
+    var marker = "undefined";
+    var myLatLng = 0;
+    window.onload = load;
+    
     var socket = io();
 
     // to check connection status with the server
