@@ -460,6 +460,8 @@ pre code{
 	margin-right:-15px;
 	margin-left:-15px;
 	height: 100%;
+	opacity: 0.97;
+	background: transparent;
 }
 .row{
 	display:-webkit-box;

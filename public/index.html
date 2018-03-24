@@ -9,6 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <!--added the socket.io path-->
     <script src="socket.io/socket.io.js"></script>
+    <script src="js/libs/jquery-3.3.1.min.js"></script>
     <script src="js/index.js"></script>
 
     <title>Map</title>
@@ -16,10 +17,11 @@
 
 <body>
 
-<div class="row-full-height">
-    <div class="col-9" id="map"></div>
+    <div id="map">
+        <img src="js/images/yellow.svg"/>
+    </div>
 
-    <div class="col-3">
+    <div id="data">
 
         <div class="row">
             <div class="col-5">Connection:</div>
@@ -98,7 +100,6 @@
 
     </div>
 
-</div>
 
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">

@@ -3,7 +3,6 @@ var i = 0;
 var marker = "undefined";
 var myLatLng = 0;
 
-
 var socket = io();
 
 // to check connection status with the server
@@ -11,12 +10,17 @@ socket.on('connect', function () {
     console.log('connected successfully with the server');
 });
 
+
+
 socket.on('copter-data', function (data) {
     // console.log(data);
+    var imageString;
     var firmware = data.firm || 0;
     if (data.conn === 'TRUE'){
+        imageString = location.href+ "js/images/red.svg";
         document.getElementById("conn-data").style.backgroundColor = "red";
     } else {
+        imageString = location.href+ "js/images/yellow.svg";
         document.getElementById("conn-data").style.backgroundColor = "yellow";
     }
     var is_armed = data.arm || 0;
@@ -50,25 +54,50 @@ socket.on('copter-data', function (data) {
     console.log(myLatLng);
     console.log();
     if(marker !== "undefined") {
+        var lastposition = marker.getPosition();
         marker.setPosition(myLatLng);
+        marker.setIcon({
+            url: imageString
+        });
+
+        $('img[src= "'+imageString+'"]').css({
+            'transform': 'rotate(' + heading + 'deg)'
+        });
+
         if(!map.getBounds().contains(marker.getPosition())) {
             map.panTo(myLatLng);
         }
-
     }
 
 });
 
 function initmap() {
+
+    /*Object.assign(document.getElementById("data").style, {
+        color: "white",
+        position: "absolute",
+        float: "right",
+        top: "0px",
+        right: "0px",
+        width: "300px",
+        height: "150px"
+    });*/
+
     var lat = {lat:27.67022157595957, lng:85.33891081809998};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 18,
         center: lat
     });
-    map.setMapTypeId('hybrid');
+    map.setMapTypeId('satellite');
     map.setTilt(45);
     marker = new google.maps.Marker({
         position: lat,
+        icon: {
+           // path: '/images/green.jpg',
+            url: location.href+ "js/images/yellow.svg",
+            scale: 6,
+            rotation: 0
+        },
         map: map
     });
 }
