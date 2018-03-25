@@ -19,38 +19,30 @@
 
     <div id="map">
         <img src="js/images/yellow.svg"/>
+        <img src="js/images/red.svg"/>
     </div>
 
-    <div id="data">
+    <div id="dataSat">
+
+        <!--<div class="row">-->
+            <!--<div class="col-5">Connection:</div>-->
+            <!--<div class="col-7" id="conn-data" style="background-color: yellow"></div>-->
+        <!--</div>-->
 
         <div class="row">
-            <div class="col-5">Connection:</div>
-            <div class="col-7" id="conn-data" style="background-color: yellow"></div>
+            <div class="col-5">Latitude:</div>
+            <div class="col-7" id="lat-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Firmware:</div>
-            <div class="col-7" id="firm-data">unknown</div>
+            <div class="col-5">Longitude:</div>
+            <div class="col-7" id="long-data">unknown</div>
         </div>
 
-        <div class="row">
-            <div class="col-5">Mode:</div>
-            <div class="col-7" id="mode-data">unknown</div>
-        </div>
 
         <div class="row">
-            <div class="col-5">Is Armed:</div>
-            <div class="col-7" id="arm-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">EKF OK:</div>
-            <div class="col-7" id="ekf-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">Status:</div>
-            <div class="col-7" id="status-data">unknown</div>
+            <div class="col-5">Altitude R:</div>
+            <div class="col-7" id="altr-data">unknown</div>
         </div>
 
         <div class="row">
@@ -59,18 +51,52 @@
         </div>
 
         <div class="row">
+            <div class="col-5">No. Stat:</div>
+            <div class="col-7" id="numSat-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">HDOP:</div>
+            <div class="col-7" id="hdop-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">FIX:</div>
+            <div class="col-7" id="fix-data">unknown</div>
+        </div>
+
+        <div class="row">
             <div class="col-5">Heading:</div>
             <div class="col-7" id="head-data">unknown</div>
         </div>
 
-        <div class="row">
-            <div class="col-5">LiDar:</div>
-            <div class="col-7" id="lidar-data">unknown</div>
-        </div>
+    </div>
+
+    <div id="dataVel">
 
         <div class="row">
             <div class="col-5">Ground Speed:</div>
             <div class="col-7" id="gs-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">Air Speed:</div>
+            <div class="col-7" id="air-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">VX:</div>
+            <div class="col-7" id="vx-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">VY:</div>
+            <div class="col-7" id="vy-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">VZ:</div>
+            <div class="col-7" id="vz-data">unknown</div>
         </div>
 
         <div class="row">
@@ -88,18 +114,56 @@
             <div class="col-7" id="yaw-data">unknown</div>
         </div>
 
+    </div>
+
+    <div id="dataOther">
+
         <div class="row">
-            <div class="col-5">Latitude:</div>
-            <div class="col-7" id="lat-data">unknown</div>
+            <div class="col-5">Firmware:</div>
+            <div class="col-7" id="firm-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Longitude:</div>
-            <div class="col-7" id="long-data">unknown</div>
+            <div class="col-5">Mode:</div>
+            <div class="col-7" id="mode-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">Arm:</div>
+            <div class="col-7" id="arm-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">EKF:</div>
+            <div class="col-7" id="ekf-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">Status:</div>
+            <div class="col-7" id="status-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">LiDar:</div>
+            <div class="col-7" id="lidar-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">Voltage:</div>
+            <div class="col-7" id="volt-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">HearBeat:</div>
+            <div class="col-7" id="heartbeat-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">Connection:</div>
+            <div class="col-7" id="conn-data" style="background-color: yellow"></div>
         </div>
 
     </div>
-
 
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">

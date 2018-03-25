@@ -23,6 +23,7 @@ socket.on('copter-data', function (data) {
         imageString = location.href+ "js/images/yellow.svg";
         document.getElementById("conn-data").style.backgroundColor = "yellow";
     }
+
     var is_armed = data.arm || 0;
     var is_ekf_ok = data.ekf || 0;
     var mode = data.mode || 0;
@@ -32,24 +33,49 @@ socket.on('copter-data', function (data) {
     var heading = data.head || 0;
     var lidar = data.lidar || 0 ;
     var groundspeed = data.gs || 0;
+    var airspeed = data.air || 0;
     var roll = data.roll || 0;
     var pitch = data.pitch || 0;
     var yaw = data.yaw || 0;
     var status = data.status || 0;
+    var altr = data.altr || 0;
+    var volt = data.volt || 0;
+    var vx = data.vx || 0;
+    var vy = data.vy || 0;
+    var vz = data.vz || 0;
+    var heartbeat = data.heartbeat || 0;
+    var numSat = data.numSat || 0;
+    var hdop = data.hdop || 0;
+    var fix = data.fix || 0;
+
     document.getElementById("firm-data").innerHTML = firmware;
     document.getElementById("mode-data").innerHTML = mode;
     document.getElementById("arm-data").innerHTML = is_armed;
     document.getElementById("ekf-data").innerHTML = is_ekf_ok;
     document.getElementById("status-data").innerHTML = status;
-    document.getElementById("altitude-data").innerHTML = alt;
-    document.getElementById("head-data").innerHTML = heading;
     document.getElementById("lidar-data").innerHTML = lidar;
-    document.getElementById("gs-data").innerHTML = groundspeed;
+    document.getElementById("volt-data").innerHTML = volt;
+    document.getElementById("heartbeat-data").innerHTML = heartbeat;
+
     document.getElementById("roll-data").innerHTML = roll;
     document.getElementById("pitch-data").innerHTML = pitch;
     document.getElementById("yaw-data").innerHTML= yaw;
+    document.getElementById("gs-data").innerHTML = groundspeed;
+    document.getElementById("air-data").innerHTML = airspeed;
+    document.getElementById("vx-data").innerHTML = vx;
+    document.getElementById("vy-data").innerHTML = vy;
+    document.getElementById("vz-data").innerHTML = vz;
+
+
+    document.getElementById("altr-data").innerHTML = altr;
+    document.getElementById("altitude-data").innerHTML = alt;
+    document.getElementById("head-data").innerHTML = heading;
     document.getElementById("lat-data").innerHTML = _lat;
     document.getElementById("long-data").innerHTML = _long;
+    document.getElementById("numSat-data").innerHTML = numSat;
+    document.getElementById("hdop-data").innerHTML = hdop;
+    document.getElementById("fix-data").innerHTML = fix;
+
     myLatLng = {lat: _lat, lng: _long};
     console.log(myLatLng);
     console.log();
