@@ -487,6 +487,8 @@ pre code{
 	padding-right:15px;
 	padding-left:15px;
 	border: 1px solid #333;
+	background: white;
+	opacity: 0.7;
 }
 .col{
 	-ms-flex-preferred-size:0;
@@ -721,7 +723,7 @@ pre code{
 		-webkit-box-flex:0;
 		-ms-flex:0 0 33.333333%;
 		flex:0 0 33.333333%;
-		max-width:33.333333%
+		max-width:33.333333%;
 	}
 	.col-sm-5{
 		-webkit-box-flex:0;

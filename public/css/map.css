@@ -8,39 +8,39 @@ body, html {
 }
 
 #dataSat {
-	color: yellow;
+	color: black;
 	position: absolute;
 	top: 50px;
 	left: 25px;
-	width: auto;
+	width: 300px;
 	height: auto;
 }
 
 #dataSat1 {
-	color: yellow;
+	color: black;
 	position: absolute;
 	top: 130px;
 	left: 25px;
-	width: auto;
+	width: 300px;
 	height: auto;
 }
 
 
 #dataVel {
-	color: yellow;
+	color: black;
 	position: absolute;
 	top: 340px;
 	left: 25px;
-	width: auto;
+	width: 300px;
 	height: auto;
 }
 
 #dataOther {
-	color: yellow;
+	color: black;
 	position: absolute;
 	bottom: 50px;
 	left: 25px;
-	width: auto;
+	width: 300px;
 	height: auto;
 }
 
