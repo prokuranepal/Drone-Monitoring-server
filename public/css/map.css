@@ -8,34 +8,40 @@ body, html {
 }
 
 #dataSat {
-	color: white;
+	color: yellow;
 	position: absolute;
-	float: right;
 	top: 50px;
-	right: 0px;
-	width: 300px;
-	height: 150px;
+	left: 25px;
+	width: auto;
+	height: auto;
+}
+
+#dataSat1 {
+	color: yellow;
+	position: absolute;
+	top: 130px;
+	left: 25px;
+	width: auto;
+	height: auto;
 }
 
 
 #dataVel {
-	color: white;
+	color: yellow;
 	position: absolute;
-	float: left;
-	top: 50px;
-	left: 0px;
-	width: 300px;
-	height: 150px;
+	top: 340px;
+	left: 25px;
+	width: auto;
+	height: auto;
 }
 
 #dataOther {
-	color: white;
+	color: yellow;
 	position: absolute;
-	float: left;
-	bottom: 150px;
-	left: 0px;
-	width: 300px;
-	height: 150px;
+	bottom: 50px;
+	left: 25px;
+	width: auto;
+	height: auto;
 }
 
 .trans {

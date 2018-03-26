@@ -9,161 +9,167 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <!--added the socket.io path-->
     <script src="socket.io/socket.io.js"></script>
+    <!--added the jquery path-->
     <script src="js/libs/jquery-3.3.1.min.js"></script>
+    <!--added the java script path-->
     <script src="js/index.js"></script>
 
     <title>Map</title>
 </head>
 
 <body>
-
+    <!-- It is the div which renders the google map api -->
     <div id="map">
-        <img src="js/images/yellow.svg"/>
+        <img src="js/images/green.svg"/>
         <img src="js/images/red.svg"/>
     </div>
 
+    <!-- It is the div which creates the gps table on the right top side of the web page -->
     <div id="dataSat">
 
-        <!--<div class="row">-->
-            <!--<div class="col-5">Connection:</div>-->
-            <!--<div class="col-7" id="conn-data" style="background-color: yellow"></div>-->
-        <!--</div>-->
-
         <div class="row">
-            <div class="col-5">Latitude:</div>
-            <div class="col-7" id="lat-data">unknown</div>
+            <div class="col-sm-6">Latitude:</div>
+            <div class="col-sm-auto" id="lat-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Longitude:</div>
-            <div class="col-7" id="long-data">unknown</div>
+            <div class="col-sm-6">Longitude:</div>
+            <div class="col-sm-auto" id="long-data">unknown</div>
         </div>
+    </div>
 
+    <div id="dataSat1">
 
         <div class="row">
-            <div class="col-5">Altitude R:</div>
-            <div class="col-7" id="altr-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">Altitude:</div>
-            <div class="col-7" id="altitude-data">unknown</div>
+            <div class="col-sm-6">AltitudeR:</div>
+            <div class="col-sm-auto" id="altr-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">No. Stat:</div>
-            <div class="col-7" id="numSat-data">unknown</div>
+            <div class="col-sm-6">Altitude:</div>
+            <div class="col-sm-auto" id="altitude-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">HDOP:</div>
-            <div class="col-7" id="hdop-data">unknown</div>
+            <div class="col-sm-6">No. Stat:</div>
+            <div class="col-sm-auto" id="numSat-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">FIX:</div>
-            <div class="col-7" id="fix-data">unknown</div>
+            <div class="col-sm-6">HDOP:</div>
+            <div class="col-sm-auto" id="hdop-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Heading:</div>
-            <div class="col-7" id="head-data">unknown</div>
+            <div class="col-sm-6">FIX:</div>
+            <div class="col-sm-auto" id="fix-data">unknown</div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">Heading:</div>
+            <div class="col-sm-auto" id="head-data">unknown</div>
         </div>
 
     </div>
+
+    <!-- It is the div which creates the velocity table on the left top side of the web page -->
 
     <div id="dataVel">
 
         <div class="row">
-            <div class="col-5">Ground Speed:</div>
-            <div class="col-7" id="gs-data">unknown</div>
+            <div class="col-sm-auto">Ground Speed:</div>
+            <div class="col-sm-auto" id="gs-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Air Speed:</div>
-            <div class="col-7" id="air-data">unknown</div>
+            <div class="col-sm-auto">Air Speed:</div>
+            <div class="col-sm-auto" id="air-data">unknown</div>
+        </div>
+<!--
+        <div class="row">
+            <div class="col-sm-auto">VX:</div>
+            <div class="col-sm-auto" id="vx-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">VX:</div>
-            <div class="col-7" id="vx-data">unknown</div>
+            <div class="col-sm-auto">VY:</div>
+            <div class="col-sm-auto" id="vy-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">VY:</div>
-            <div class="col-7" id="vy-data">unknown</div>
+            <div class="col-sm-auto">VZ:</div>
+            <div class="col-sm-auto" id="vz-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">VZ:</div>
-            <div class="col-7" id="vz-data">unknown</div>
+            <div class="col-sm-auto">Roll:</div>
+            <div class="col-sm-auto" id="roll-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Roll:</div>
-            <div class="col-7" id="roll-data">unknown</div>
+            <div class="col-sm-auto">Pitch:</div>
+            <div class="col-sm-auto" id="pitch-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Pitch:</div>
-            <div class="col-7" id="pitch-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">Yaw:</div>
-            <div class="col-7" id="yaw-data">unknown</div>
-        </div>
+            <div class="col-sm-auto">Yaw:</div>
+            <div class="col-sm-auto" id="yaw-data">unknown</div>
+        </div>-->
 
     </div>
+
+    <!-- It is the div which creates the Other table on the left bottom side of the web page -->
 
     <div id="dataOther">
 
+        <!--<div class="row">
+            <div class="col-sm-auto">Firmware:</div>
+            <div class="col-sm-auto" id="firm-data">unknown</div>
+        </div>-->
+
         <div class="row">
-            <div class="col-5">Firmware:</div>
-            <div class="col-7" id="firm-data">unknown</div>
+            <div class="col-sm-5">Mode:</div>
+            <div class="col-sm-auto" id="mode-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Mode:</div>
-            <div class="col-7" id="mode-data">unknown</div>
+            <div class="col-sm-5">Arm:</div>
+            <div class="col-sm-auto" id="arm-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Arm:</div>
-            <div class="col-7" id="arm-data">unknown</div>
+            <div class="col-sm-5">EKF:</div>
+            <div class="col-sm-auto" id="ekf-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">EKF:</div>
-            <div class="col-7" id="ekf-data">unknown</div>
+            <div class="col-sm-5">Status:</div>
+            <div class="col-sm-auto" id="status-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Status:</div>
-            <div class="col-7" id="status-data">unknown</div>
+            <div class="col-sm-5">LiDar:</div>
+            <div class="col-sm-auto" id="lidar-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">LiDar:</div>
-            <div class="col-7" id="lidar-data">unknown</div>
+            <div class="col-sm-5">Voltage:</div>
+            <div class="col-sm-auto" id="volt-data">unknown</div>
+        </div>
+
+        <!--<div class="row">
+            <div class="col-sm-auto">HearBeat:</div>
+            <div class="col-sm-auto" id="heartbeat-data">unknown</div>
         </div>
 
         <div class="row">
-            <div class="col-5">Voltage:</div>
-            <div class="col-7" id="volt-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">HearBeat:</div>
-            <div class="col-7" id="heartbeat-data">unknown</div>
-        </div>
-
-        <div class="row">
-            <div class="col-5">Connection:</div>
-            <div class="col-7" id="conn-data" style="background-color: yellow"></div>
-        </div>
+            <div class="col-sm-auto">Connection:</div>
+            <div class="col-sm-auto" id="conn-data" style="background-color: yellow"></div>
+        </div>-->
 
     </div>
+
+<!-- Script for map rendering and callback with the initmap written in the index.js -->
 
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">

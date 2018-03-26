@@ -2,6 +2,7 @@ var map;
 var i = 0;
 var marker = "undefined";
 var myLatLng = 0;
+var previousImage;
 
 var socket = io();
 
@@ -11,61 +12,85 @@ socket.on('connect', function () {
 });
 
 
-
+// to listens to the server socket and renders the data and map as required
 socket.on('copter-data', function (data) {
-    // console.log(data);
+
     var imageString;
+    // Firmware data extraction from the data .
     var firmware = data.firm || 0;
+    // the red and green gps pointer is defined according to the connection status.
     if (data.conn === 'TRUE'){
         imageString = location.href+ "js/images/red.svg";
-        document.getElementById("conn-data").style.backgroundColor = "red";
+       // document.getElementById("conn-data").style.backgroundColor = "red";
     } else {
-        imageString = location.href+ "js/images/yellow.svg";
-        document.getElementById("conn-data").style.backgroundColor = "yellow";
+        imageString = location.href+ "js/images/green.svg";
+        //document.getElementById("conn-data").style.backgroundColor = "green";
     }
-
+    // Armed status is extracted.
     var is_armed = data.arm || 0;
+    // EKF error is present or not.
     var is_ekf_ok = data.ekf || 0;
+    // In which mode the copter is extracted.
     var mode = data.mode || 0;
+    // Latitude of the copter location
     var _lat = parseFloat(data.lat) || 0;
+    // Longitude of the copter location
     var _long = parseFloat(data.long) || 0;
+    // Relative altitude form the home location
     var alt = parseFloat(data.alt) || 0;
+    // Heading of the copter provide by the magnetometer.
     var heading = data.head || 0;
+    // Altitude provide by the lidar.
     var lidar = data.lidar || 0 ;
+    // Ground speed is extracted.
     var groundspeed = data.gs || 0;
+    // Air Speed is extracted
     var airspeed = data.air || 0;
+    // Roll
     var roll = data.roll || 0;
+    // Pitch
     var pitch = data.pitch || 0;
+    // Yaw
     var yaw = data.yaw || 0;
+    // Error that is detected by the copter.
     var status = data.status || 0;
+    // altr
     var altr = data.altr || 0;
+    // voltage measured by the copter
     var volt = data.volt || 0;
+    // velocity towards the x axis
     var vx = data.vx || 0;
+    // velocity towards the y axis
     var vy = data.vy || 0;
+    // velocity towards the z axis
     var vz = data.vz || 0;
+    // heart beat
     var heartbeat = data.heartbeat || 0;
+    // number of satellite the copter is connected with
     var numSat = data.numSat || 0;
+    // Horizontal Dilution of Precision of the copter
     var hdop = data.hdop || 0;
+    // what fix is provided by the copter 3D or 2D.
     var fix = data.fix || 0;
 
-    document.getElementById("firm-data").innerHTML = firmware;
+    // following document update the data in div of the html file
+   // document.getElementById("firm-data").innerHTML = firmware;
     document.getElementById("mode-data").innerHTML = mode;
     document.getElementById("arm-data").innerHTML = is_armed;
     document.getElementById("ekf-data").innerHTML = is_ekf_ok;
     document.getElementById("status-data").innerHTML = status;
     document.getElementById("lidar-data").innerHTML = lidar;
     document.getElementById("volt-data").innerHTML = volt;
-    document.getElementById("heartbeat-data").innerHTML = heartbeat;
+   // document.getElementById("heartbeat-data").innerHTML = heartbeat;
 
-    document.getElementById("roll-data").innerHTML = roll;
-    document.getElementById("pitch-data").innerHTML = pitch;
-    document.getElementById("yaw-data").innerHTML= yaw;
+ //   document.getElementById("roll-data").innerHTML = roll;
+  //  document.getElementById("pitch-data").innerHTML = pitch;
+   // document.getElementById("yaw-data").innerHTML= yaw;
     document.getElementById("gs-data").innerHTML = groundspeed;
     document.getElementById("air-data").innerHTML = airspeed;
-    document.getElementById("vx-data").innerHTML = vx;
-    document.getElementById("vy-data").innerHTML = vy;
-    document.getElementById("vz-data").innerHTML = vz;
-
+  //  document.getElementById("vx-data").innerHTML = vx;
+  //  document.getElementById("vy-data").innerHTML = vy;
+  //  document.getElementById("vz-data").innerHTML = vz;
 
     document.getElementById("altr-data").innerHTML = altr;
     document.getElementById("altitude-data").innerHTML = alt;
@@ -79,7 +104,10 @@ socket.on('copter-data', function (data) {
     myLatLng = {lat: _lat, lng: _long};
     console.log(myLatLng);
     console.log();
+
+    // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
+
         var lastposition = marker.getPosition();
         marker.setPosition(myLatLng);
         marker.setIcon({
@@ -93,10 +121,12 @@ socket.on('copter-data', function (data) {
         if(!map.getBounds().contains(marker.getPosition())) {
             map.panTo(myLatLng);
         }
+        previousImage = imageString;
     }
 
 });
 
+// initmap update the map with the initial map google map.
 function initmap() {
 
     /*Object.assign(document.getElementById("data").style, {
@@ -120,7 +150,7 @@ function initmap() {
         position: lat,
         icon: {
            // path: '/images/green.jpg',
-            url: location.href+ "js/images/yellow.svg",
+            url: location.href+ "js/images/green.svg",
             scale: 6,
             rotation: 0
         },
