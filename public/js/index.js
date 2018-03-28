@@ -3,6 +3,8 @@ var i = 0;
 var marker = "undefined";
 var myLatLng = 0;
 var previousImage;
+var prev_lat;
+var prev_lng;
 
 var socket = io();
 
@@ -14,7 +16,9 @@ socket.on('connect', function () {
 
 // to listens to the server socket and renders the data and map as required
 socket.on('copter-data', function (data) {
-    var currentTime = new Date().getTime();
+
+ //   var currentTime = new Date().getTime();
+    
     var imageString;
     // Firmware data extraction from the data .
     var firmware = data.firm || 0;
@@ -101,9 +105,35 @@ socket.on('copter-data', function (data) {
     document.getElementById("hdop-data").innerHTML = hdop;
     document.getElementById("fix-data").innerHTML = fix;
 
+    console.log(prev_lng,prev_lat);
+
+    if (i >= 1) {
+        var flightPath = new google.maps.Polyline({
+            path: [
+                {
+                    lat: prev_lat,
+                    lng: prev_lng
+                },
+                {
+                    lat: _lat,
+                    lng: _long
+                }],
+            geodesic: true,
+            strokeColor: '#FFFF00',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+
+        flightPath.setMap(map);
+        console.log(i);
+    }
+
+    i = i + 1;
+    prev_lat = _lat;
+    prev_lng = _long;
+
     myLatLng = {lat: _lat, lng: _long};
     console.log(myLatLng);
-    console.log();
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
@@ -124,9 +154,9 @@ socket.on('copter-data', function (data) {
         previousImage = imageString;
     }
 
-    var lastTime = new Date().getTime();
-    var totalTime = lastTime-currentTime;
-    console.log(`${totalTime} ms`);
+   // var lastTime = new Date().getTime();
+   // var totalTime = lastTime-currentTime;
+   // console.log(`${totalTime} ms`);
 });
 
 // initmap update the map with the initial map google map.

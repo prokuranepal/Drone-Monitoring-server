@@ -31,12 +31,12 @@ io.on('connection', (socket) => {
     console.log('connected with the client');
 
     app.get('/data' ,(req,res) => {
-        var currentTime = new Date().getTime();
+      //  var currentTime = new Date().getTime();
         io.emit('copter-data', req.query);
         res.send('data');
-        var lastTime = new Date().getTime();
-        var totalTime = lastTime-currentTime;
-        console.log(`${totalTime} ms`);
+       // var lastTime = new Date().getTime();
+       // var totalTime = lastTime-currentTime;
+       // console.log(`${totalTime} ms`);
     });
 
     /*app.post('/data', (req, res) => {
