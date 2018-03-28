@@ -31,11 +31,21 @@ io.on('connection', (socket) => {
     console.log('connected with the client');
 
     app.get('/data' ,(req,res) => {
-
+        var currentTime = new Date().getTime();
         io.emit('copter-data', req.query);
         res.send('data');
+        var lastTime = new Date().getTime();
+        console.log(lastTime-currentTime);
     });
 
+    /*app.post('/data', (req, res) => {
+        var currentTime = new Date().getTime();
+        console.log(req.body);
+       /!* io.emit('copter-data', req.query);
+        res.send('data');*!/
+        var lastTime = new Date().getTime();
+        console.log(lastTime-currentTime);
+    });*/
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
