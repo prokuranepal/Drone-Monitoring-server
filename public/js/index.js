@@ -19,7 +19,7 @@ socket.on('copter-data', function (data) {
     // Firmware data extraction from the data .
     var firmware = data.firm || 0;
     // the red and green gps pointer is defined according to the connection status.
-    if (data.conn === 'TRUE'){
+    if ((data.conn).toUpperCase() === 'TRUE'){
         imageString = location.href+ "js/images/red.svg";
        // document.getElementById("conn-data").style.backgroundColor = "red";
     } else {
