@@ -14,7 +14,7 @@ socket.on('connect', function () {
 
 // to listens to the server socket and renders the data and map as required
 socket.on('copter-data', function (data) {
-
+    var currentTime = new Date().getTime();
     var imageString;
     // Firmware data extraction from the data .
     var firmware = data.firm || 0;
@@ -124,6 +124,9 @@ socket.on('copter-data', function (data) {
         previousImage = imageString;
     }
 
+    var lastTime = new Date().getTime();
+    var totalTime = lastTime-currentTime;
+    console.log(`${totalTime} ms`);
 });
 
 // initmap update the map with the initial map google map.
