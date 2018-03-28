@@ -35,7 +35,8 @@ io.on('connection', (socket) => {
         io.emit('copter-data', req.query);
         res.send('data');
         var lastTime = new Date().getTime();
-        console.log(lastTime-currentTime);
+        var totalTime = lastTime-currentTime;
+        console.log(`${totalTime} ms`);
     });
 
     /*app.post('/data', (req, res) => {
