@@ -29,6 +29,7 @@ const io = socketIO(server);
 app.use(express.static(publicPath));
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
