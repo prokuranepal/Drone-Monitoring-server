@@ -2,6 +2,8 @@
 // it is available in core library.
 const path = require('path');
 
+const bodyParser = require('body-parser');
+
 // it is used so that both socketIO and express can run simultaneously
 // it is available in core library.
 const http = require('http');
@@ -26,6 +28,8 @@ const io = socketIO(server);
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
 
+app.use(bodyParser.json());
+
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
     console.log('connected with the client');
@@ -40,12 +44,9 @@ io.on('connection', (socket) => {
     });
 
     app.post('/data', (req, res) => {
-        var currentTime = new Date().getTime();
         console.log(req.body);
        /* io.emit('copter-data', req.query);*/
         res.send('data');
-        var lastTime = new Date().getTime();
-        console.log(lastTime-currentTime);
     });
 
     // to confirm the disconnected status with the client
