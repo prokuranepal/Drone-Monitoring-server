@@ -15,13 +15,13 @@ const publicPath = path.join(__dirname,'..','/public');
 const port = process.env.PORT || 3000;
 
 // setting up express app
-var app = express();
+const app = express();
 
 // created a http server to use express
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 // configuring server to use socket io
-var io = socketIO(server);
+const io = socketIO(server);
 
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
@@ -39,14 +39,14 @@ io.on('connection', (socket) => {
        // console.log(`${totalTime} ms`);
     });
 
-    /*app.post('/data', (req, res) => {
+    app.post('/data', (req, res) => {
         var currentTime = new Date().getTime();
         console.log(req.body);
-       /!* io.emit('copter-data', req.query);
-        res.send('data');*!/
+       /* io.emit('copter-data', req.query);*/
+        res.send('data');
         var lastTime = new Date().getTime();
         console.log(lastTime-currentTime);
-    });*/
+    });
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {

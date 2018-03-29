@@ -1,12 +1,12 @@
-var map;
-var i = 0;
-var marker = "undefined";
-var myLatLng = 0;
-var previousImage;
-var prev_lat;
-var prev_lng;
+let map;
+let i = 0;
+let marker = "undefined";
+let myLatLng = 0;
+let previousImage;
+let prev_lat;
+let prev_lng;
 
-var socket = io();
+const socket = io();
 
 // to check connection status with the server
 socket.on('connect', function () {
@@ -18,10 +18,10 @@ socket.on('connect', function () {
 socket.on('copter-data', function (data) {
 
  //   var currentTime = new Date().getTime();
-    
-    var imageString;
+
+    let imageString;
     // Firmware data extraction from the data .
-    var firmware = data.firm || 0;
+    let firmware = data.firm || 0;
     // the red and green gps pointer is defined according to the connection status.
     if ((data.conn).toUpperCase() === 'TRUE'){
         imageString = location.href+ "js/images/red.svg";
@@ -31,51 +31,51 @@ socket.on('copter-data', function (data) {
         //document.getElementById("conn-data").style.backgroundColor = "green";
     }
     // Armed status is extracted.
-    var is_armed = data.arm || 0;
+    let is_armed = data.arm || 0;
     // EKF error is present or not.
-    var is_ekf_ok = data.ekf || 0;
+    let is_ekf_ok = data.ekf || 0;
     // In which mode the copter is extracted.
-    var mode = data.mode || 0;
+    let mode = data.mode || 0;
     // Latitude of the copter location
-    var _lat = parseFloat(data.lat) || 0;
+    let _lat = parseFloat(data.lat) || 0;
     // Longitude of the copter location
-    var _long = parseFloat(data.long) || 0;
+    let _long = parseFloat(data.long) || 0;
     // Relative altitude form the home location
-    var alt = parseFloat(data.alt) || 0;
+    let alt = parseFloat(data.alt) || 0;
     // Heading of the copter provide by the magnetometer.
-    var heading = data.head || 0;
+    let heading = data.head || 0;
     // Altitude provide by the lidar.
-    var lidar = data.lidar || 0 ;
+    let lidar = data.lidar || 0 ;
     // Ground speed is extracted.
-    var groundspeed = data.gs || 0;
+    let groundspeed = data.gs || 0;
     // Air Speed is extracted
-    var airspeed = data.air || 0;
+    let airspeed = data.air || 0;
     // Roll
-    var roll = data.roll || 0;
+    let roll = data.roll || 0;
     // Pitch
-    var pitch = data.pitch || 0;
+    let pitch = data.pitch || 0;
     // Yaw
-    var yaw = data.yaw || 0;
+    let yaw = data.yaw || 0;
     // Error that is detected by the copter.
-    var status = data.status || 0;
+    let status = data.status || 0;
     // altr
-    var altr = data.altr || 0;
+    let altr = data.altr || 0;
     // voltage measured by the copter
-    var volt = data.volt || 0;
+    let volt = data.volt || 0;
     // velocity towards the x axis
-    var vx = data.vx || 0;
+    let vx = data.vx || 0;
     // velocity towards the y axis
-    var vy = data.vy || 0;
+    let vy = data.vy || 0;
     // velocity towards the z axis
-    var vz = data.vz || 0;
+    let vz = data.vz || 0;
     // heart beat
-    var heartbeat = data.heartbeat || 0;
+    let heartbeat = data.heartbeat || 0;
     // number of satellite the copter is connected with
-    var numSat = data.numSat || 0;
+    let numSat = data.numSat || 0;
     // Horizontal Dilution of Precision of the copter
-    var hdop = data.hdop || 0;
+    let hdop = data.hdop || 0;
     // what fix is provided by the copter 3D or 2D.
-    var fix = data.fix || 0;
+    let fix = data.fix || 0;
 
     // following document update the data in div of the html file
    // document.getElementById("firm-data").innerHTML = firmware;
