@@ -44,6 +44,8 @@ io.on('connection', (socket) => {
     });
 
     app.post('/data', (req, res) => {
+        console.log(req);
+        console.log("-------------------------");
         console.log(req.body);
        /* io.emit('copter-data', req.query);*/
         res.send('data');
