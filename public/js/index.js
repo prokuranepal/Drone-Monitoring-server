@@ -141,7 +141,7 @@ socket.on('copter-data', function (data) {
 
 // initmap update the map with the initial map google map.
 function initmap() {
-    let lat = {lat:27.67022157595957, lng:85.33891081809998};
+    let lat = {lat:27.682828, lng:85.321709};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 18,
         center: lat
