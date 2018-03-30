@@ -64,6 +64,8 @@ socket.on('copter-data', function (data) {
     let hdop = data.hdop || 100;
     // what fix is provided by the copter 3D or 2D.
     let fix = data.fix || 0;
+    // heartbeat
+    let heartbeat = data.heartbeat || 0;
 
     // following document update the data in div of the html file
     document.getElementById("mode-data").innerHTML = mode;

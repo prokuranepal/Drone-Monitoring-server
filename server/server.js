@@ -41,14 +41,6 @@ io.on('connection', (socket) => {
        // console.log(`${totalTime} ms`);
     });
 
-    if (new Date().getTime() - startTime >= 100 ) {
-        io.emit('copter-data',{
-            data: {
-                conn : "FALSE"
-            }
-        });
-    }
-
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
         console.log('disconnected form the client');
