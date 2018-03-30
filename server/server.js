@@ -2,8 +2,6 @@
 // it is available in core library.
 const path = require('path');
 
-const bodyParser = require('body-parser');
-
 // it is used so that both socketIO and express can run simultaneously
 // it is available in core library.
 const http = require('http');
@@ -28,35 +26,35 @@ const io = socketIO(server);
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
     console.log('connected with the client');
-
+    var StartTime;
     app.get('/data' ,(req,res) => {
       //  var currentTime = new Date().getTime();
+
         io.emit('copter-data', req.query);
         res.send('data');
+        startTime = new Date().getTime();
        // var lastTime = new Date().getTime();
        // var totalTime = lastTime-currentTime;
        // console.log(`${totalTime} ms`);
     });
 
-    app.post('/data', (req, res) => {
-        console.log(req);
-        console.log("-------------------------");
-        console.log(req.body);
-       /* io.emit('copter-data', req.query);*/
-        res.send('data');
-    });
+    if (new Date().getTime() - startTime >= 100 ) {
+        io.emit('copter-data',{
+            data: {
+                conn : "FALSE"
+            }
+        });
+    }
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
         console.log('disconnected form the client');
     });
 });
+
 
 // setting up a server at port 3000 or describe by process.env.PORT
 server.listen(port, () => {
