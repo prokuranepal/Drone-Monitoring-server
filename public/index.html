@@ -4,137 +4,48 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/map.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <!--added the socket.io path-->
-    <script src="socket.io/socket.io.js"></script>
-    <!--added the jquery path-->
-    <script src="js/libs/jquery-3.3.1.min.js"></script>
-    <!--added the java script path-->
-    <script src="js/index.js"></script>
-
-    <title>Map</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Drone | login</title>
 </head>
 
-<body>
-    <!-- It is the div which renders the google map api -->
-    <div id="map">
-        <img src="js/images/green.svg"/>
-        <img src="js/images/red.svg"/>
-    </div>
+<body class="centered-form">
 
-    <!-- It is the div which creates the gps table on the right top side of the web page -->
-    <div id="dataSat">
-
-        <div class="row">
-            <div class="col-sm-4">Latitude:</div>
-            <div class="col-sm-6" id="lat-data">0</div>
+<div class="centered-form_form">
+    <form>
+        <div class="form-field">
+            <h3>Login</h3>
         </div>
-
-        <div class="row">
-            <div class="col-sm-4">Longitude:</div>
-            <div class="col-sm-6" id="long-data">0</div>
+        <div class="form-field">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" autofocus/>
         </div>
-
-    </div>
-
-    <div id="dataSat1">
-
-        <div class="row">
-            <div class="col-sm-4">AltitudeR:</div>
-            <div class="col-sm-4" id="altr-data">0</div>
+        <div class="form-field">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password"/>
         </div>
-
-        <div class="row">
-            <div class="col-sm-4">Altitude:</div>
-            <div class="col-sm-4" id="altitude-data">0</div>
+        <div class="form-field">
+            <button type="button" onclick="javascript:validate()">Login</button>
         </div>
+    </form>
+</div>
 
-        <div class="row">
-            <div class="col-sm-4">No. Sat:</div>
-            <div class="col-sm-4" id="numSat-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">HDOP:</div>
-            <div class="col-sm-4" id="hdop-data">100</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">FIX:</div>
-            <div class="col-sm-4" id="fix-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">Heading:</div>
-            <div class="col-sm-4" id="head-data">0</div>
-        </div>
-
-    </div>
-
-    <!-- It is the div which creates the velocity table on the left top side of the web page -->
-
-    <div id="dataVel">
-
-        <div class="row">
-            <div class="col-sm-6">Ground Speed:</div>
-            <div class="col-sm-4" id="gs-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6">Air Speed:</div>
-            <div class="col-sm-4" id="air-data">0</div>
-        </div>
-
-    </div>
-
-    <!-- It is the div which creates the Other table on the left bottom side of the web page -->
-
-    <div id="dataOther">
-
-        <div class="row">
-            <div class="col-sm-4">Mode:</div>
-            <div class="col-sm-4" id="mode-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">Arm:</div>
-            <div class="col-sm-4" id="arm-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">EKF:</div>
-            <div class="col-sm-4" id="ekf-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">Status:</div>
-            <div class="col-sm-4" id="status-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">LiDar:</div>
-            <div class="col-sm-4" id="lidar-data">0</div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">Voltage:</div>
-            <div class="col-sm-4" id="volt-data">0</div>
-        </div>
-
-        <!--<div class="row">
-            <div class="col-sm-4">HearBeat:</div>
-            <div class="col-sm-4" id="heartbeat-data">0</div>
-        </div>-->
-
-    </div>
-
-<!-- Script for map rendering and callback with the initmap written in the index.js -->
-
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">
+<script type="text/javascript">
+    function validate()
+    {
+        if(   document.getElementById("username").value == "nicdrone"
+            && document.getElementById("password").value == "nicdrone" )
+        {
+            alert( "validation succeeded" );
+            location.href="status.html";
+        }
+        else
+        {
+            alert( "validation failed" );
+            location.href="/";
+        }
+    }
 </script>
+
 
 
 </body>
