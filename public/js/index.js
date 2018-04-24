@@ -5,6 +5,9 @@ let previousImage;
 let prev_lat;
 let prev_lng;
 
+/*var mydata = JSON.parse('../mission.json');
+console.log(mydata);*/
+
 const socket = io();
 
 // to check connection status with the server
@@ -43,29 +46,29 @@ socket.on('copter-data', function (data) {
     // Longitude of the copter location
     let _long = parseFloat(data.long) || 0;
     // Relative altitude form the home location
-    let alt = parseFloat(data.alt) || 0;
+    let alt = parseFloat(data.alt)*3.28084 || 0;
     // Heading of the copter provide by the magnetometer.
     let heading = data.head || 0;
     // Altitude provide by the lidar.
-    let lidar = data.lidar || 0 ;
+    let lidar = parseFloat(data.lidar)*3.28084 || 0 ;
     // Ground speed is extracted.
-    let groundspeed = data.gs || 0;
+    let groundspeed = parseFloat(data.gs) || 0;
     // Air Speed is extracted
     let airspeed = data.air || 0;
     // Error that is detected by the copter.
     let status = data.status || 0;
     // altr
-    let altr = data.altr || 0;
+    let altr = parseFloat(data.altr)*3.28084 || 0;
     // voltage measured by the copter
-    let volt = data.volt || 0;
+    let volt = parseFloat(data.volt) || 0;
     // number of satellite the copter is connected with
     let numSat = data.numSat || 0;
     // Horizontal Dilution of Precision of the copter
-    let hdop = data.hdop || 100;
+    let hdop = parseFloat(data.hdop) || 100;
     // what fix is provided by the copter 3D or 2D.
     let fix = data.fix || 0;
     // heartbeat
-    let heartbeat = data.heartbeat || 0;
+    //let heartbeat = data.heartbeat || 0;
 
     // following document update the data in div of the html file
     document.getElementById("mode-data").innerHTML = mode;
@@ -143,7 +146,7 @@ socket.on('copter-data', function (data) {
 function initmap() {
     let lat = {lat:27.682828, lng:85.321709};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 18,
+        zoom: 19,
         center: lat
     });
     map.setMapTypeId('satellite');
