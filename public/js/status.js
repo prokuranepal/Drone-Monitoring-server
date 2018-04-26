@@ -1,7 +1,7 @@
 let map;
 let i = 0;
+let fix;
 let marker = "undefined";
-let previousImage;
 let prev_lat;
 let prev_lng;
 
@@ -27,21 +27,18 @@ socket.on('copter-data', function (data) {
     if (data.conn != undefined) {
         if ((data.conn).toUpperCase() === 'TRUE'){
             imageString = location.origin+ "/js/images/green.svg";
-            console.log(imageString);
-           // document.getElementById("conn-data").style.backgroundColor = "red";
         } else {
             imageString = location.origin+ "/js/images/red.svg";
-            //document.getElementById("conn-data").style.backgroundColor = "green";
         }
     } else {
         imageString = location.origin+ "/js/images/red.svg";
     }
     // Armed status is extracted.
-    let is_armed = data.arm || 0;
+    let is_armed = data.arm || "False";
     // EKF error is present or not.
-    let is_ekf_ok = data.ekf || 0;
+    let is_ekf_ok = data.ekf || "False";
     // In which mode the copter is extracted.
-    let mode = data.mode || 0;
+    let mode = data.mode || "Unknown";
     // Latitude of the copter location
     let _lat = parseFloat(data.lat) || 0;
     // Longitude of the copter location
@@ -57,7 +54,7 @@ socket.on('copter-data', function (data) {
     // Air Speed is extracted
     let airspeed = data.air || 0;
     // Error that is detected by the copter.
-    let status = data.status || 0;
+    let status = data.status || "Unknown";
     // altr
     let altr = parseFloat(data.altr)*3.28084 || 0;
     // voltage measured by the copter
@@ -67,7 +64,16 @@ socket.on('copter-data', function (data) {
     // Horizontal Dilution of Precision of the copter
     let hdop = (parseFloat(data.hdop)/100) || 100;
     // what fix is provided by the copter 3D or 2D.
-    let fix = data.fix || 0;
+    if (data.fix === '1'){
+        fix = "1D FIX";
+    } else if (data.fix === '2'){
+        fix = "2D FIX";
+    } else if (data.fix === '3'){
+        fix = "3D FIX";
+    } else {
+        fix = "NO LOCK";
+    }
+
     // heartbeat
     //let heartbeat = data.heartbeat || 0;
 
@@ -76,20 +82,18 @@ socket.on('copter-data', function (data) {
     document.getElementById("arm-data").innerHTML = is_armed;
     document.getElementById("ekf-data").innerHTML = is_ekf_ok;
     document.getElementById("status-data").innerHTML = status;
-    document.getElementById("lidar-data").innerHTML = lidar;
+    document.getElementById("lidar-data").innerHTML = lidar.toFixed(3);
     document.getElementById("volt-data").innerHTML = volt;
-    document.getElementById("gs-data").innerHTML = groundspeed;
-    document.getElementById("air-data").innerHTML = airspeed;
-    document.getElementById("altr-data").innerHTML = altr;
-    document.getElementById("altitude-data").innerHTML = alt;
+    document.getElementById("gs-data").innerHTML = groundspeed.toFixed(3);
+    document.getElementById("air-data").innerHTML = airspeed.toFixed(3);
+    document.getElementById("altr-data").innerHTML = altr.toFixed(3);
+    document.getElementById("altitude-data").innerHTML = alt.toFixed(3);
     document.getElementById("head-data").innerHTML = heading;
-    document.getElementById("lat-data").innerHTML = _lat;
-    document.getElementById("long-data").innerHTML = _long;
+    document.getElementById("lat-data").innerHTML = _lat.toFixed(6);
+    document.getElementById("long-data").innerHTML = _long.toFixed(6);
     document.getElementById("numSat-data").innerHTML = numSat;
     document.getElementById("hdop-data").innerHTML = hdop;
     document.getElementById("fix-data").innerHTML = fix;
-
-    console.log(prev_lng,prev_lat);
 
     if (i >= 1) {
         i = 2;
