@@ -37,6 +37,7 @@ io.on('connection', (socket) => {
     //var StartTime;
     app.get('/data' ,(req,res) => {
       //  var currentTime = new Date().getTime();
+        console.log(`sending data at ${new Date().getTime()}`);
 
         socket.broadcast.emit('copter-data', req.query);
         res.send('data');
@@ -46,16 +47,9 @@ io.on('connection', (socket) => {
        // console.log(`${totalTime} ms`);
     });
 
-    /*app.post('/mission', (req,res) => {
-        console.log(req.body);
-        fs.writeFile('mission.json',JSON.stringify(req.body,undefined,2), (err) =>{
-            if(err) {
-                console.log(err);
-            }
-            console.log('saved');
-        });
-        res.send(req.body);
-    });*/
+    socket.on("message",(msg) => {
+        console.log(msg);
+    });
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {

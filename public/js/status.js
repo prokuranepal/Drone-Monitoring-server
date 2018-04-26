@@ -145,6 +145,7 @@ socket.on('copter-data', function (data) {
    // var lastTime = new Date().getTime();
    // var totalTime = lastTime-currentTime;
    // console.log(`${totalTime} ms`);
+    socket.send(`send another data at ${new Date().getTime()}`);
 });
 
 // initmap update the map with the initial map google map.
