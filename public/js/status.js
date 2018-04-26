@@ -49,7 +49,7 @@ socket.on('copter-data', function (data) {
     // Relative altitude form the home location
     let alt = parseFloat(data.alt)*3.28084 || 0;
     // Heading of the copter provide by the magnetometer.
-    let heading = data.head || 0;
+    let heading = parseFloat(data.head) || 0;
     // Altitude provide by the lidar.
     let lidar = parseFloat(data.lidar)*3.28084 || 0 ;
     // Ground speed is extracted.
@@ -65,7 +65,7 @@ socket.on('copter-data', function (data) {
     // number of satellite the copter is connected with
     let numSat = data.numSat || 0;
     // Horizontal Dilution of Precision of the copter
-    let hdop = parseFloat(data.hdop) || 100;
+    let hdop = (parseFloat(data.hdop)/100) || 100;
     // what fix is provided by the copter 3D or 2D.
     let fix = data.fix || 0;
     // heartbeat

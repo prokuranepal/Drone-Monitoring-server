@@ -34,13 +34,13 @@ app.use(bodyparser.json());
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
     console.log('connected with the client');
-    var StartTime;
+    //var StartTime;
     app.get('/data' ,(req,res) => {
       //  var currentTime = new Date().getTime();
 
-        io.emit('copter-data', req.query);
+        socket.broadcast.emit('copter-data', req.query);
         res.send('data');
-        startTime = new Date().getTime();
+        //startTime = new Date().getTime();
        // var lastTime = new Date().getTime();
        // var totalTime = lastTime-currentTime;
        // console.log(`${totalTime} ms`);
