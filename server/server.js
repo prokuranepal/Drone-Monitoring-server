@@ -37,7 +37,6 @@ io.on('connection', (socket) => {
     //var StartTime;
     app.get('/data' ,(req,res) => {
       //  var currentTime = new Date().getTime();
-        console.log(`sending data at ${new Date().getTime()}`);
 
         socket.broadcast.emit('copter-data', req.query);
         res.send('data');
@@ -45,10 +44,6 @@ io.on('connection', (socket) => {
        // var lastTime = new Date().getTime();
        // var totalTime = lastTime-currentTime;
        // console.log(`${totalTime} ms`);
-    });
-
-    socket.on("message",(msg) => {
-        console.log(msg);
     });
 
     // to confirm the disconnected status with the client
