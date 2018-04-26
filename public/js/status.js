@@ -64,9 +64,7 @@ socket.on('copter-data', function (data) {
     // Horizontal Dilution of Precision of the copter
     let hdop = (parseFloat(data.hdop)/100) || 100;
     // what fix is provided by the copter 3D or 2D.
-    if (data.fix === '1'){
-        fix = "1D FIX";
-    } else if (data.fix === '2'){
+    if (data.fix === '2'){
         fix = "2D FIX";
     } else if (data.fix === '3'){
         fix = "3D FIX";
