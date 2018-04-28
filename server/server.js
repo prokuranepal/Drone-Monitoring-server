@@ -31,6 +31,8 @@ app.use(express.static(publicPath));
 
 app.use(bodyparser.json());
 
+let x = 1;
+
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
     console.log('connected with the client');
@@ -39,11 +41,23 @@ io.on('connection', (socket) => {
       //  var currentTime = new Date().getTime();
 
         socket.broadcast.emit('copter-data', req.query);
-        res.send('data');
+        res.send(`${x}`);
         //startTime = new Date().getTime();
        // var lastTime = new Date().getTime();
        // var totalTime = lastTime-currentTime;
        // console.log(`${totalTime} ms`);
+    });
+
+    app.get('/waypoints', (req,res) => {
+
+        socket.broadcast.emit('waypoints', req.body);
+        x = 0;
+        res.send("made");
+
+    });
+
+    socket.on('message', (msg) => {
+        x= msg;
     });
 
     // to confirm the disconnected status with the client

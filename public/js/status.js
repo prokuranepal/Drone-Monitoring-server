@@ -4,9 +4,7 @@ let fix;
 let marker = "undefined";
 let prev_lat;
 let prev_lng;
-
-/*var mydata = JSON.parse('../mission.json');
-console.log(mydata);*/
+let myLatLng;
 
 const socket = io();
 
@@ -14,6 +12,7 @@ const socket = io();
 socket.on('connect', function () {
     console.log('connected successfully with the server');
 });
+
 
 
 // to listens to the server socket and renders the data and map as required
@@ -95,31 +94,19 @@ socket.on('copter-data', function (data) {
 
     if (i >= 1) {
         i = 2;
-        var flightPath = new google.maps.Polyline({
-            path: [
-                {
-                    lat: prev_lat,
-                    lng: prev_lng
-                },
-                {
-                    lat: _lat,
-                    lng: _long
-                }],
-            geodesic: true,
-            strokeColor: '#FFFF00',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-
-        flightPath.setMap(map);
+        lineDrawer(_lat,_long,prev_lat,prev_lng,'#FFFF00');
     }
 
     i = i + 1;
     prev_lat = _lat;
     prev_lng = _long;
 
-    let myLatLng = {lat: _lat, lng: _long};
-    console.log(myLatLng);
+    myLatLng = {lat: _lat, lng: _long};
+    //console.log(myLatLng);
+
+    if (i == 2 ) {
+        console.log(myLatLng);
+    }
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
@@ -146,16 +133,56 @@ socket.on('copter-data', function (data) {
     // socket.send(`send another data at ${new Date().getTime()}`);
 });
 
+function lineDrawer(presentLat,presentLng, pastLat, pastLng, color) {
+    var flightPath = new google.maps.Polyline({
+        path: [
+            {
+                lat: pastLat,
+                lng: pastLng
+            },
+            {
+                lat: presentLat,
+                lng: presentLng
+            }],
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+    flightPath.setMap(map);
+}
+
+socket.on('waypoints', function (waypoint) {
+    let a = 1;
+    if (typeof (waypoint[a]) == 'undefined'){
+        socket.send(`1`);
+        console.log("1");
+    } else {
+        while (typeof (waypoint[a]) != 'undefined') {
+            var marker1 = new google.maps.Marker({
+                position: {lat: waypoint[a].lat, lng: waypoint[a].lon},
+                map: map,
+                label: `${a}`
+            });
+            if (a > 1) {
+                lineDrawer(waypoint[a].lat,waypoint[a].lon,waypoint[a-1].lat,waypoint[a-1].lon,'#FF0000');
+            }
+            a = a +1;
+        }
+        socket.send(`0`);
+    }
+});
+
 // initmap update the map with the initial map google map.
 function initmap() {
-    let lat = {lat:27.682828, lng:85.321709};
+    let lat = { lat:27.682828, lng:85.321709 };
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 19,
-        center: lat
+        zoom: 16,
+        center: lat,
+        mapTypeId: 'satellite'
     });
-    map.setMapTypeId('satellite');
     map.setTilt(45);
-    marker = new google.maps.Marker({
+    marker = new google.maps.Marker ({
         position: lat,
         icon: {
             url: location.origin+ "/js/images/red.svg",
