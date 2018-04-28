@@ -57,3 +57,21 @@ body, html {
 	width: 300px;
 	height: auto;
 }
+
+#DownloadMission {
+	color: black;
+	position: absolute;
+	top: 10px;
+	left: 300px;
+	width: 300px;
+	height: auto;
+}
+
+#ClearMission {
+	color: black;
+	position: absolute;
+	top: 10px;
+	left: 480px;
+	width: 300px;
+	height: auto;
+}

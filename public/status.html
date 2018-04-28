@@ -13,7 +13,7 @@
     <script src="js/libs/jquery-3.3.1.min.js"></script>
     <!--added the java script path-->
     <script src="js/status.js"></script>
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <!--<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>-->
 
     <title>Drone | Status</title>
 </head>
@@ -28,10 +28,17 @@
 <div id="waypoint"></div>
 
 <div id="ReadMission">
-    <div class="row">
-            <button type="button" onclick="javascript:ReadMission()">Read Mission</button>
-    </div>
+    <button type="button" onclick="javascript:ReadMission()">Read Mission</button>
 </div>
+
+<div id="DownloadMission">
+    <button type="button" onclick="javascript:DownloadMission()">Download Mission</button>
+</div>
+
+<div id="ClearMission">
+    <button type="button" onclick="javascript:ClearMission()">Clear Mission</button>
+</div>
+
 
 <!-- It is the div which creates the gps table on the right top side of the web page -->
 <div id="dataSat">

@@ -5,6 +5,9 @@ let marker = "undefined";
 let prev_lat;
 let prev_lng;
 let myLatLng;
+let flightPath;
+let markers=[];
+let flightPathCoordinate= [];
 
 const socket = io();
 
@@ -94,6 +97,7 @@ socket.on('copter-data', function (data) {
 
     if (i >= 1) {
         i = 2;
+
         lineDrawer(_lat,_long,prev_lat,prev_lng,'#FFFF00');
     }
 
@@ -103,10 +107,6 @@ socket.on('copter-data', function (data) {
 
     myLatLng = {lat: _lat, lng: _long};
     //console.log(myLatLng);
-
-    if (i == 2 ) {
-        console.log(myLatLng);
-    }
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
@@ -133,46 +133,6 @@ socket.on('copter-data', function (data) {
     // socket.send(`send another data at ${new Date().getTime()}`);
 });
 
-function lineDrawer(presentLat,presentLng, pastLat, pastLng, color) {
-    var flightPath = new google.maps.Polyline({
-        path: [
-            {
-                lat: pastLat,
-                lng: pastLng
-            },
-            {
-                lat: presentLat,
-                lng: presentLng
-            }],
-        geodesic: true,
-        strokeColor: color,
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
-    flightPath.setMap(map);
-}
-
-socket.on('waypoints', function (waypoint) {
-    let a = 1;
-    if (typeof (waypoint[a]) == 'undefined'){
-        socket.send(`1`);
-        console.log("1");
-    } else {
-        while (typeof (waypoint[a]) != 'undefined') {
-            var marker1 = new google.maps.Marker({
-                position: {lat: waypoint[a].lat, lng: waypoint[a].lon},
-                map: map,
-                label: `${a}`
-            });
-            if (a > 1) {
-                lineDrawer(waypoint[a].lat,waypoint[a].lon,waypoint[a-1].lat,waypoint[a-1].lon,'#FF0000');
-            }
-            a = a +1;
-        }
-        socket.send(`0`);
-    }
-});
-
 // initmap update the map with the initial map google map.
 function initmap() {
     let lat = { lat:27.682828, lng:85.321709 };
@@ -193,24 +153,84 @@ function initmap() {
     });
 }
 
+function addMarker(location,label) {
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        label: `${label}`
+    });
+    markers.push(marker);
+}
+
+function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    }
+}
+
+function deleteMarkers() {
+    setMapOnAll(null);
+    markers = [];
+}
+
+function lineDrawer(presentLat,presentLng, pastLat, pastLng, color) {
+    flightPath = new google.maps.Polyline({
+        path: [
+            {
+                lat: pastLat,
+                lng: pastLng
+            },
+            {
+                lat: presentLat,
+                lng: presentLng
+            }],
+        clickable: false,
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+    flightPath.setMap(map);
+}
+
+function ClearMission() {
+    flightPath.setMap(null);
+    flightPathCoordinate = [];
+    deleteMarkers();
+}
+
+function addLine(flightPathCoordinates,color) {
+    flightPath = new google.maps.Polyline({
+        path: flightPathCoordinates,
+        strokeColor: color,
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+    });
+
+    flightPath.setMap(map);
+}
+
 function ReadMission() {
     var mission = fetch('/js/mission.txt')
         .then(response => response.json())
         .then(jsonResponse => {
-            a= 1;
+            let a= 1;
             while (typeof (jsonResponse[a]) != 'undefined') {
-                var marker1 = new google.maps.Marker({
-                    position: {lat: jsonResponse[a].lat, lng: jsonResponse[a].lon},
-                    map: map,
-                    label: `${a}`
-                });
-                if (a > 1) {
-                    lineDrawer(jsonResponse[a].lat,jsonResponse[a].lon,jsonResponse[a-1].lat,jsonResponse[a-1].lon,'#FF0000');
-                }
+                let pos = {lat: jsonResponse[a].lat, lng: jsonResponse[a].lon};
+                addMarker(pos,a);
+
+                flightPathCoordinate.push(pos);
+
                 a = a +1;
             }
+
+            addLine(flightPathCoordinate,'#FF0000');
         })
 
+}
+
+function DownloadMission() {
+    socket.send(`1`);
 }
 
 // to check disconnect status
