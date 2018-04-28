@@ -193,6 +193,26 @@ function initmap() {
     });
 }
 
+function ReadMission() {
+    var mission = fetch('/js/mission.txt')
+        .then(response => response.json())
+        .then(jsonResponse => {
+            a= 1;
+            while (typeof (jsonResponse[a]) != 'undefined') {
+                var marker1 = new google.maps.Marker({
+                    position: {lat: jsonResponse[a].lat, lng: jsonResponse[a].lon},
+                    map: map,
+                    label: `${a}`
+                });
+                if (a > 1) {
+                    lineDrawer(jsonResponse[a].lat,jsonResponse[a].lon,jsonResponse[a-1].lat,jsonResponse[a-1].lon,'#FF0000');
+                }
+                a = a +1;
+            }
+        })
+
+}
+
 // to check disconnect status
 socket.on('disconnect', function () {
     console.log('disconneted from the server');

@@ -13,6 +13,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname,'..','/public');
+const missionfile = path.join(__dirname,'..','/public/js/mission.txt');
 
 // setting the port at which the server run
 const port = process.env.PORT || 3000;
@@ -50,7 +51,14 @@ io.on('connection', (socket) => {
 
     app.get('/waypoints', (req,res) => {
 
-        socket.broadcast.emit('waypoints', req.body);
+        //socket.broadcast.emit('waypoints', req.body);
+        fs.writeFile(missionfile,JSON.stringify(req.body,undefined,2), (err) => {
+            if(err) {
+                return console.log(err);
+            }
+
+            console.log("The file was saved!");
+        });
         x = 0;
         res.send("made");
 
