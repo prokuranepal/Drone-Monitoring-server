@@ -6,28 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/map.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.0.1/math.min.js"></script>
-    <!--added the socket.io path-->
+    <script src="js/libs/bootstrap.min.js"></script>
+    <script src="js/libs/math.min.js"></script>
     <script src="socket.io/socket.io.js"></script>
-    <!--added the jquery path-->
     <script src="js/libs/jquery-3.3.1.min.js"></script>
-    <!--added the java script path-->
     <script src="js/status.js"></script>
-    <!--<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>-->
+    <script src="js/function.js"></script>
 
     <title>Drone | Status</title>
 </head>
 
 <body>
+
 <!-- It is the div which renders the google map api -->
 <div id="map">
-    <img src="js/images/green.svg"/>
-    <img src="js/images/red.svg"/>
+    <img src="js/files/green.svg"/>
+    <img src="js/files/red.svg"/>
 </div>
-
-<div id="waypoint"></div>
 
 <div id="ReadMission">
     <button class="button" type="button" onclick="javascript:ReadMission()">Read Mission</button>
@@ -43,7 +39,7 @@
 
 <div id="raduiusInput">
     <input type="text" id="data">
-    <button class="button" type="button" onclick="javascript:DrawCircle1()">Draw Circle</button>
+    <button class="button" type="button" onclick="javascript:DrawCircle()">Draw Circle</button>
 </div>
 
 <!--
@@ -117,7 +113,6 @@
 </div>
 
 <!-- It is the div which creates the velocity table on the left top side of the web page -->
-
 <div id="dataVel">
 
     <div class="row">
@@ -133,7 +128,6 @@
 </div>
 
 <!-- It is the div which creates the Other table on the left bottom side of the web page -->
-
 <div id="dataOther">
 
     <div class="row">
@@ -174,11 +168,9 @@
 </div>
 
 <!-- Script for map rendering and callback with the initmap written in the status.js -->
-
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">
 </script>
-
 
 </body>
 

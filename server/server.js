@@ -15,7 +15,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname,'..','/public');
-const missionfile = path.join(__dirname,'..','/public/js/mission.txt');
+const missionfile = path.join(__dirname,'..','/public/js/files/mission.txt');
 
 // setting the port at which the server run
 const port = process.env.PORT || 3000;
@@ -35,11 +35,10 @@ app.use(express.static(publicPath));
 app.use(bodyparser.json());
 
 let x = 1;
-var flag = 'True';
-var currentTime;
+
 var checkTimeOutT = setTimeout(() => {
     console.log('timeout beyond time');
-    }, 6000);
+}, 6000);
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
@@ -48,9 +47,11 @@ io.on('connection', (socket) => {
     app.get('/data',(req,res) => {
         socket.broadcast.emit('copter-data', req.query);
         clearTimeout(checkTimeOutT);
+
         checkTimeOutT = setTimeout(() => {
             var data = req.query;
             data.conn = 'False';
+            x = 1;
             socket.broadcast.emit('copter-data',data);
         }, 6000);
         res.send(`${x}`);
@@ -58,19 +59,14 @@ io.on('connection', (socket) => {
     });
 
     app.get('/waypoints', (req,res) => {
-
         //socket.broadcast.emit('waypoints', req.body);
         fs.writeFile(missionfile,JSON.stringify(req.body,undefined,2), (err) => {
             if(err) {
                 return console.log(err);
             }
-
-            console.log("The file was saved!");
         });
-
         x = 0;
         res.send("made");
-
     });
 
     app.get('/android', (req,res) => {
