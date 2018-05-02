@@ -4,6 +4,8 @@ const path = require('path');
 
 const fs = require('fs');
 
+const math = require('mathjs');
+
 const bodyparser = require('body-parser');
 // it is used so that both socketIO and express can run simultaneously
 // it is available in core library.
@@ -33,20 +35,26 @@ app.use(express.static(publicPath));
 app.use(bodyparser.json());
 
 let x = 1;
+var flag = 'True';
+var currentTime;
+var checkTimeOutT = setTimeout(() => {
+    console.log('timeout beyond time');
+    }, 6000);
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
     console.log('connected with the client');
-    //var StartTime;
-    app.get('/data' ,(req,res) => {
-      //  var currentTime = new Date().getTime();
 
+    app.get('/data',(req,res) => {
         socket.broadcast.emit('copter-data', req.query);
+        clearTimeout(checkTimeOutT);
+        checkTimeOutT = setTimeout(() => {
+            var data = req.query;
+            data.conn = 'False';
+            socket.broadcast.emit('copter-data',data);
+        }, 6000);
         res.send(`${x}`);
-        //startTime = new Date().getTime();
-       // var lastTime = new Date().getTime();
-       // var totalTime = lastTime-currentTime;
-       // console.log(`${totalTime} ms`);
+
     });
 
     app.get('/waypoints', (req,res) => {
@@ -59,9 +67,14 @@ io.on('connection', (socket) => {
 
             console.log("The file was saved!");
         });
+
         x = 0;
         res.send("made");
 
+    });
+
+    app.get('/android', (req,res) => {
+        res.send("you did it");
     });
 
     socket.on('message', (msg) => {
@@ -73,6 +86,7 @@ io.on('connection', (socket) => {
         console.log('disconnected form the client');
     });
 });
+
 
 
 // setting up a server at port 3000 or describe by process.env.PORT

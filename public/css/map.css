@@ -10,18 +10,18 @@ body, html {
 #dataSat {
 	color: black;
 	position: absolute;
-	top: 50px;
+	top: 20px;
 	left: 25px;
-	width: 300px;
+	width: 160px;
 	height: auto;
 }
 
 #dataSat1 {
 	color: black;
 	position: absolute;
-	top: 130px;
+	top: 90px;
 	left: 25px;
-	width: 300px;
+	width: 250px;
 	height: auto;
 }
 
@@ -29,9 +29,9 @@ body, html {
 #dataVel {
 	color: black;
 	position: absolute;
-	top: 340px;
+	top: 380px;
 	left: 25px;
-	width: 300px;
+	width: 100px;
 	height: auto;
 }
 
@@ -40,7 +40,7 @@ body, html {
 	position: absolute;
 	bottom: 50px;
 	left: 25px;
-	width: 300px;
+	width: 200px;
 	height: auto;
 }
 
@@ -52,26 +52,45 @@ body, html {
 #ReadMission {
 	color: black;
 	position: absolute;
-	top: 10px;
-	left: 150px;
-	width: 300px;
+	top: 20px;
+	right: 20px;
+	width: 180px;
 	height: auto;
 }
 
 #DownloadMission {
 	color: black;
 	position: absolute;
-	top: 10px;
-	left: 300px;
-	width: 300px;
+	top: 60px;
+	right: 20px;
+	width: 180px;
 	height: auto;
 }
 
 #ClearMission {
 	color: black;
 	position: absolute;
-	top: 10px;
-	left: 480px;
-	width: 300px;
+	top: 100px;
+	right: 20px;
+	width: 180px;
 	height: auto;
+}
+
+#raduiusInput {
+	color: black;
+	position: absolute;
+	top: 140px;
+	right: 20px;
+	width: 180px;
+	height: auto;
+}
+
+.button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
 }
