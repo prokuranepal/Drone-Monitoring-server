@@ -34,7 +34,9 @@ app.use(express.static(publicPath));
 
 app.use(bodyparser.json());
 
-let x = 1;
+let x = 1,
+    toAndroid=0,
+    toFlight=0;
 
 var checkTimeOutT = setTimeout(() => {
     console.log('timeout beyond time');
@@ -59,7 +61,6 @@ io.on('connection', (socket) => {
     });
 
     app.get('/waypoints', (req,res) => {
-        //socket.broadcast.emit('waypoints', req.body);
         fs.writeFile(missionfile,JSON.stringify(req.body,undefined,2), (err) => {
             if(err) {
                 return console.log(err);
@@ -70,7 +71,16 @@ io.on('connection', (socket) => {
     });
 
     app.get('/android', (req,res) => {
-        res.send("you did it");
+        toFlight=req.query.fly;
+        console.log(toFlight);
+        res.send(`Succeeded`);
+    });
+
+    app.get('/flight', (req,res) => {
+        console.log(req.query.flight);
+        if (req.query.flight == 0) {
+            res.send(`${toFlight}`);
+        }
     });
 
     socket.on('message', (msg) => {
