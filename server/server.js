@@ -79,6 +79,7 @@ io.on('connection', (socket) => {
     app.get('/flight', (req,res) => {
         console.log(req.query.flight);
         res.send(`${toFlight}`);
+        toFlight = 0;
 
     });
 
