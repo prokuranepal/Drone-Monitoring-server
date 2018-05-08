@@ -94,7 +94,7 @@ body, html {
 	}
 }
 
-@media (max-height:600px) {
+@media (max-height: 600px) {
 	.dataOther {
 		color: black;
 		position: absolute;

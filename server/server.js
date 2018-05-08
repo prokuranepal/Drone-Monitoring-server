@@ -27,9 +27,10 @@ const app = express();
 const server = http.createServer(app);
 
 // configuring server to use socket io , websocket first and long polling second
-const io = socketIO(server, {
+/*const io = socketIO(server, {
     transports: ['websocket','polling']
-});
+});*/
+const io = socketIO(server);
 
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
@@ -39,7 +40,8 @@ app.use(bodyparser.json());
 let x = 1,
     toFlight=0,
     Android = [],
-    Website = [];
+    Website = [],
+    Pi = [];
 
 let checkTimeOutT = setTimeout(() => {
     console.log('timeout beyond time');
@@ -47,6 +49,13 @@ let checkTimeOutT = setTimeout(() => {
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
+    console.log("connected");
+
+    socket.on('joinPi', () => {
+        Pi.push(socket.id);
+        socket.join('pi');
+        console.log(`${socket.id} (Pi) connected`);
+    });
 
     socket.on('joinWebsite', () => {
         Website.push(socket.id);
@@ -92,19 +101,22 @@ io.on('connection', (socket) => {
     });
 
     socket.on('message', (msg) => {
+        console.log(msg.hello);
         x= msg;
     });
 
     socket.on('fly', (msg) => {
         console.log(msg);
         toFlight = msg;
+        io.emit('aaa_response',"hello");
         io.to('android').emit('response',"Go to Hell");
     });
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
         let indexWebsite = Website.indexOf(socket.id),
-            indexAndroid = Android.indexOf(socket.id);
+            indexAndroid = Android.indexOf(socket.id),
+            indexPi = Pi.indexOf(socket.id);
 /*
         socket.leave('website'||'android');*/
 
@@ -117,6 +129,11 @@ io.on('connection', (socket) => {
             Android.splice(indexAndroid,1);
             socket.leave('android');
             console.log(`${socket.id} (Android device) disconnected`);
+        }
+        if (indexPi > -1 ){
+            Pi.splice(indexPi,1);
+            socket.leave('pi');
+            console.log(`${socket.id} (Pi) disconnected`);
         }
 
     });
