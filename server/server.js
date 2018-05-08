@@ -4,7 +4,7 @@ const path = require('path');
 
 const fs = require('fs');
 
-const math = require('mathjs');
+//const mysql = require('mysql');
 
 const bodyparser = require('body-parser');
 // it is used so that both socketIO and express can run simultaneously
@@ -26,8 +26,10 @@ const app = express();
 // created a http server to use express
 const server = http.createServer(app);
 
-// configuring server to use socket io
-const io = socketIO(server);
+// configuring server to use socket io , websocket first and long polling second
+const io = socketIO(server, {
+    transports: ['websocket','polling']
+});
 
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
@@ -35,26 +37,39 @@ app.use(express.static(publicPath));
 app.use(bodyparser.json());
 
 let x = 1,
-    toAndroid=0,
-    toFlight=0;
+    toFlight=0,
+    Android = [],
+    Website = [];
 
-var checkTimeOutT = setTimeout(() => {
+let checkTimeOutT = setTimeout(() => {
     console.log('timeout beyond time');
 }, 6000);
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
-    console.log('connected with the client');
+
+    socket.on('joinWebsite', () => {
+        Website.push(socket.id);
+        socket.join('website');
+        console.log ( `${socket.id} (Website) connected`);
+    });
+
+    socket.on('joinAndroid',() => {
+        Android.push(socket.id);
+        socket.join('android');
+        console.log(`${socket.id} (Android device) connected`);
+    });
+
 
     app.get('/data',(req,res) => {
-        socket.broadcast.emit('copter-data', req.query);
+        io.to('website').emit('copter-data', req.query);
         clearTimeout(checkTimeOutT);
 
         checkTimeOutT = setTimeout(() => {
-            var data = req.query;
+            let data = req.query;
             data.conn = 'False';
             x = 1;
-            socket.broadcast.emit('copter-data',data);
+            io.to('website').emit('copter-data',data);
         }, 6000);
         res.send(`${x}`);
 
@@ -70,30 +85,42 @@ io.on('connection', (socket) => {
         res.send("made");
     });
 
-    app.get('/android', (req,res) => {
-        toFlight=req.query.fly;
-        console.log(toFlight);
-        res.send(`Succeeded`);
-    });
-
     app.get('/flight', (req,res) => {
         console.log(req.query.flight);
         res.send(`${toFlight}`);
         toFlight = 0;
-
     });
 
     socket.on('message', (msg) => {
         x= msg;
     });
 
+    socket.on('fly', (msg) => {
+        console.log(msg);
+        toFlight = msg;
+        io.to('android').emit('response',"Go to Hell");
+    });
+
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
-        console.log('disconnected form the client');
+        let indexWebsite = Website.indexOf(socket.id),
+            indexAndroid = Android.indexOf(socket.id);
+/*
+        socket.leave('website'||'android');*/
+
+        if (indexWebsite > -1) {
+            Website.splice(indexWebsite,1);
+            socket.leave('website');
+            console.log(`${socket.id} (Website) disconnected`);
+        }
+        if (indexAndroid > -1) {
+            Android.splice(indexAndroid,1);
+            socket.leave('android');
+            console.log(`${socket.id} (Android device) disconnected`);
+        }
+
     });
 });
-
-
 
 // setting up a server at port 3000 or describe by process.env.PORT
 server.listen(port, () => {

@@ -3,94 +3,125 @@ body, html {
 }
 
 #map {
-	height: 100%;
 	width: 100%;
+	height: 100%;
 }
 
-#dataSat {
+
+
+.Show {
 	color: black;
 	position: absolute;
-	top: 20px;
-	left: 25px;
-	width: 160px;
+	top: 10px;
+	left: 240px;
 	height: auto;
 }
 
-#dataSat1 {
+.ReadMission {
 	color: black;
 	position: absolute;
-	top: 90px;
-	left: 25px;
-	width: 250px;
-	height: auto;
+	top: 10px;
+	left: 310px;
 }
 
-
-#dataVel {
+.DownloadMission {
 	color: black;
 	position: absolute;
-	top: 380px;
-	left: 25px;
-	width: 100px;
-	height: auto;
+	top: 10px;
+	left: 440px;
 }
 
-#dataOther {
+.ClearMission {
 	color: black;
 	position: absolute;
-	bottom: 30px;
-	left: 25px;
-	width: 200px;
-	height: auto;
+	top: 10px;
+	left: 605px;
 }
 
-.trans {
-	float: left;
-	background: transparent;
-}
-
-#ReadMission {
-	color: black;
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	width: 180px;
-	height: auto;
-}
-
-#DownloadMission {
+.dataSat {
 	color: black;
 	position: absolute;
 	top: 60px;
-	right: 20px;
-	width: 180px;
-	height: auto;
+	left: 5px;
+	width: 160px;
 }
 
-#ClearMission {
+.dataSat1 {
 	color: black;
 	position: absolute;
-	top: 100px;
-	right: 20px;
-	width: 180px;
-	height: auto;
+	top: 120px;
+	left: 5px;
+	width: 250px;
 }
 
-#raduiusInput {
+.dataVel {
 	color: black;
 	position: absolute;
-	top: 140px;
-	right: 20px;
-	width: 180px;
+	top: 360px;
+	left: 5px;
+	width: 150px;
+}
+
+.dataOther {
+	color: black;
+	position: absolute;
+	top: 420px;
+	left: 5px;
+	width: 200px;
+}
+
+.logo {
+	position: absolute;
+	top: 10px;
+	right: 5px;
+	background-color: black;
 	height: auto;
 }
 
-.button {
-	background-color: #4CAF50; /* Green */
-	border: none;
-	color: white;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 16px;
+.radiusInput {
+	color: black;
+	position: absolute;
+	top: 120px;
+	right: 50px;
+	width: 130px;
+	height: auto;
+}
+
+@media (min-height: 600px) {
+	body,html {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
+@media (max-height:600px) {
+	.dataOther {
+		color: black;
+		position: absolute;
+		top: 200px;
+		right: 0px;
+		left: unset;
+		height: auto;
+	}
+}
+
+@media (max-width: 920px) {
+	.DownloadMission {
+		color: black;
+		position: absolute;
+		top: 55px;
+		left: 310px;
+	}
+	.ClearMission {
+		color: black;
+		position: absolute;
+		top: 100px;
+		left: 310px;
+	}
+}
+
+.theme {
+	border: 1px solid #333;
+	background: white;
+	opacity: 0.7;
 }

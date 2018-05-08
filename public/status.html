@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="css/map.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
-    <script src="js/libs/bootstrap.min.js"></script>
     <script src="js/libs/math.min.js"></script>
-    <script src="socket.io/socket.io.js"></script>
-    <script src="js/libs/jquery-3.3.1.min.js"></script>
+    <script src="js/libs/socket.io.js"></script>
     <script src="js/status.js"></script>
     <script src="js/function.js"></script>
 
@@ -25,21 +24,43 @@
     <img src="js/files/red.svg"/>
 </div>
 
-<div id="ReadMission">
-    <button class="button" type="button" onclick="javascript:ReadMission()">Read Mission</button>
+<div class="container">
+    <div class="logo">
+        <img src="js/files/logo.png">
+    </div>
 </div>
 
-<div id="DownloadMission">
-    <button class="button" type="button" onclick="javascript:DownloadMission()">Download Mission</button>
+<div class="container">
+    <div style="position: absolute; top: 10px; left: 5px; height: auto;background-color: blue;opacity: 0.5">
+        <H3 style="color: black">NIC Drone Status</H3>
+    </div>
 </div>
 
-<div id="ClearMission">
-    <button class="button" type="button" onclick="javascript:ClearMission()">Clear Mission</button>
-</div>
+<div class="container">
+    <div class="ReadMission">
+        <div class="row">
+            <button class="btn btn-dark" type="button" onclick="ReadMission()">Read Mission</button>
+        </div>
+    </div>
 
-<div id="raduiusInput">
-    <input type="text" id="data">
-    <button class="button" type="button" onclick="javascript:DrawCircle()">Draw Circle</button>
+    <div class="DownloadMission">
+        <div class="row">
+            <button class="btn btn-dark" type="button" onclick="DownloadMission()">Download Mission</button>
+        </div>
+    </div>
+
+    <div class="ClearMission">
+        <div class="row">
+            <button class="btn btn-dark" type="button" onclick="ClearMission()">Clear Mission</button>
+        </div>
+    </div>
+
+    <div class="radiusInput">
+        <div class="row">
+            <input title="radius" placeholder="radius" type="text" id="data" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+            <button class="btn btn-dark" type="button" onclick="DrawCircle()">Draw Circle</button>
+        </div>
+    </div>
 </div>
 
 <!--
@@ -47,130 +68,177 @@
     <button type="button" onclick="javascript: ">Test Button</button>
 </div>
 -->
+<div class="container">
 
-<!-- It is the div which creates the gps table on the right top side of the web page -->
-<div id="dataSat">
-
-    <div class="row">
-        <div class="col-sm-4">Lat:</div>
-        <div class="col-sm-7" id="lat-data">27.682828</div>
+    <div class="Show">
+        <div class="row">
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo">Show</button>
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-4">Lng:</div>
-        <div class="col-sm-7" id="long-data">85.321709</div>
-    </div>
+    <!-- It is the div which creates the gps table on the right top side of the web page -->
+    <div id="demo" class="collapse">
+        <div class="container">
+            <div class="dataSat">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">Lat:</div>
+                        <div class="col-8 theme" id="lat-data">27.682828</div>
+                    </div>
+                </div>
 
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">Lng:</div>
+                        <div class="col-8 theme" id="long-data">85.321709</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dataSat1">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">AltR:</div>
+                        <div class="col-5 theme" id="altr-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">Alt:</div>
+                        <div class="col-5 theme" id="altitude-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">Sat:</div>
+                        <div class="col-5 theme" id="numSat-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">HDOP:</div>
+                        <div class="col-5 theme" id="hdop-data">100</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">FIX:</div>
+                        <div class="col-5 theme" id="fix-data">NO FIX</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">Head:</div>
+                        <div class="col-5 theme" id="head-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">DFH:</div>
+                        <div class="col-5 theme" id="DFH-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">EST:</div>
+                        <div class="col-5 theme" id="EST-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 theme">TOF:</div>
+                        <div class="col-5 theme" id="TOF-data">0:0</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- It is the div which creates the velocity table on the left top side of the web page -->
+            <div class="dataVel">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 theme">GS:</div>
+                        <div class="col-6 theme" id="gs-data">0.000</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 theme">AS:</div>
+                        <div class="col-6 theme" id="air-data">0.000</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- It is the div which creates the Other table on the left bottom side of the web page -->
+            <div class="dataOther">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">Mode:</div>
+                        <div class="col-6 theme" id="mode-data">Unknown</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">Arm:</div>
+                        <div class="col-6 theme" id="arm-data">False</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">EKF:</div>
+                        <div class="col-6 theme" id="ekf-data">False</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">Status:</div>
+                        <div class="col-6 theme" id="status-data">Unknown</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">LiDar:</div>
+                        <div class="col-6 theme" id="lidar-data">0</div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-5 theme">Volt:</div>
+                        <div class="col-6 theme" id="volt-data">0</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
-
-<div id="dataSat1">
-
-    <div class="row">
-        <div class="col-sm-3">AltR:</div>
-        <div class="col-sm-4" id="altr-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">Alt:</div>
-        <div class="col-sm-4" id="altitude-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">Sat:</div>
-        <div class="col-sm-4" id="numSat-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">HDOP:</div>
-        <div class="col-sm-4" id="hdop-data">100</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">FIX:</div>
-        <div class="col-sm-4" id="fix-data">NO FIX</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">Head:</div>
-        <div class="col-sm-4" id="head-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">DFH:</div>
-        <div class="col-sm-4" id="DFH-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">EST:</div>
-        <div class="col-sm-4" id="EST-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-3">TOF:</div>
-        <div class="col-sm-4" id="TOF-data">0:0</div>
-    </div>
-
-</div>
-
-<!-- It is the div which creates the velocity table on the left top side of the web page -->
-<div id="dataVel">
-
-    <div class="row">
-        <div class="col-sm-5">GS:</div>
-        <div class="col-sm-6" id="gs-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-5">AS:</div>
-        <div class="col-sm-6" id="air-data">0</div>
-    </div>
-
-</div>
-
-<!-- It is the div which creates the Other table on the left bottom side of the web page -->
-<div id="dataOther">
-
-    <div class="row">
-        <div class="col-sm-4">Mode:</div>
-        <div class="col-sm-5" id="mode-data">Unknown</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4">Arm:</div>
-        <div class="col-sm-5" id="arm-data">False</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4">EKF:</div>
-        <div class="col-sm-5" id="ekf-data">False</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4">Status:</div>
-        <div class="col-sm-5" id="status-data">Unknown</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4">LiDar:</div>
-        <div class="col-sm-5" id="lidar-data">0</div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-4">Volt:</div>
-        <div class="col-sm-5" id="volt-data">0</div>
-    </div>
-
-    <!--<div class="row">
-        <div class="col-sm-4">HearBeat:</div>
-        <div class="col-sm-4" id="heartbeat-data">0</div>
-    </div>-->
-
-</div>
-
 <!-- Script for map rendering and callback with the initmap written in the status.js -->
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUN4qNqgyU_VHeKpqBky9YB93bIX-gy7w&callback=initmap">
 </script>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="js/libs/jquery-3.2.1.slim.min.js"></script>
+<script src="js/libs/popper.min.js"></script>
+<script src="js/libs/bootstrap.min.js"></script>
 
 </body>
 

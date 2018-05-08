@@ -18,6 +18,7 @@ const socket = io();
 // to check connection status with the server
 socket.on('connect', function () {
     console.log('connected successfully with the server');
+    socket.emit('joinWebsite');
 });
 
 // to listens to the server socket and renders the data and map as required
@@ -61,8 +62,8 @@ socket.on('copter-data', function (data) {
     document.getElementById("status-data").innerHTML = data.status;
     document.getElementById("lidar-data").innerHTML = (parseFloat(data.lidar)*3.28084).toFixed(3);
     document.getElementById("volt-data").innerHTML = parseFloat(data.volt);
-    document.getElementById("gs-data").innerHTML = (parseFloat(data.gs)).toFixed(3);
-    document.getElementById("air-data").innerHTML = (parseFloat(data.as)).toFixed(3);
+    document.getElementById("gs-data").innerHTML = (parseFloat(data.gs)).toFixed(2);
+    document.getElementById("air-data").innerHTML = (parseFloat(data.as)).toFixed(2);
     document.getElementById("altr-data").innerHTML = (parseFloat(data.altr)*3.28084).toFixed(3);
     document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)*3.28084).toFixed(3);
     document.getElementById("head-data").innerHTML = heading;
