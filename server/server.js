@@ -60,6 +60,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
+        parameters = 0;
         parameters = data;
         io.to('website').emit('copter-data', data);
     });
@@ -93,26 +94,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('fly', (msg) => {
+        console.log(msg);
         // send data to pi to initiate flight.
         io.to('pi').emit('initiate_flight',msg);
     });
-
-    /*app.get('/waypoints', (req,res) => {
-        fs.writeFile(missionfile,JSON.stringify(req.body,undefined,2), (err) => {
-            if(err) {
-                return console.log(err);
-            }
-        });
-        x = 0;
-        res.send("made");
-    });*/
-
-    socket.on('message', (msg) => {
-        console.log(msg);
-        x= msg;
-    });
-
-
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
@@ -135,10 +120,9 @@ io.on('connection', (socket) => {
         if (indexPi > -1 ){
             Pi.splice(indexPi,1);
             socket.leave('pi');
-            console.log(`${socket.id} (Pi) disconnected`);
             parameters.conn = 'False';
             io.to('website').emit('copter-data', parameters);
-            parameters = 0;
+            console.log(`${socket.id} (Pi) disconnected`);
         }
 
     });
