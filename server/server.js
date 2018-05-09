@@ -65,7 +65,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('waypoints', (waypoints) => {
-        console.log(waypoints);
         fs.writeFile(missionfile,JSON.stringify(waypoints,undefined,2), (err) => {
             if(err) {
                 return console.log(err);
@@ -82,7 +81,6 @@ io.on('connection', (socket) => {
 
     socket.on('getMission', (msg) => {
         io.to('pi').emit('mission_download',msg);
-        console.log(msg);
     });
 
     // Android
@@ -93,7 +91,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('fly', (msg) => {
-        console.log(msg);
         // send data to pi to initiate flight.
         io.to('pi').emit('initiate_flight',msg);
     });
