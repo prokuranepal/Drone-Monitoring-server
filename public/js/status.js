@@ -263,6 +263,7 @@ function ReadMission() {
  */
 function DownloadMission() {
     socket.emit('getMission','1');
+    console.log('getMission');
 }
 
 /**
