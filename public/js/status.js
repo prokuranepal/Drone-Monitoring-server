@@ -24,6 +24,7 @@ socket.on('connect', function () {
 // to listens to the server socket and renders the data and map as required
 socket.on('copter-data', function (data) {
 
+
     let imageString,
         is_armed = data.arm || "False",
         _lat = parseFloat(data.lat) || 0,
@@ -42,7 +43,7 @@ socket.on('copter-data', function (data) {
         imageString = location.origin+ "/js/files/red.svg";
     }
 
-    if ((is_armed).toUpperCase() == 'TRUE' && armedCheck == 'True') {
+    if (String(is_armed).toUpperCase() == 'TRUE' && armedCheck == 'True') {
         StartOfFlight = new Date().getTime();
         armedCheck = 'False';
     }
@@ -75,7 +76,7 @@ socket.on('copter-data', function (data) {
     document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
     document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_long).toFixed(3);
 
-    if ((is_armed).toUpperCase() == 'TRUE') {
+    if (String(is_armed).toUpperCase() == 'TRUE') {
         document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime()-StartOfFlight);
     } else {
         armedCheck = 'True';

@@ -60,7 +60,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
-        parameters = 0;
         parameters = data;
         io.to('website').emit('copter-data', data);
     });
@@ -104,22 +103,17 @@ io.on('connection', (socket) => {
         let indexWebsite = Website.indexOf(socket.id),
             indexAndroid = Android.indexOf(socket.id),
             indexPi = Pi.indexOf(socket.id);
-/*
-        socket.leave('website'||'android');*/
 
         if (indexWebsite > -1) {
             Website.splice(indexWebsite,1);
-            socket.leave('website');
             console.log(`${socket.id} (Website) disconnected`);
         }
         if (indexAndroid > -1) {
             Android.splice(indexAndroid,1);
-            socket.leave('android');
             console.log(`${socket.id} (Android device) disconnected`);
         }
         if (indexPi > -1 ){
             Pi.splice(indexPi,1);
-            socket.leave('pi');
             parameters.conn = 'False';
             io.to('website').emit('copter-data', parameters);
             console.log(`${socket.id} (Pi) disconnected`);
