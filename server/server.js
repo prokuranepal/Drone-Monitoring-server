@@ -38,50 +38,62 @@ app.use(express.static(publicPath));
 app.use(bodyparser.json());
 
 let x = 1,
-    toFlight=0,
     Android = [],
     Website = [],
-    Pi = [];
+    Pi = [],
+    parameters;
 
-let checkTimeOutT = setTimeout(() => {
-    console.log('timeout beyond time');
-}, 6000);
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
-    console.log("connected");
 
+    // Pi
     socket.on('joinPi', () => {
         Pi.push(socket.id);
         socket.join('pi');
         console.log(`${socket.id} (Pi) connected`);
     });
 
+    socket.on('success', (msg) => {
+        // to android for successful take off
+        io.to('android').emit('success',msg);
+    });
+
+    socket.on('data', (data) => {
+        parameters = data;
+        io.to('website').emit('copter-data', data);
+    });
+
+    socket.on('waypoints', (waypoints) => {
+        console.log(waypoints);
+        fs.writeFile(missionfile,JSON.stringify(waypoints,undefined,2), (err) => {
+            if(err) {
+                return console.log(err);
+            }
+        });
+    });
+
+    // Website
     socket.on('joinWebsite', () => {
         Website.push(socket.id);
         socket.join('website');
         console.log ( `${socket.id} (Website) connected`);
     });
 
+    socket.on('getMission', (msg) => {
+        io.to('pi').emit('mission_download',msg);
+    });
+
+    // Android
     socket.on('joinAndroid',() => {
         Android.push(socket.id);
         socket.join('android');
         console.log(`${socket.id} (Android device) connected`);
     });
 
-
-    app.get('/data',(req,res) => {
-        io.to('website').emit('copter-data', req.query);
-        clearTimeout(checkTimeOutT);
-
-        checkTimeOutT = setTimeout(() => {
-            let data = req.query;
-            data.conn = 'False';
-            x = 1;
-            io.to('website').emit('copter-data',data);
-        }, 6000);
-        res.send(`${x}`);
-
+    socket.on('fly', (msg) => {
+        // send data to pi to initiate flight.
+        io.to('pi').emit('initiate_flight',msg);
     });
 
     app.get('/waypoints', (req,res) => {
@@ -94,23 +106,12 @@ io.on('connection', (socket) => {
         res.send("made");
     });
 
-    app.get('/flight', (req,res) => {
-        console.log(req.query.flight);
-        res.send(`${toFlight}`);
-        toFlight = 0;
-    });
-
     socket.on('message', (msg) => {
-        console.log(msg.hello);
+        console.log(msg);
         x= msg;
     });
 
-    socket.on('fly', (msg) => {
-        console.log(msg);
-        toFlight = msg;
-        io.emit('aaa_response',"hello");
-        io.to('android').emit('response',"Go to Hell");
-    });
+
 
     // to confirm the disconnected status with the client
     socket.on('disconnect', () => {
@@ -134,6 +135,9 @@ io.on('connection', (socket) => {
             Pi.splice(indexPi,1);
             socket.leave('pi');
             console.log(`${socket.id} (Pi) disconnected`);
+            parameters.conn = 'False';
+            io.to('website').emit('copter-data', parameters);
+            parameters = 0;
         }
 
     });

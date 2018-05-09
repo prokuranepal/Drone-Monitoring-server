@@ -4,7 +4,7 @@ let map,
     prev_lat,
     prev_lng,
     armedCheck = 'True',
-    Home= {lat:-35.36326217651367, lng:149.1652374267578},
+    Home= {lat:27.686331, lng:85.317652},
     markers=[],
     flightPathCoordinate= [],
     dC=[],
@@ -29,7 +29,7 @@ socket.on('copter-data', function (data) {
         _lat = parseFloat(data.lat) || 0,
         _long = parseFloat(data.long) || 0,
         heading = parseFloat(data.head) || 0,
-        fix;
+        Sfix;
 
     // the red and green gps pointer is defined according to the connection status.
     if (data.conn != undefined) {
@@ -42,17 +42,17 @@ socket.on('copter-data', function (data) {
         imageString = location.origin+ "/js/files/red.svg";
     }
 
-    if (is_armed == 'True' && armedCheck == 'True') {
+    if ((is_armed).toUpperCase() == 'TRUE' && armedCheck == 'True') {
         StartOfFlight = new Date().getTime();
         armedCheck = 'False';
     }
 
     if (data.fix === '2'){
-        fix = "2D FIX";
+        Sfix = "2D FIX";
     } else if (data.fix === '3'){
-        fix = "3D FIX";
+        Sfix = "3D FIX";
     } else {
-        fix = "NO LOCK";
+        Sfix = "NO LOCK";
     }
 
     // following document update the data in div of the html file
@@ -71,11 +71,11 @@ socket.on('copter-data', function (data) {
     document.getElementById("long-data").innerHTML = _long.toFixed(6);
     document.getElementById("numSat-data").innerHTML = data.numSat;
     document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop)/100);
-    document.getElementById("fix-data").innerHTML = fix;
+    document.getElementById("fix-data").innerHTML = Sfix;
     document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
     document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_long).toFixed(3);
 
-    if (is_armed == 'True') {
+    if ((is_armed).toUpperCase() == 'TRUE') {
         document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime()-StartOfFlight);
     } else {
         armedCheck = 'True';
@@ -117,8 +117,9 @@ socket.on('copter-data', function (data) {
  * initmap update the map with the initial map google map.
  */
 function initmap() {
-    //let lat = { lat:27.682828, lng:85.321709 };
-    let pos = {lat:-35.36326217651367, lng:149.1652374267578};
+   // let pos = { lat:27.682828, lng:85.321709 };
+    //let pos = {lat:-35.36326217651367, lng:149.1652374267578};
+    let pos = Home;
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: pos,
@@ -261,7 +262,7 @@ function ReadMission() {
  * Download mission from the copter
  */
 function DownloadMission() {
-    socket.send(`1`);
+    socket.emit('getMission','1');
 }
 
 /**
