@@ -52,7 +52,7 @@ socket.on('copter-data', function (data) {
     } else if (data.fix === 3){
         Sfix = "3D FIX";
     } else {
-        Sfix = "NO LOCK";
+        Sfix = "NO FIX";
     }
 
     // following document update the data in div of the html file
@@ -93,7 +93,9 @@ socket.on('copter-data', function (data) {
     prev_lat = _lat;
     prev_lng = _long;
 
-
+    /*map.addListener('click', function (e) {
+        infowindow.open(distanceLatLng(Home.lat,Home.lng,e.latLng.lat,e.latLng.lng),map);
+    });*/
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
@@ -125,7 +127,13 @@ function initmap() {
         center: pos,
         mapTypeId: 'hybrid',
         disableDefaultUI: true,
-        zoomControl: true
+        zoomControl: true,
+        disableDoubleClickZoom: true/*,
+        fullscreenControl : false,
+        maxZoom:20,
+        minZoom: 14,
+        rotateControl: false,
+        scaleControl: false*/
     });
     map.setTilt(45);
     marker = new google.maps.Marker ({
@@ -307,6 +315,7 @@ function DrawPlusLineFromCenter(centerLat,centerLng,radius) {
     line2.push(west);
     addLine(line2,'#C0C0C0');
 }
+
 
 // to check disconnect status
 socket.on('disconnect', function () {
