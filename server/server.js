@@ -41,7 +41,7 @@ let Android = [],
     Website = [],
     Pi = [],
     parameters,
-    misssionDownloadFlag=1;
+    missionDownloadFlag=1;
 
 
 // to confirm the connection status with the client
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
 
     socket.on('error', (msg) => {
         console.log(msg);
-        misssionDownloadFlag = 1;
+        //missionDownloadFlag = 1;
         // to android for error
         io.to('android').emit('error',msg);
     });
@@ -87,10 +87,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getMission', (msg) => {
-        if (misssionDownloadFlag == 1) {
+        /*if (missionDownloadFlag == '1') {
+            console.log('enter');*/
             io.to('pi').emit('mission_download',msg);
-            misssionDownloadFlag = 0;
-        }
+            /*missionDownloadFlag = '0';
+        }*/
 
     });
 
