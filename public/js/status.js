@@ -93,9 +93,15 @@ socket.on('copter-data', function (data) {
     prev_lat = _lat;
     prev_lng = _long;
 
-    /*map.addListener('click', function (e) {
-        infowindow.open(distanceLatLng(Home.lat,Home.lng,e.latLng.lat,e.latLng.lng),map);
+   /* var infowindow = new google.maps.InfoWindow({
+        content: "clicked"
+    });
+
+    map.addListener('click', function (e) {
+        console.log(distanceLatLng(marker.getPosition().lat(),marker.getPosition().lng(),e.latLng.lat(),e.latLng.lng()));
+        infowindow.open(distanceLatLng(Home.lat,Home.lng,e.latLng.lat(),e.latLng.lng()).toFixed(2),marker);
     });*/
+
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
@@ -115,6 +121,9 @@ socket.on('copter-data', function (data) {
     }
 });
 
+
+
+
 /**
  * initmap update the map with the initial map google map.
  */
@@ -127,8 +136,8 @@ function initmap() {
         center: pos,
         mapTypeId: 'hybrid',
         disableDefaultUI: true,
-        zoomControl: true,
-        disableDoubleClickZoom: true/*,
+        zoomControl: true/*,
+        disableDoubleClickZoom: true,
         fullscreenControl : false,
         maxZoom:20,
         minZoom: 14,

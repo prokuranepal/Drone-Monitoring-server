@@ -40,8 +40,7 @@ app.use(bodyparser.json());
 let Android = [],
     Website = [],
     Pi = [],
-    parameters,
-    a = 0;
+    parameters;
 
 
 // to confirm the connection status with the client
@@ -60,8 +59,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
-        a = a + 1;
-        console.log(`${a}`);
         parameters = data;
         io.to('website').emit('copter-data', data);
     });
