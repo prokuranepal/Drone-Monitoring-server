@@ -24,9 +24,8 @@ socket.on('connect', function () {
 // to listens to the server socket and renders the data and map as required
 socket.on('copter-data', function (data) {
 
-
     let imageString,
-        is_armed = data.arm || "False",
+        is_armed = String(data.arm).toUpperCase() || "FALSE",
         _lat = parseFloat(data.lat) || 0,
         _long = parseFloat(data.long) || 0,
         heading = parseFloat(data.head) || 0,
@@ -43,14 +42,14 @@ socket.on('copter-data', function (data) {
         imageString = location.origin+ "/js/files/red.svg";
     }
 
-    if (String(is_armed).toUpperCase() == 'TRUE' && armedCheck == 'True') {
+    if (is_armed == 'TRUE' && armedCheck == 'True') {
         StartOfFlight = new Date().getTime();
         armedCheck = 'False';
     }
 
-    if (data.fix === '2'){
+    if (data.fix === 2){
         Sfix = "2D FIX";
-    } else if (data.fix === '3'){
+    } else if (data.fix === 3){
         Sfix = "3D FIX";
     } else {
         Sfix = "NO LOCK";
@@ -59,14 +58,14 @@ socket.on('copter-data', function (data) {
     // following document update the data in div of the html file
     document.getElementById("mode-data").innerHTML = data.mode;
     document.getElementById("arm-data").innerHTML = is_armed;
-    document.getElementById("ekf-data").innerHTML = data.ekf;
+    document.getElementById("ekf-data").innerHTML = String(data.ekf).toUpperCase();
     document.getElementById("status-data").innerHTML = data.status;
-    document.getElementById("lidar-data").innerHTML = (parseFloat(data.lidar)*3.28084).toFixed(3);
+    document.getElementById("lidar-data").innerHTML = (parseFloat(data.lidar)).toFixed(2);
     document.getElementById("volt-data").innerHTML = parseFloat(data.volt);
     document.getElementById("gs-data").innerHTML = (parseFloat(data.gs)).toFixed(2);
     document.getElementById("air-data").innerHTML = (parseFloat(data.as)).toFixed(2);
-    document.getElementById("altr-data").innerHTML = (parseFloat(data.altr)*3.28084).toFixed(3);
-    document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)*3.28084).toFixed(3);
+    document.getElementById("altr-data").innerHTML = (parseFloat(data.altr)).toFixed(2);
+    document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)).toFixed(2);
     document.getElementById("head-data").innerHTML = heading;
     document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
     document.getElementById("long-data").innerHTML = _long.toFixed(6);
@@ -74,9 +73,9 @@ socket.on('copter-data', function (data) {
     document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop)/100);
     document.getElementById("fix-data").innerHTML = Sfix;
     document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
-    document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_long).toFixed(3);
+    document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_long).toFixed(2);
 
-    if (String(is_armed).toUpperCase() == 'TRUE') {
+    if (is_armed == 'TRUE') {
         document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime()-StartOfFlight);
     } else {
         armedCheck = 'True';

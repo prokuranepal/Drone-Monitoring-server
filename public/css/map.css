@@ -5,120 +5,114 @@ body, html {
 #map {
 	width: 100%;
 	height: 100%;
+	position: absolute;
 }
 
-
-
-.Show {
-	color: black;
+.container-fluid-fill {
+	width: 100%;
+	height: 100%;
 	position: absolute;
-	top: 10px;
-	left: 240px;
-	height: auto;
 }
 
-.ReadMission {
-	color: black;
-	position: absolute;
-	top: 10px;
-	left: 310px;
+.top-row {
+	top : 0.625rem;     /*10px*/
+	position: relative;
 }
 
-.DownloadMission {
-	color: black;
-	position: absolute;
-	top: 10px;
-	left: 440px;
-}
-
-.ClearMission {
-	color: black;
-	position: absolute;
-	top: 10px;
-	left: 605px;
-}
-
-.dataSat {
-	color: black;
-	position: absolute;
-	top: 60px;
-	left: 5px;
-	width: 160px;
-}
-
-.dataSat1 {
-	color: black;
-	position: absolute;
-	top: 120px;
-	left: 5px;
-	width: 250px;
-}
-
-.dataVel {
-	color: black;
-	position: absolute;
-	top: 360px;
-	left: 5px;
-	width: 150px;
-}
-
-.dataOther {
-	color: black;
-	position: absolute;
-	top: 420px;
-	left: 5px;
-	width: 200px;
-}
-
-.logo {
-	position: absolute;
-	top: 10px;
-	right: 5px;
+.image-logo{
+	position: relative;
+	right: 0.312rem;    /*5px*/
+	float: right;
 	background-color: white;
-	opacity: 0.8;
-	height: auto;
+	opacity: 0.7;
+	width: 11.875rem;  /*190px*/
+	height: 6.375rem;   /*102px*/
 }
 
-.radiusInput {
-	color: black;
+.radius-input {
 	position: absolute;
-	top: 120px;
-	right: 50px;
-	width: 130px;
-	height: auto;
+	top: 6.875rem;      /*110px*/
+	right: 0.312rem;    /*5px*/
+	float: right;
 }
 
-@media (min-height: 600px) {
-	body,html {
-		height: 100%;
-		overflow: hidden;
-	}
+.radius-button {
+	position: absolute;
+	top: 9.375rem;      /*150px*/
+	right: 0.312rem;    /*5px*/
+	float: right;
 }
 
-@media (max-height: 600px) {
-	.dataOther {
-		color: black;
-		position: absolute;
-		top: 200px;
-		right: 0px;
-		left: unset;
-		height: auto;
-	}
+.nic-text {
+	position: relative;
+	left: 0.312rem;     /*5px*/
+	opacity: 0.7;
+	font-size: 1.5rem;      /*24px*/
+	background-color: blue;
+	color: black;
+	float: left;
+	font-weight: bold;
 }
 
-@media (max-width: 920px) {
-	.DownloadMission {
-		color: black;
-		position: absolute;
-		top: 55px;
-		left: 310px;
-	}
-	.ClearMission {
-		color: black;
-		position: absolute;
-		top: 100px;
-		left: 310px;
-	}
+.show-parameters {
+	position: relative;
+	margin-left: 0.9375rem;     /*15px*/
+	float: left;
+}
+
+.read-mission {
+	position: relative;
+	margin-left: 0.9375rem;     /*15px*/
+	float: left;
+}
+
+.download-mission {
+	position: relative;
+	margin-left: 0.9375rem;     /*15px*/
+	float: left;
+}
+
+.clear-mission {
+	position: relative;
+	margin-left: 0.9375rem;     /*15px*/
+	float: left;
+}
+
+.data-column {
+	top: 3.125rem;      /*5px*/
+	position: absolute;
+	width: 100%;
+}
+
+.data-sat {
+	position: absolute;
+	left: 0.312rem;     /*5px*/
+	float: left;
+	width: 11.875rem;  /*190px*/
+}
+
+.data-sat-1 {
+	position: absolute;
+	top: 3.75rem;       /*60px*/
+	left: 0.312rem;     /*5px*/
+	float: left;
+	width: 13.75rem; /*220px*/
+}
+
+.data-vel {
+	position: absolute;
+	top: 18.75rem;      /*300px*/
+	left: 0.312rem;     /*5px*/
+	width: 9.375rem;    /*150px*/
+	float: left;
+}
+
+.data-other {
+	position: absolute;
+	top: 22.5rem;       /*360px*/
+	left: 0.312rem;     /*5px*/
+	width: 12.5rem;  /*200px*/
+	float: left;
 }
 
 .theme {
@@ -126,3 +120,90 @@ body, html {
 	background: white;
 	opacity: 0.7;
 }
+
+@media (max-height: 480px) {
+	.data-other {
+		top: 10rem;         /*160px*/
+		right: 0.3125rem;       /*5px*/
+		left: unset;
+		float: right;
+	}
+
+	.data-vel{
+		top: 19.125rem      /*306px*/
+	}
+}
+
+@media (max-height: 400px) {
+	.data-other {
+		top: 10rem;         /*160px*/
+		right: 3.125rem;        /*5px*/
+		left: unset;
+		float: right;
+	}
+
+	.data-vel{
+		top: 19.125rem      /*306px*/
+	}
+}
+
+@media (max-width: 390px) {
+
+	.data-sat {
+		top:3.125rem;       /*5px*/
+	}
+
+	.data-sat-1 {
+		top: 6.875rem;      /*110px*/
+	}
+
+	.data-vel {
+		margin-top: 3.125rem;   /*5px*/
+	}
+
+	.data-other {
+		margin-top: 3.15rem;    /*50.4px*/
+	}
+}
+
+@media (max-width: 920px) {
+	html {
+		font-size: 80%;
+	}
+}
+
+@media (max-width: 760px) {
+	html {
+		font-size: 70%;
+	}
+}
+
+@media (max-width: 670px) {
+	html {
+		font-size: 60%;
+	}
+}
+
+@media (max-width: 570px) {
+	html {
+		font-size: 50%;
+	}
+
+	.data-sat {
+		width: 13.125rem;       /*210px*/
+	}
+
+	.data-sat-1 {
+		width: 15.625rem;       /*250px*/
+	}
+
+	.data-vel {
+		top: 20rem;     /*320px*/
+	}
+
+	.data-other {
+		top: 23.75rem;      /*380px*/
+	}
+
+}
+

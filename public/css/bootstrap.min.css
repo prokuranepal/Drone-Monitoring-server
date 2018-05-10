@@ -421,8 +421,8 @@ pre code{
 	width:100%;
 	padding-right:15px;
 	padding-left:15px;
-	/*margin-right:auto;*/
-	/*margin-left:auto*/
+	margin-right:auto;
+	margin-left:auto
 }
 @media (min-width:576px){
 	.container{
@@ -2561,7 +2561,7 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
 	display:none
 }
 .collapse.show{
-	display:block
+	display:inline;
 }
 tr.collapse.show{
 	display:table-row
@@ -7382,4 +7382,5 @@ a.text-dark:focus,a.text-dark:hover{
 		border:1px solid #ddd!important
 	}
 }
+
 /*# sourceMappingURL=bootstrap.min.css.map */

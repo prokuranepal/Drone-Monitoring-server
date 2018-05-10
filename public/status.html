@@ -14,73 +14,53 @@
     <script src="js/function.js"></script>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+
     <title>Drone | Status</title>
 </head>
 
-<body>
+<body style="position: relative">
 
 <!-- It is the div which renders the google map api -->
-<div id="map">
-    <img src="js/files/green.svg"/>
-    <img src="js/files/red.svg"/>
-</div>
+<div class="container-fluid-fill">
 
-<div class="container">
-    <div class="logo">
-        <img src="js/files/logo.png">
-    </div>
-</div>
-
-<div class="container">
-    <div style="position: absolute; top: 10px; left: 5px; height: auto;background-color: blue;opacity: 0.5">
-        <H3 style="color: black">NIC Drone Status</H3>
-    </div>
-</div>
-
-<div class="container">
-    <div class="ReadMission">
-        <div class="row">
-            <button class="btn btn-dark" type="button" onclick="ReadMission()">Read Mission</button>
-        </div>
+    <div id="map">
+        <img src="js/files/green.svg"/>
+        <img src="js/files/red.svg"/>
     </div>
 
-    <div class="DownloadMission">
-        <div class="row">
-            <button class="btn btn-dark" type="button" onclick="DownloadMission()">Download Mission</button>
-        </div>
+    <div class="top-row">
+
+        <img class="image-logo img-fluid" src="js/files/logo.png">
+
+        <input title="radius" placeholder="radius" type="text" id="data" class="form-inline radius-input" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+
+        <button class="btn btn-dark radius-button" type="button" onclick="DrawCircle()">Draw Circle</button>
+
     </div>
 
-    <div class="ClearMission">
-        <div class="row">
-            <button class="btn btn-dark" type="button" onclick="ClearMission()">Clear Mission</button>
-        </div>
+    <div class="top-row">
+
+        <div class="nic-text">NIC Drone Status</div>
+
+        <button type="button" class="btn btn-primary show-parameters" data-toggle="collapse" data-target="#demo">Show</button>
+
+        <button class="btn btn-dark read-mission" type="button" onclick="ReadMission()">Read Mission</button>
+
+        <button class="btn btn-dark download-mission" type="button" onclick="DownloadMission()">Download Mission</button>
+
+        <button class="btn btn-dark clear-mission" type="button" onclick="ClearMission()">Clear Mission</button>
+
     </div>
 
-    <div class="radiusInput">
-        <div class="row">
-            <input title="radius" placeholder="radius" type="text" id="data" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-            <button class="btn btn-dark" type="button" onclick="DrawCircle()">Draw Circle</button>
-        </div>
-    </div>
-</div>
 
-<!--
-<div id ="testButton">
-    <button type="button" onclick="javascript: ">Test Button</button>
-</div>
--->
-<div class="container">
 
-    <div class="Show">
-        <div class="row">
-            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#demo">Show</button>
-        </div>
-    </div>
+    <div class="data-column">
 
-    <!-- It is the div which creates the gps table on the right top side of the web page -->
-    <div id="demo" class="collapse">
-        <div class="container">
-            <div class="dataSat">
+        <div id="demo" class="collapse">
+
+            <!-- It is the div which creates the gps table on the right top side of the web page -->
+
+            <div class="data-sat">
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">Lat:</div>
@@ -94,77 +74,78 @@
                         <div class="col-8 theme" id="long-data">85.321709</div>
                     </div>
                 </div>
+
             </div>
 
-            <div class="dataSat1">
+            <div class="data-sat-1">
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">AltR:</div>
-                        <div class="col-5 theme" id="altr-data">0</div>
+                        <div class="col-6 theme" id="altr-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">Alt:</div>
-                        <div class="col-5 theme" id="altitude-data">0</div>
+                        <div class="col-6 theme" id="altitude-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">Sat:</div>
-                        <div class="col-5 theme" id="numSat-data">0</div>
+                        <div class="col-6 theme" id="numSat-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">HDOP:</div>
-                        <div class="col-5 theme" id="hdop-data">100</div>
+                        <div class="col-6 theme" id="hdop-data">100</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">FIX:</div>
-                        <div class="col-5 theme" id="fix-data">NO FIX</div>
+                        <div class="col-6 theme" id="fix-data">NO FIX</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">Head:</div>
-                        <div class="col-5 theme" id="head-data">0</div>
+                        <div class="col-6 theme" id="head-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">DFH:</div>
-                        <div class="col-5 theme" id="DFH-data">0</div>
+                        <div class="col-6 theme" id="DFH-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">EST:</div>
-                        <div class="col-5 theme" id="EST-data">0</div>
+                        <div class="col-6 theme" id="EST-data">0</div>
                     </div>
                 </div>
 
                 <div class="container">
                     <div class="row">
                         <div class="col-4 theme">TOF:</div>
-                        <div class="col-5 theme" id="TOF-data">0:0</div>
+                        <div class="col-6 theme" id="TOF-data">0:0</div>
                     </div>
                 </div>
 
             </div>
 
             <!-- It is the div which creates the velocity table on the left top side of the web page -->
-            <div class="dataVel">
+            <div class="data-vel">
 
                 <div class="container">
                     <div class="row">
@@ -183,7 +164,7 @@
             </div>
 
             <!-- It is the div which creates the Other table on the left bottom side of the web page -->
-            <div class="dataOther">
+            <div class="data-other">
 
                 <div class="container">
                     <div class="row">
@@ -228,8 +209,11 @@
                 </div>
 
             </div>
+
         </div>
+
     </div>
+
 </div>
 <!-- Script for map rendering and callback with the initmap written in the status.js -->
 <script async defer

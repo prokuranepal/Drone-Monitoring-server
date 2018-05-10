@@ -37,8 +37,7 @@ app.use(express.static(publicPath));
 
 app.use(bodyparser.json());
 
-let x = 1,
-    Android = [],
+let Android = [],
     Website = [],
     Pi = [],
     parameters;

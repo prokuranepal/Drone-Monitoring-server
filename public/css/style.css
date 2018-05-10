@@ -40,3 +40,16 @@
 	border:1px solid #e1e1e1;
 	padding:10px
 }
+
+.top-row {
+	top : 0.625rem;     /*10px*/
+	position: relative;
+}
+
+.image-logo{
+	position: relative;
+	background-color: white;
+	opacity: 0.7;
+	width: 11.875rem;  /*190px*/
+	height: 6.375rem;   /*102px*/
+}
