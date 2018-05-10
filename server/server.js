@@ -40,7 +40,8 @@ app.use(bodyparser.json());
 let Android = [],
     Website = [],
     Pi = [],
-    parameters;
+    parameters,
+    misssionDownloadFlag=1;
 
 
 // to confirm the connection status with the client
@@ -65,6 +66,9 @@ io.on('connection', (socket) => {
 
     socket.on('error', (msg) => {
         console.log(msg);
+        misssionDownloadFlag = 1;
+        // to android for error
+        io.to('android').emit('error',msg);
     });
 
     socket.on('waypoints', (waypoints) => {
@@ -83,7 +87,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getMission', (msg) => {
-        io.to('pi').emit('mission_download',msg);
+        if (misssionDownloadFlag == 1) {
+            io.to('pi').emit('mission_download',msg);
+            misssionDownloadFlag = 0;
+        }
+
     });
 
     // Android

@@ -121,9 +121,6 @@ socket.on('copter-data', function (data) {
     }
 });
 
-
-
-
 /**
  * initmap update the map with the initial map google map.
  */
