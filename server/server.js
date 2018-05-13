@@ -1,3 +1,4 @@
+require('./config/config');
 // it is used inorder to create the path towards the folder or file nice and readable
 // it is available in core library.
 const path = require('path');
@@ -13,6 +14,10 @@ const http = require('http');
 
 const express = require('express');
 const socketIO = require('socket.io');
+
+// local imports
+var {mongoose} = require('./db/mongoose');
+var {droneData} = require('./models/droneData');
 
 const publicPath = path.join(__dirname,'..','/public');
 const missionfile = path.join(__dirname,'..','/public/js/files/mission.txt');
@@ -62,6 +67,12 @@ io.on('connection', (socket) => {
     socket.on('data', (data) => {
         parameters = data;
         io.to('website').emit('copter-data', data);
+        var droneData = new DroneData(parameters);
+        droneData.save().then(() => {
+          console.log('data has been saved.');
+        }, (e) => {
+          console.log('data cannot be saved.');
+        });
     });
 
     socket.on('error', (msg) => {
