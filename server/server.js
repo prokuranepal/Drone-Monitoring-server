@@ -17,7 +17,7 @@ const socketIO = require('socket.io');
 
 // local imports
 var {mongoose} = require('./db/mongoose');
-var {droneData} = require('./models/droneData');
+var {DroneData} = require('./models/droneData');
 
 const publicPath = path.join(__dirname,'..','/public');
 const missionfile = path.join(__dirname,'..','/public/js/files/mission.txt');
