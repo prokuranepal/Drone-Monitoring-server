@@ -121,6 +121,15 @@ socket.on('copter-data', function (data) {
     }
 });
 
+socket.on('error', function (msg)  {
+    var x = document.getElementById("snackbar");
+    x.innerHTML = msg;
+    x.className = "show";
+    setTimeout(function() {
+        x.className = x.className.replace("show", "");
+    }, 3000);
+});
+
 /**
  * initmap update the map with the initial map google map.
  */

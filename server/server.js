@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
         console.log(msg);
         //missionDownloadFlag = 1;
         // to android for error
-        io.to('android').emit('error',msg);
+        io.to('website').emit('error',msg);
     });
 
     socket.on('waypoints', (waypoints) => {
