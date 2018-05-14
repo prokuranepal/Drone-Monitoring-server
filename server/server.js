@@ -136,7 +136,7 @@ io.on('connection', (socket) => {
             Pi.splice(indexPi,1);
             parameters.conn = 'False';
             io.to('website').emit('copter-data', parameters);
-            console.log(`${socket.id} (Pi) disconnected`);
+            console.log(`${socket.id} (Pi) disconnected`);            
         }
 
     });
