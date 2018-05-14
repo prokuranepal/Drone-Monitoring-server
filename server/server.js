@@ -170,12 +170,11 @@ socket.on('disconnect', () => {
         DroneData.collection.drop();
         console.log('********** the file has been written and db is dropped.');
       });
+    }
+  });
 
-    });
-}
 
-});
-});
+
 
 // setting up a server at port 3000 or describe by process.env.PORT
 server.listen(port, () => {
