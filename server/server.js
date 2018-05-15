@@ -146,6 +146,11 @@ io.on('connection', (socket) => {
           //   parser: 'json'
           // });
           // the above method saves all fields and also saves each document to separate json file
+
+          // find method doesn't return the fields mentioned
+          // in second bracket called projections
+          // the fields whose value are 0 are not included
+
           DroneData.find({}, {
             tokens: 0,
             __id: 0,
@@ -153,6 +158,7 @@ io.on('connection', (socket) => {
             __v: 0
           }).cursor().on('data', function(doc) {
             console.log(doc);
+            // writing to file here synchronously
             fs.appendFileSync(datafile, doc + '\n', (err) => {
               if (err) {
                 console.log(err);
