@@ -50,6 +50,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 
 let Android = [],
   Website = [],
@@ -60,6 +61,11 @@ let Android = [],
 app.get('/', (req,res) => {
     res.render('index.html');
 });
+
+/*app.post('/auth',(req,res) => {
+    console.log(`${req.body.username} ${req.body.password}`);
+    res.render('status.html');
+});*/
 
 app.get('/status', (req,res) => {
     res.render('status.html');
@@ -85,7 +91,7 @@ io.on('connection', (socket) => {
       io.to('website').emit('copter-data', data);
       var droneData = new DroneData(parameters);
       droneData.save().then(() => {
-        console.log('data has been saved.');
+        //console.log('data has been saved.');
       }, (e) => {
         console.log('data cannot be saved.');
       });
@@ -165,7 +171,7 @@ io.on('connection', (socket) => {
             _id: 0,
             __v: 0
           }).cursor().on('data', function(doc) {
-            console.log(doc);
+            //console.log(doc);
             // writing to file here synchronously
             fs.appendFileSync(datafile, doc + '\n', (err) => {
               if (err) {
