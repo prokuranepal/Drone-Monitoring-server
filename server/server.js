@@ -23,6 +23,7 @@ var {
 
 const publicPath = path.join(__dirname, '..', '/public');
 const missionfile = path.join(__dirname, '..', '/public/js/files/mission.txt');
+const datafile = path.join(__dirname, '..', '/public/data.txt');
 
 // setting the port at which the server run
 const port = process.env.PORT || 3000;
@@ -152,7 +153,7 @@ io.on('connection', (socket) => {
             __v: 0
           }).cursor().on('data', function(doc) {
             console.log(doc);
-            fs.appendFileSync('data.txt', doc + '\n', (err) => {
+            fs.appendFileSync(datafile, doc + '\n', (err) => {
               if (err) {
                 console.log(err);
               }
@@ -165,6 +166,7 @@ io.on('connection', (socket) => {
           });
         }
     });
+
 });
 
 // setting up a server at port 3000 or describe by process.env.PORT
