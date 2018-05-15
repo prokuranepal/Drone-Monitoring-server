@@ -4,6 +4,7 @@ require('./config/config');
 const path = require('path');
 
 const fs = require('fs');
+const session = require('express-session');
 
 const bodyparser = require('body-parser');
 // it is used so that both socketIO and express can run simultaneously
@@ -12,13 +13,13 @@ const http = require('http');
 
 const express = require('express');
 const socketIO = require('socket.io');
-const backup = require('mongodb-backup');
+//const backup = require('mongodb-backup');
 
 // local imports
-var {
+let {
   mongoose
 } = require('./db/mongoose');
-var {
+let {
   DroneData
 } = require('./models/droneData');
 
@@ -51,21 +52,30 @@ app.set('view engine', 'html');
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
+/*
+app.use(session({
+    secret: 'work hard',
+    resave: true,
+    saveUninitialized: false
+}));
+*/
 
 let Android = [],
   Website = [],
   Pi = [],
-  parameters,
-  missionDownloadFlag = 1;
+  parameters;
 
-app.get('/', (req,res) => {
-    res.render('index.html');
-});
-
-/*app.post('/auth',(req,res) => {
-    console.log(`${req.body.username} ${req.body.password}`);
-    res.render('status.html');
-});*/
+app.route('/')
+    .get((req,res) => {
+        res.render('index.html');
+    })
+    .post((req,res) => {
+        if ((req.body.username === 'nicdrone') && (req.body.password === 'nicdrone')) {
+            res.redirect('/status');
+        } else {
+            res.redirect('/');
+        }
+    });
 
 app.get('/status', (req,res) => {
     res.render('status.html');
@@ -76,25 +86,25 @@ io.on('connection', (socket) => {
 
     // Pi
     socket.on('joinPi', () => {
-    Pi.push(socket.id);
-    socket.join('pi');
-    console.log(`${socket.id} (Pi) connected`);
+        Pi.push(socket.id);
+        socket.join('pi');
+        console.log(`${socket.id} (Pi) connected`);
     });
 
     socket.on('success', (msg) => {
-      // to android for successful take off
-      io.to('android').emit('success', msg);
+        // to android for successful take off
+        io.to('android').emit('success', msg);
     });
 
     socket.on('data', (data) => {
-      parameters = data;
-      io.to('website').emit('copter-data', data);
-      var droneData = new DroneData(parameters);
-      droneData.save().then(() => {
-        //console.log('data has been saved.');
-      }, (e) => {
-        console.log('data cannot be saved.');
-      });
+        parameters = data;
+        io.to('website').emit('copter-data', data);
+        var droneData = new DroneData(parameters);
+        droneData.save().then(() => {
+            //console.log('data has been saved.');
+        }, (e) => {
+            console.log('data cannot be saved.');
+        });
     });
 
     socket.on('error', (msg) => {
