@@ -5,7 +5,7 @@ function validate()
     if(   document.getElementById("username").value == "nicdrone"
         && document.getElementById("password").value == "nicdrone" )
     {
-        location.href="status.html";
+        location.href="/status";
     }
     else
     {

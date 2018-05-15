@@ -13,6 +13,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 const backup = require('mongodb-backup');
+
 // local imports
 var {
   mongoose
@@ -22,6 +23,8 @@ var {
 } = require('./models/droneData');
 
 const publicPath = path.join(__dirname, '..', '/public');
+const views = path.join(__dirname, '..','/public/views');
+
 const missionfile = path.join(__dirname, '..', '/public/js/files/mission.txt');
 const datafile = path.join(__dirname, '..', '/public/data.txt');
 
@@ -42,6 +45,9 @@ const io = socketIO(server);
 
 // setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
 app.use(express.static(publicPath));
+app.set('views',views);
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(bodyparser.json());
 
@@ -51,6 +57,13 @@ let Android = [],
   parameters,
   missionDownloadFlag = 1;
 
+app.get('/', (req,res) => {
+    res.render('index.html');
+});
+
+app.get('/status', (req,res) => {
+    res.render('status.html');
+});
 
 // to confirm the connection status with the client
 io.on('connection', (socket) => {
@@ -80,7 +93,6 @@ io.on('connection', (socket) => {
 
     socket.on('error', (msg) => {
       console.log(msg);
-      //missionDownloadFlag = 1;
       // to android for error
       io.to('website').emit('error', msg);
     });
@@ -101,11 +113,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getMission', (msg) => {
-      /*if (missionDownloadFlag == '1') {
-          console.log('enter');*/
       io.to('pi').emit('mission_download', msg);
-      /*missionDownloadFlag = '0';
-          }*/
     });
 
     // Android
