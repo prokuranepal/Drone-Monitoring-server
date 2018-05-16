@@ -1,21 +1,45 @@
+/**
+ * configuration of database is stored in config file
+ */
 require('./config/config');
-// it is used inorder to create the path towards the folder or file nice and readable
-// it is available in core library.
+
+/**
+ * it is used in-order to create the path towards the folder or file nice and readable
+ * it is available in core library.
+ */
 const path = require('path');
 
+/**
+ * It is used for accessing the file to preform read,write and other file system operations
+ */
 const fs = require('fs');
-//const session = require('express-session');
 
+/**
+ * It is used for parsing the data send by the clients.
+ */
 const bodyparser = require('body-parser');
-// it is used so that both socketIO and express can run simultaneously
-// it is available in core library.
+
+/**
+ * it is used so that both socketIO and express can run simultaneously
+ * it is available in core library.
+ */
 const http = require('http');
 
+/**
+ * TODO : comment on express
+ */
 const express = require('express');
+
+/**
+ * It is used for websocket connections between the client
+ */
 const socketIO = require('socket.io');
+
 //const backup = require('mongodb-backup');
 
-// local imports
+/**
+ * local imports
+ */
 let {
   mongoose
 } = require('./db/mongoose');
@@ -25,35 +49,74 @@ let {
 let {
   User
 } = require('./models/user');
+/********************************************************************/
 
-const publicPath = path.join(__dirname, '..', '/public');
-const views = path.join(__dirname, '..', '/public/views');
+/**
+ * The path constant for required files
+ */
+const publicPath = path.join(__dirname, '..', '/public'),
+    views = path.join(__dirname, '..', '/public/views'),
+    actualmissionfile = path.join(__dirname, '..', '/public/js/files/mission.txt'),
+    renamedmissionfile = path.join(__dirname, '..', '/public/js/files/oldmission.txt'),
+    datafile = path.join(__dirname, '..', '/public/data.txt');
+/********************************************************************/
 
-const missionfile = path.join(__dirname, '..', '/public/js/files/mission.txt');
-const datafile = path.join(__dirname, '..', '/public/data.txt');
-
-// setting the port at which the server run
+/**
+ * setting the port at which the server run
+ */
 const port = process.env.PORT || 3000;
 
-// setting up express app
+/**
+ * setting up express app
+ */
 const app = express();
 
-// created a http server to use express
+/**
+ * created a http server to use express
+ */
 const server = http.createServer(app);
 
-// configuring server to use socket io , websocket first and long polling second
+/**
+ * configuring server to use socket io , websocket first and long polling second
+ */
 /*const io = socketIO(server, {
     transports: ['websocket','polling']
 });*/
+
+/**
+ * io for accessing the socket functionality
+ */
 const io = socketIO(server);
 
-// setting up middleware at public directory which is displayed in browser in the main directory '/' file should be index.html
+/**
+ * setting up middleware at public directory which is displayed in browser
+ * in the main directory '/' file should be index.html
+ */
 app.use(express.static(publicPath));
+
+/**
+ * TODO: comment required for views folder
+ */
 app.set('views', views);
+
+/**
+ * TODO: comment required for ejs
+ */
 app.engine('html', require('ejs').renderFile);
+
+/**
+ * TODO: comment required for view engine
+ */
 app.set('view engine', 'html');
 
+/**
+ * to parse json objects
+ */
 app.use(bodyparser.json());
+
+/**
+ * to parse post request or urlencoded data
+ */
 app.use(bodyparser.urlencoded({
   extended: true
 }));
@@ -64,11 +127,22 @@ app.use(bodyparser.urlencoded({
     saveUninitialized: false
 }));*/
 
+/**
+ * local variables
+ */
 let Android = [],
   Website = [],
   Pi = [],
   parameters;
+/********************************************************************/
 
+/**
+ * get and post route of '/'
+ * get is used for rendering the index.html file
+ * post is used for authenticating of the user for login
+ * and redirect to '/status' if success or to '/' if
+ * failed
+ */
 app.route('/')
   .get((req, res) => {
     res.render('index.html');
@@ -84,31 +158,67 @@ app.route('/')
       if ((user.length != 0) && (user[0].password === req.body.password)) {
         res.redirect('/status');
       } else {
-        console.log(`${req.body.username} or password incorrect`);
+        console.log(`username or password incorrect`);
         res.redirect('/');
       }
     });
   });
+/********************************************************************/
 
+/**
+ * to render the status.html in /status
+ */
 app.get('/status', (req, res) => {
   res.render('status.html');
 });
+/********************************************************************/
 
-// to confirm the connection status with the client
+/**
+ * to confirm the connection status with the client
+ */
 io.on('connection', (socket) => {
 
-  // Pi
+  /**
+   * to join the particular devices
+   * joinPi to join the socket of pi
+   * joinWebsite to join the socket of website
+   * joinAndroid to join the socket of android
+   */
   socket.on('joinPi', () => {
     Pi.push(socket.id);
     socket.join('pi');
     console.log(`${socket.id} (Pi) connected`);
   });
 
-  socket.on('success', (msg) => {
-    // to android for successful take off
-    io.to('android').emit('success', msg);
+  socket.on('joinWebsite', () => {
+    Website.push(socket.id);
+    socket.join('website');
+    console.log(`${socket.id} (Website) connected`);
   });
 
+  socket.on('joinAndroid', () => {
+    Android.push(socket.id);
+    socket.join('android');
+    console.log(`${socket.id} (Android device) connected`);
+  });
+  /******************** Join device completed *************************/
+
+
+  /**
+   * This socket is listening to pi socket which relayed the message
+   * to android socket about the success of auto arm of copter.
+   */
+  socket.on('success', (msg) => {
+    io.to('android').emit('success', msg);
+  });
+  /********************************************************************/
+
+  /**
+   * This socket is listening to pi socket for the continuous data of
+   * copter about the state and positions.
+   * And the received data are relayed to the website for Graphical view
+   * Also the data is store in the mongodb database
+   */
   socket.on('data', (data) => {
     io.to('website').emit('copter-data', data);
     parameters = data;
@@ -119,49 +229,86 @@ io.on('connection', (socket) => {
       console.log('data cannot be saved.');
     });
   });
+  /********************************************************************/
 
+  /**
+   * This socket is listening to pi socket for the home lat and lng of
+   * the copter after the gps lock has been established in the copter.
+   * And the received home location is emitted to the website
+   */
   socket.on('homePosition', (homeLocation) => {
     io.to('website').emit('homePosition', homeLocation);
   });
+  /********************************************************************/
 
-  socket.on('error', (msg) => {
-    console.log(msg);
-    // to android for error
-    io.to('website').emit('error', msg);
+  /**
+   * This socket is listening for the error messages send by the clients
+   * (pi and android) the error message is received in the format of
+   * {'context': 'something', 'msg':'something'}
+   * The error message is send to the website and the context is used
+   * for determining the task to be done before sending to the website
+   */
+  socket.on('error', (error) => {
+    console.log(error);
+    io.to('website').emit('error', error.msg);
+    if(error.context == 'Mission') {
+      fs.readFile(renamedmissionfile, (err,waypoints) => {
+        if (err) {
+          return console.log('no mission file ');
+        }
+        io.to('website').emit('Mission', waypoints);
+      });
+    }
   });
+  /********************************************************************/
 
+  /**
+   * This socket is listening to pi for the way-points of mission
+   * and the way-points are send to the website for display and save to
+   * the file called 'actualmissionfile'
+   */
   socket.on('waypoints', (waypoints) => {
-    fs.writeFile(missionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
+    io.to('website').emit('Mission',waypoints);
+    fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
       if (err) {
-        return console.log(err);
+        return console.log('File cannot be created');
       }
     });
   });
+  /********************************************************************/
 
-  // Website
-  socket.on('joinWebsite', () => {
-    Website.push(socket.id);
-    socket.join('website');
-    console.log(`${socket.id} (Website) connected`);
-  });
-
+  /**
+   * This socket is listening to website client for requesting the pi to
+   * download the mission file.
+   * In the process the actualmissionfile is renamed to renamedmissionfile
+   * so to differentiate the new and old mission file.
+   * And the request is emitted to the pi socket
+   */
   socket.on('getMission', (msg) => {
+    fs.rename(actualmissionfile, renamedmissionfile , (err) => {
+      if(!err) {
+        console.log('rename done');
+      }
+      console.log('No actual mission file present');
+    });
     io.to('pi').emit('mission_download', msg);
   });
+  /********************************************************************/
 
-  // Android
-  socket.on('joinAndroid', () => {
-    Android.push(socket.id);
-    socket.join('android');
-    console.log(`${socket.id} (Android device) connected`);
-  });
-
+  /**
+   * This socket is listening to android socket which initiates the auto
+   * flight mode in the copter.
+   * The command received from the android socket is emitted to the pi
+   * socket for initiating the flight
+   */
   socket.on('fly', (msg) => {
-    // send data to pi to initiate flight.
     io.to('pi').emit('initiate_flight', msg);
   });
+  /********************************************************************/
 
-  // to confirm the disconnected status with the client
+  /**
+   * to confirm the disconnected status with the client
+   */
   socket.on('disconnect', () => {
     let indexWebsite = Website.indexOf(socket.id),
       indexAndroid = Android.indexOf(socket.id),
@@ -222,7 +369,9 @@ io.on('connection', (socket) => {
 
 });
 
-// setting up a server at port 3000 or describe by process.env.PORT
+/**
+ * setting up a server at port 3000 or describe by process.env.PORT
+ */
 server.listen(port, () => {
   console.log(`Server running at ${port}`);
 });

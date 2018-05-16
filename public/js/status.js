@@ -15,13 +15,17 @@ let map,
 
 const socket = io();
 
-// to check connection status with the server
+/**
+ * to check connection status with the server
+ */
 socket.on('connect', function () {
     console.log('connected successfully with the server');
     socket.emit('joinWebsite');
 });
 
-// to listens to the server socket and renders the data and map as required
+/**
+ * to listens to the server socket and renders the data and map as required
+ */
 socket.on('copter-data', function (data) {
 
     let imageString,
@@ -121,10 +125,17 @@ socket.on('copter-data', function (data) {
     }
 });
 
+/**
+ * Socket to obtain the home loaction
+ */
 socket.on('homePosition', function (homeLocation) {
     Home = {lat:parseFloat(homeLocation.lat),lng:parseFloat(homeLocation.lng)}
 });
 
+/**
+ * Socket to display the error message for 3 second in the
+ * base to the website
+ */
 socket.on('error', function (msg)  {
     var x = document.getElementById("snackbar");
     x.innerHTML = msg;
@@ -149,7 +160,7 @@ function initmap() {
         disableDoubleClickZoom: true,
         fullscreenControl : false,
         maxZoom:20,
-        minZoom: 14,
+        minZoom: 10,
         rotateControl: false,
         scaleControl: false
     });
@@ -218,9 +229,9 @@ function deleteFlightPath() {
     line2 =[];
 }
 
-// function to clear the previous marker and polyline
 /**
  * Clears the map
+ * function to clear the previous marker and polyline
  */
 function ClearMission() {
     deleteCircle();
@@ -249,7 +260,7 @@ function addLine(flightPathCoordinates,color) {
 /**
  * To read the mission from the file.
  */
-function ReadMission() {
+/*function ReadMission() {
     // fetch is used for reading the mission from the file as json object.
     fetch('/js/files/mission.txt')
         .then(response => response.json())
@@ -282,6 +293,43 @@ function ReadMission() {
 
         })
 
+}*/
+
+/**
+ * to read mission from the companion computer
+ */
+socket.on('Mission',function (waypoints) {
+    if (typeof (flightPathCoordinate[1]) == "undefined") {
+        let a= 1;
+
+        Home  = {lat : parseFloat(waypoints[0].lat),lng: parseFloat(waypoints[0].lng)};
+
+        addMarker(Home,`H`);
+
+        flightPathCoordinate.push(Home);
+
+        while (typeof (waypoints[a]) != 'undefined') {
+
+            let pos = {lat: parseFloat(waypoints[a].lat), lng: parseFloat(waypoints[a].lng)};
+
+            // Ploting the marker in the map according to the position.
+            addMarker(pos,a);
+
+            // creating the array of pos for making the line with adjacent positions
+            flightPathCoordinate.push(pos);
+            a = a +1;
+        }
+
+        // creating the line with the adjacent position according to the flightPathCoordinate
+        addLine(flightPathCoordinate,'#FF0000');
+    }
+});
+
+/**
+ * Download mission from the copter
+ */
+function ReadMission() {
+    socket.emit('getMission','1');
 }
 
 /**
@@ -334,8 +382,9 @@ function DrawPlusLineFromCenter(centerLat,centerLng,radius) {
     addLine(line2,'#C0C0C0');
 }
 
-
-// to check disconnect status
+/**
+ * to check disconnect status
+ */
 socket.on('disconnect', function () {
     console.log('disconneted from the server');
 });
