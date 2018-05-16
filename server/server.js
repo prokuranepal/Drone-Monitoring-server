@@ -4,7 +4,7 @@ require('./config/config');
 const path = require('path');
 
 const fs = require('fs');
-const session = require('express-session');
+//const session = require('express-session');
 
 const bodyparser = require('body-parser');
 // it is used so that both socketIO and express can run simultaneously
@@ -49,11 +49,11 @@ app.set('view engine', 'html');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
-app.use(session({
+/*app.use(session({
     secret: 'work hard',
     resave: true,
     saveUninitialized: false
-}));
+}));*/
 
 let Android = [],
   Website = [],
