@@ -4,7 +4,7 @@ let map,
     prev_lat,
     prev_lng,
     armedCheck = 'True',
-    Home= {lat:27.686331, lng:85.317652},
+    Home= {lat:parseFloat('27.686331'), lng:parseFloat('85.317652')},
     markers=[],
     flightPathCoordinate= [],
     dC=[],
@@ -122,8 +122,7 @@ socket.on('copter-data', function (data) {
 });
 
 socket.on('homePosition', function (homeLocation) {
-    console.log(homeLocation);
-    Home = homeLocation;
+    Home = {lat:parseFloat(homeLocation.lat),lng:parseFloat(homeLocation.lng)}
 });
 
 socket.on('error', function (msg)  {
@@ -139,21 +138,20 @@ socket.on('error', function (msg)  {
  * initmap update the map with the initial map google map.
  */
 function initmap() {
-   // let pos = { lat:27.682828, lng:85.321709 };
-    //let pos = {lat:-35.36326217651367, lng:149.1652374267578};
-    let pos = Home;
+    while(Home.lat == null);
+    let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: pos,
         mapTypeId: 'hybrid',
         disableDefaultUI: true,
-        zoomControl: true/*,
+        zoomControl: true,
         disableDoubleClickZoom: true,
         fullscreenControl : false,
         maxZoom:20,
         minZoom: 14,
         rotateControl: false,
-        scaleControl: false*/
+        scaleControl: false
     });
     map.setTilt(45);
     marker = new google.maps.Marker ({
@@ -260,7 +258,7 @@ function ReadMission() {
             if (typeof (flightPathCoordinate[1]) == "undefined") {
                 let a= 1;
 
-                Home  = {lat : jsonResponse[0].lat,lng: jsonResponse[0].lng};
+                Home  = {lat : parseFloat(jsonResponse[0].lat),lng: parseFloat(jsonResponse[0].lng)};
 
                 addMarker(Home,`H`);
 
@@ -268,7 +266,7 @@ function ReadMission() {
 
                 while (typeof (jsonResponse[a]) != 'undefined') {
 
-                    let pos = {lat: jsonResponse[a].lat, lng: jsonResponse[a].lng};
+                    let pos = {lat: parseFloat(jsonResponse[a].lat), lng: parseFloat(jsonResponse[a].lng)};
 
                     // Ploting the marker in the map according to the position.
                     addMarker(pos,a);
