@@ -16,8 +16,12 @@ const socketIO = require('socket.io');
 //const backup = require('mongodb-backup');
 
 // local imports
-let {mongoose} = require('./db/mongoose');
-let {DroneData} = require('./models/droneData');
+let {
+  mongoose
+} = require('./db/mongoose');
+let {
+  DroneData
+} = require('./models/droneData');
 
 const publicPath = path.join(__dirname, '..', '/public');
 const views = path.join(__dirname, '..', '/public/views');
@@ -47,7 +51,9 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({
+  extended: true
+}));
 
 /*app.use(session({
     secret: 'work hard',
@@ -65,11 +71,20 @@ app.route('/')
     res.render('index.html');
   })
   .post((req, res) => {
-    if ((req.body.username === 'nicdrone') && (req.body.password === 'nicdrone')) {
-      res.redirect('/status');
-    } else {
-      res.redirect('/');
-    }
+    User.find({
+      username: req.body.username
+    }, {
+      _id: 0,
+      password: 1
+    }).
+    then((user) => {
+      if ((user.length != 0) && (user[0].password === req.body.password)) {
+        res.redirect('/status');
+      } else {
+        console.log(`${req.body.username} or password incorrect`);
+        res.redirect('/');
+      }
+    });
   });
 
 app.get('/status', (req, res) => {
