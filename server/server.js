@@ -95,14 +95,18 @@ io.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
-        parameters = data;
         io.to('website').emit('copter-data', data);
+        parameters = data;
         var droneData = new DroneData(parameters);
         droneData.save().then(() => {
             //console.log('data has been saved.');
         }, (e) => {
             console.log('data cannot be saved.');
         });
+    });
+
+    socket.on('homePosition', (homeLocation) => {
+        io.to('website').emit('homePosition', homeLocation);
     });
 
     socket.on('error', (msg) => {
@@ -157,10 +161,18 @@ io.on('connection', (socket) => {
           console.log(`${socket.id} (Android device) disconnected`);
         }
         if (indexPi > -1) {
+
           Pi.splice(indexPi, 1);
+
           parameters.conn = 'False';
+          parameters.fix = 0;
+          parameters.numSat = 0;
+          parameters.hdop = 10000;
+          parameters.arm = 'False';
+
           io.to('website').emit('copter-data', parameters);
           console.log(`${socket.id} (Pi) disconnected`);
+
           // backup({
           //   uri: process.env.MONGODB_URI,
           //   root: './',

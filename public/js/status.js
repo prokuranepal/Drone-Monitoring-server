@@ -121,6 +121,11 @@ socket.on('copter-data', function (data) {
     }
 });
 
+socket.on('homePosition', function (homeLocation) {
+    console.log(homeLocation);
+    Home = homeLocation;
+});
+
 socket.on('error', function (msg)  {
     var x = document.getElementById("snackbar");
     x.innerHTML = msg;
