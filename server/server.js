@@ -52,13 +52,11 @@ app.set('view engine', 'html');
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
-/*
 app.use(session({
     secret: 'work hard',
     resave: true,
     saveUninitialized: false
 }));
-*/
 
 let Android = [],
   Website = [],
