@@ -27,7 +27,7 @@ socket.on('copter-data', function (data) {
     let imageString,
         is_armed = String(data.arm).toUpperCase() || "FALSE",
         _lat = parseFloat(data.lat) || 0,
-        _long = parseFloat(data.long) || 0,
+        _lng = parseFloat(data.lng) || 0,
         heading = parseFloat(data.head) || 0,
         Sfix;
 
@@ -68,12 +68,12 @@ socket.on('copter-data', function (data) {
     document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)).toFixed(2);
     document.getElementById("head-data").innerHTML = heading;
     document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
-    document.getElementById("long-data").innerHTML = _long.toFixed(6);
+    document.getElementById("lng-data").innerHTML = _lng.toFixed(6);
     document.getElementById("numSat-data").innerHTML = data.numSat;
     document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop)/100);
     document.getElementById("fix-data").innerHTML = Sfix;
     document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
-    document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_long).toFixed(2);
+    document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_lng).toFixed(2);
 
     if (is_armed == 'TRUE') {
         document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime()-StartOfFlight);
@@ -83,7 +83,7 @@ socket.on('copter-data', function (data) {
 
     if (flag1= 'True') {
         let pos = [
-            {lat: _lat,lng: _long},
+            {lat: _lat,lng: _lng},
             {lat: prev_lat,lng: prev_lng}
         ];
         addLine(pos,'#FFFF00');
@@ -91,7 +91,7 @@ socket.on('copter-data', function (data) {
 
     flag1 = 'True';
     prev_lat = _lat;
-    prev_lng = _long;
+    prev_lng = _lng;
 
    /* var infowindow = new google.maps.InfoWindow({
         content: "clicked"
@@ -105,7 +105,7 @@ socket.on('copter-data', function (data) {
 
     // marker is updated with the new gps position and other other parameters.
     if(marker !== "undefined") {
-        let myLatLng = {lat: _lat, lng: _long};
+        let myLatLng = {lat: _lat, lng: _lng};
         marker.setPosition(myLatLng);
         marker.setIcon({
             url: imageString
@@ -260,7 +260,7 @@ function ReadMission() {
             if (typeof (flightPathCoordinate[1]) == "undefined") {
                 let a= 1;
 
-                Home  = {lat : jsonResponse[0].lat,lng: jsonResponse[0].lon};
+                Home  = {lat : jsonResponse[0].lat,lng: jsonResponse[0].lng};
 
                 addMarker(Home,`H`);
 
@@ -268,7 +268,7 @@ function ReadMission() {
 
                 while (typeof (jsonResponse[a]) != 'undefined') {
 
-                    let pos = {lat: jsonResponse[a].lat, lng: jsonResponse[a].lon};
+                    let pos = {lat: jsonResponse[a].lat, lng: jsonResponse[a].lng};
 
                     // Ploting the marker in the map according to the position.
                     addMarker(pos,a);
