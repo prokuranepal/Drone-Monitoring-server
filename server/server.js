@@ -16,12 +16,8 @@ const socketIO = require('socket.io');
 //const backup = require('mongodb-backup');
 
 // local imports
-let {
-  mongoose
-} = require('./db/mongoose');
-let {
-  DroneData
-} = require('./models/droneData');
+let {mongoose} = require('./db/mongoose');
+let {DroneData} = require('./models/droneData');
 
 const publicPath = path.join(__dirname, '..', '/public');
 const views = path.join(__dirname, '..','/public/views');
@@ -52,6 +48,7 @@ app.set('view engine', 'html');
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
+
 app.use(session({
     secret: 'work hard',
     resave: true,
@@ -156,10 +153,12 @@ io.on('connection', (socket) => {
           Website.splice(indexWebsite, 1);
           console.log(`${socket.id} (Website) disconnected`);
         }
+
         if (indexAndroid > -1) {
           Android.splice(indexAndroid, 1);
           console.log(`${socket.id} (Android device) disconnected`);
         }
+
         if (indexPi > -1) {
 
           Pi.splice(indexPi, 1);
@@ -205,6 +204,7 @@ io.on('connection', (socket) => {
             console.log('********** the file has been written and db is dropped.');
           });
         }
+
     });
 
 });
