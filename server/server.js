@@ -22,6 +22,9 @@ let {
 let {
   DroneData
 } = require('./models/droneData');
+let {
+  User
+} = require('./models/user');
 
 const publicPath = path.join(__dirname, '..', '/public');
 const views = path.join(__dirname, '..', '/public/views');
