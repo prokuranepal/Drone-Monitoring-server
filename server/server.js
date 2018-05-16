@@ -47,7 +47,6 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 app.use(bodyparser.json());
-<<<<<<< HEAD
 app.use(bodyparser.urlencoded({ extended: true }));
 
 /*app.use(session({
@@ -55,16 +54,6 @@ app.use(bodyparser.urlencoded({ extended: true }));
     resave: true,
     saveUninitialized: false
 }));*/
-=======
-app.use(bodyparser.urlencoded({
-  extended: true
-}));
-app.use(session({
-  secret: 'work hard',
-  resave: true,
-  saveUninitialized: false
-}));
->>>>>>> dbman
 
 let Android = [],
   Website = [],
@@ -193,7 +182,7 @@ io.on('connection', (socket) => {
       // in second bracket called projections
       // the fields whose value are 0 are not included
 
-      var fileStream = fs.createWriteStream('data.txt');
+      var fileStream = fs.createWriteStream(datafile);
       fileStream.once('open', (no_need) => {
         DroneData.find({}, {
           tokens: 0,
