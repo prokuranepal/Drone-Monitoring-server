@@ -1,4 +1,8 @@
 /**
+ * TODO: how to use HTTP /2 protocol
+ */
+
+/**
  * configuration of database is stored in config file
  */
 require('./config/config');
@@ -249,16 +253,21 @@ io.on('connection', (socket) => {
    * for determining the task to be done before sending to the website
    */
   socket.on('error', (error) => {
-    console.log(error);
     io.to('website').emit('error', error.msg);
-    if(error.context == 'Mission') {
+
+    if(error.context == 'GPS/Mission') {
       fs.readFile(renamedmissionfile, (err,waypoints) => {
         if (err) {
           return console.log('no mission file ');
         }
-        io.to('website').emit('Mission', waypoints);
+        io.to('website').emit('Mission', JSON.parse(waypoints));
       });
+    } else if(error.context == 'Prearm') {
+      io.to('android').emit('success',error.msg);
+    } else if(error.context == 'Connection') {
+      io.to('android').emit('success',error.msg);
     }
+
   });
   /********************************************************************/
 
@@ -302,6 +311,7 @@ io.on('connection', (socket) => {
    * socket for initiating the flight
    */
   socket.on('fly', (msg) => {
+    console.log(`${msg} from android`);
     io.to('pi').emit('initiate_flight', msg);
   });
   /********************************************************************/
@@ -335,7 +345,7 @@ io.on('connection', (socket) => {
       io.to('website').emit('copter-data', parameters);
       console.log(`${socket.id} (Pi) disconnected`);
 
-      // backup({
+      /*// backup({
       //   uri: process.env.MONGODB_URI,
       //   root: './',
       //   collection: ['dronedats'],
@@ -345,7 +355,7 @@ io.on('connection', (socket) => {
 
       // find method doesn't return the fields mentioned
       // in second bracket called projections
-      // the fields whose value are 0 are not included
+      // the fields whose value are 0 are not included*/
 
       var fileStream = fs.createWriteStream(datafile);
       fileStream.once('open', (no_need) => {

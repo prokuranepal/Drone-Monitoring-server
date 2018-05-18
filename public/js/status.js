@@ -35,7 +35,9 @@ socket.on('copter-data', function (data) {
         heading = parseFloat(data.head) || 0,
         Sfix;
 
-    // the red and green gps pointer is defined according to the connection status.
+    /**
+     * the red and green gps pointer is defined according to the connection status.
+     */
     if (data.conn != undefined) {
         if ((data.conn).toUpperCase() === 'TRUE'){
             imageString = location.origin+ "/js/files/green.svg";
@@ -59,7 +61,9 @@ socket.on('copter-data', function (data) {
         Sfix = "NO FIX";
     }
 
-    // following document update the data in div of the html file
+    /**
+     * following document update the data in div of the html file
+     */
     document.getElementById("mode-data").innerHTML = data.mode;
     document.getElementById("arm-data").innerHTML = is_armed;
     document.getElementById("ekf-data").innerHTML = String(data.ekf).toUpperCase();
@@ -107,7 +111,9 @@ socket.on('copter-data', function (data) {
     });*/
 
 
-    // marker is updated with the new gps position and other other parameters.
+    /**
+     * marker is updated with the new gps position and other other parameters.
+     */
     if(marker !== "undefined") {
         let myLatLng = {lat: _lat, lng: _lng};
         marker.setPosition(myLatLng);
@@ -256,44 +262,6 @@ function addLine(flightPathCoordinates,color) {
     flightPath.setMap(map);
     flightArray.push(flightPath);
 }
-
-/**
- * To read the mission from the file.
- */
-/*function ReadMission() {
-    // fetch is used for reading the mission from the file as json object.
-    fetch('/js/files/mission.txt')
-        .then(response => response.json())
-        .then(jsonResponse => {
-
-            if (typeof (flightPathCoordinate[1]) == "undefined") {
-                let a= 1;
-
-                Home  = {lat : parseFloat(jsonResponse[0].lat),lng: parseFloat(jsonResponse[0].lng)};
-
-                addMarker(Home,`H`);
-
-                flightPathCoordinate.push(Home);
-
-                while (typeof (jsonResponse[a]) != 'undefined') {
-
-                    let pos = {lat: parseFloat(jsonResponse[a].lat), lng: parseFloat(jsonResponse[a].lng)};
-
-                    // Ploting the marker in the map according to the position.
-                    addMarker(pos,a);
-
-                    // creating the array of pos for making the line with adjacent positions
-                    flightPathCoordinate.push(pos);
-                    a = a +1;
-                }
-
-                // creating the line with the adjacent position according to the flightPathCoordinate
-                addLine(flightPathCoordinate,'#FF0000');
-            }
-
-        })
-
-}*/
 
 /**
  * to read mission from the companion computer
