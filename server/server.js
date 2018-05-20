@@ -192,12 +192,14 @@ io.on('connection', (socket) => {
     Pi.push(socket.id);
     socket.join('pi');
     console.log(`${socket.id} (Pi) connected`);
+
   });
 
   socket.on('joinWebsite', () => {
     Website.push(socket.id);
     socket.join('website');
     console.log(`${socket.id} (Website) connected`);
+    // console.log(socket.nsp.server.eio.clients);
   });
 
   socket.on('joinAndroid', () => {

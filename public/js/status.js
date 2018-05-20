@@ -152,6 +152,36 @@ socket.on('error', function (msg)  {
 });
 
 /**
+ * to read mission from the companion computer
+ */
+socket.on('Mission',function (waypoints) {
+    if (typeof (flightPathCoordinate[1]) == "undefined") {
+        let a= 1;
+
+        Home  = {lat : parseFloat(waypoints[0].lat),lng: parseFloat(waypoints[0].lng)};
+
+        addMarker(Home,`H`);
+
+        flightPathCoordinate.push(Home);
+
+        while (typeof (waypoints[a]) != 'undefined') {
+
+            let pos = {lat: parseFloat(waypoints[a].lat), lng: parseFloat(waypoints[a].lng)};
+
+            // Ploting the marker in the map according to the position.
+            addMarker(pos,a);
+
+            // creating the array of pos for making the line with adjacent positions
+            flightPathCoordinate.push(pos);
+            a = a +1;
+        }
+
+        // creating the line with the adjacent position according to the flightPathCoordinate
+        addLine(flightPathCoordinate,'#FF0000');
+    }
+});
+
+/**
  * initmap update the map with the initial map google map.
  */
 function initmap() {
@@ -264,46 +294,9 @@ function addLine(flightPathCoordinates,color) {
 }
 
 /**
- * to read mission from the companion computer
- */
-socket.on('Mission',function (waypoints) {
-    if (typeof (flightPathCoordinate[1]) == "undefined") {
-        let a= 1;
-
-        Home  = {lat : parseFloat(waypoints[0].lat),lng: parseFloat(waypoints[0].lng)};
-
-        addMarker(Home,`H`);
-
-        flightPathCoordinate.push(Home);
-
-        while (typeof (waypoints[a]) != 'undefined') {
-
-            let pos = {lat: parseFloat(waypoints[a].lat), lng: parseFloat(waypoints[a].lng)};
-
-            // Ploting the marker in the map according to the position.
-            addMarker(pos,a);
-
-            // creating the array of pos for making the line with adjacent positions
-            flightPathCoordinate.push(pos);
-            a = a +1;
-        }
-
-        // creating the line with the adjacent position according to the flightPathCoordinate
-        addLine(flightPathCoordinate,'#FF0000');
-    }
-});
-
-/**
  * Download mission from the copter
  */
 function ReadMission() {
-    socket.emit('getMission','1');
-}
-
-/**
- * Download mission from the copter
- */
-function DownloadMission() {
     socket.emit('getMission','1');
 }
 
