@@ -360,6 +360,8 @@ io.on('connection', (socket) => {
       // the fields whose value are 0 are not included*/
 
       var fileStream = fs.createWriteStream(datafile);
+      var drop = 0;
+
       fileStream.once('open', (no_need) => {
         DroneData.find({}, {
           tokens: 0,
@@ -371,7 +373,10 @@ io.on('connection', (socket) => {
           fileStream.write(doc.toString() + '\n');
         }).on('end', function() {
           fileStream.end();
-          DroneData.collection.drop();
+          if(drop === 0) {
+            DroneData.collection.drop();
+            drop = 1;
+          }
           console.log('********** the file has been written and db is dropped.');
         });
       });
