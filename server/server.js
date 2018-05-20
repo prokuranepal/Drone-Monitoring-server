@@ -139,28 +139,6 @@ let Android = [],
   Pi = [],
   lat,
   lng;
-
-/**
- * data format needed to send to the client when pi disconnect
- */
-let params = {
-  conn: 'False',
-  fix: 0,
-  numSat: 0,
-  hdop: 10000,
-  arm: 'False',
-  head: 0,
-  ekf: 'False',
-  mode: 'UNKNOWN',
-  status: 'UNKNOWN',
-  volt: 0,
-  gs: 0,
-  as: 0,
-  altr: 0,
-  alt: 0,
-  est: 0,
-  lidar: 0
-};
 /********************************************************************/
 
 /**
@@ -172,7 +150,7 @@ let params = {
  */
 app.route('/')
   .get((req, res) => {
-    res.render('index.html');
+    res.status(200).render('index.html');
   })
   .post((req, res) => {
     User.find({
@@ -183,10 +161,10 @@ app.route('/')
     }).
     then((user) => {
       if ((user.length != 0) && (user[0].password === req.body.password)) {
-        res.redirect('/status');
+        res.status(200).redirect('/status');
       } else {
         console.log(`username or password incorrect`);
-        res.redirect('/');
+        res.status(200).redirect('/');
       }
     });
   });
@@ -196,7 +174,7 @@ app.route('/')
  * to render the status.html in /status
  */
 app.get('/status', (req, res) => {
-  res.render('status.html');
+  res.status(200).render('status.html');
 });
 /********************************************************************/
 
@@ -250,6 +228,7 @@ io.on('connection', (socket) => {
    */
   socket.on('data', (data) => {
     io.to('website').emit('copter-data', data);
+    //console.log(data);
     lat = data.lat;
     lng = data.lng;
     var droneData = new DroneData(data);
@@ -359,9 +338,31 @@ io.on('connection', (socket) => {
       console.log(`${socket.id} (Android device) disconnected`);
     }
     if (indexPi > -1) {
-
+      //console.log(`${lat}, ${lng}`);
       Pi.splice(indexPi, 1);
-      io.to('website').emit('copter-data', params);
+      io.to('website').emit('copter-data', {
+        /**
+         * data format needed to send to the client when pi disconnect
+         */
+        conn : 'False',
+        fix : 0,
+        numSat : 0,
+        hdop : 10000,
+        arm : 'False',
+        head : 0,
+        ekf : 'False',
+        mode : 'UNKNOWN',
+        status : 'UNKNOWN',
+        volt : 0,
+        gs : 0,
+        as : 0,
+        altr : 0,
+        alt : 0,
+        est : 0,
+        lidar : 0,
+        lat : lat,
+        lng : lng
+      });
       console.log(`${socket.id} (Pi) disconnected`);
 
       /*// backup({
