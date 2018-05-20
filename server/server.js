@@ -137,7 +137,30 @@ app.use(bodyparser.urlencoded({
 let Android = [],
   Website = [],
   Pi = [],
-  parameters;
+  lat,
+  lng;
+
+/**
+ * data format needed to send to the client when pi disconnect
+ */
+let params = {
+    conn : 'False',
+    fix : 0,
+    numSat : 0,
+    hdop : 10000,
+    arm : 'False',
+    head : 0,
+    ekf : 'False',
+    mode : 'UNKNOWN',
+    status : 'UNKNOWN',
+    volt : 0,
+    gs : 0,
+    as : 0,
+    altr : 0,
+    alt : 0,
+    est : 0,
+    lidar : 0
+};
 /********************************************************************/
 
 /**
@@ -227,8 +250,9 @@ io.on('connection', (socket) => {
    */
   socket.on('data', (data) => {
     io.to('website').emit('copter-data', data);
-    parameters = data;
-    var droneData = new DroneData(parameters);
+    lat = data.lat;
+    lng = data.lng;
+    var droneData = new DroneData(data);
     droneData.save().then(() => {
       //console.log('data has been saved.');
     }, (e) => {
@@ -337,14 +361,7 @@ io.on('connection', (socket) => {
     if (indexPi > -1) {
 
       Pi.splice(indexPi, 1);
-
-      parameters.conn = 'False';
-      parameters.fix = 0;
-      parameters.numSat = 0;
-      parameters.hdop = 10000;
-      parameters.arm = 'False';
-
-      io.to('website').emit('copter-data', parameters);
+      io.to('website').emit('copter-data', params);
       console.log(`${socket.id} (Pi) disconnected`);
 
       /*// backup({
