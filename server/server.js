@@ -230,6 +230,10 @@ io.on('connection', (socket) => {
     });
     /******************** Join device completed *************************/
 
+    socket.on('usernamePassword',(id) => {
+        console.log(id);
+
+    });
 
     /**
      * This socket is listening to pi socket which relayed the message
