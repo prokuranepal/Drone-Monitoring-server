@@ -1,10 +1,23 @@
 const mongoose = require('mongoose');
 
-var DroneSchema = new mongoose.Schema({},
-{
+const DroneSchema = new mongoose.Schema({}, {
   strict: false
 });
 
-var DroneData = mongoose.model("DroneDat", DroneSchema);
+const PulchowkDroneSchema = new mongoose.Schema({}, {
+  strict: false
+});
 
-module.exports = {DroneData};
+const NangiDroneSchema = new mongoose.Schema({},{
+  strict: false
+});
+
+const DroneData = mongoose.model("DroneData", DroneSchema);
+const PulchowkDroneData = mongoose.model("PulchowkDroneData",PulchowkDroneSchema);
+const NangiDroneData = mongoose.model("NangiDroneData",NangiDroneSchema);
+
+module.exports = {
+  DroneData,
+  PulchowkDroneData,
+  NangiDroneData
+};
