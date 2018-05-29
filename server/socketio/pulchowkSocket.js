@@ -22,7 +22,8 @@ let lat1,
     lng1,
     Pi1 = [],
     Website1 = [],
-    Android1 = [];
+    Android1 = [],
+    deviceMission1;
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -64,9 +65,7 @@ pulchowk.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
-        pulchowk.to('website').emit('copter-data', data);
-        console.log(data);
-        pulchowk.to('android').emit('copter-data', {
+        pulchowk.to('android').to('website').emit('copter-data', {
             lat: data.lat,
             lng: data.lng,
             altr: data.altr,
@@ -82,7 +81,8 @@ pulchowk.on('connection', (socket) => {
             ekf: data.ekf,
             status: data.status,
             lidar: data.lidar,
-            volt: data.volt
+            volt: data.volt,
+            conn: data.conn
         });
         lat1 = data.lat;
         lng1 = data.lng;
@@ -115,23 +115,26 @@ pulchowk.on('connection', (socket) => {
     });
 
     socket.on('waypoints', (waypoints) => {
-        pulchowk.to('website').emit('Mission', waypoints);
-        pulchowk.to('android').emit('Mission', waypoints);
-        fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
+        if (deviceMission1 == "android") {
+            pulchowk.to('android').emit('Mission',waypoints);
+        } else if (deviceMission1 == "website") {
+            pulchowk.to('website').emit('Mission',waypoints);
+        }        fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
             if (err) {
                 return console.log('File cannot be created');
             }
         });
     });
 
-    socket.on('getMission', (msg) => {
+    socket.on('getMission', (data) => {
+        deviceMission1 = data.device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
                 console.log('rename done');
             }
             console.log('No actual mission file present');
         });
-        pulchowk.to('pi').emit('mission_download', msg);
+        pulchowk.to('pi').emit('mission_download', data.mission);
     });
 
     socket.on('fly', (msg) => {

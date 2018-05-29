@@ -22,7 +22,8 @@ let lat2,
     lng2,
     Pi2 = [],
     Website2 = [],
-    Android2 = [];
+    Android2 = [],
+    deviceMission2;
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -64,9 +65,7 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
-        nangi.to('website').emit('copter-data', data);
-        console.log(data);
-        nangi.to('android').emit('copter-data', {
+        nangi.to('android').to('website').emit('copter-data', {
             lat: data.lat,
             lng: data.lng,
             altr: data.altr,
@@ -82,7 +81,8 @@ nangi.on('connection', (socket) => {
             ekf: data.ekf,
             status: data.status,
             lidar: data.lidar,
-            volt: data.volt
+            volt: data.volt,
+            conn: data.conn
         });
         lat2 = data.lat;
         lng2 = data.lng;
@@ -115,8 +115,11 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('waypoints', (waypoints) => {
-        nangi.to('website').emit('Mission', waypoints);
-        nangi.to('android').emit('Mission', waypoints);
+        if (deviceMission2 == "android") {
+            nangi.to('android').emit('Mission',waypoints);
+        } else if (deviceMission2 == "website") {
+            nangi.to('website').emit('Mission',waypoints);
+        }
         fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
             if (err) {
                 return console.log('File cannot be created');
@@ -124,14 +127,15 @@ nangi.on('connection', (socket) => {
         });
     });
 
-    socket.on('getMission', (msg) => {
+    socket.on('getMission', (data) => {
+        deviceMission2 = data.device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
                 console.log('rename done');
             }
             console.log('No actual mission file present');
         });
-        nangi.to('pi').emit('mission_download', msg);
+        nangi.to('pi').emit('mission_download', data.mission);
     });
 
     socket.on('fly', (msg) => {

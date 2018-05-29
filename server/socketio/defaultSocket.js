@@ -22,7 +22,8 @@ let Android = [],
     Website = [],
     Pi = [],
     lat,
-    lng;
+    lng,
+    deviceMission;
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -86,8 +87,7 @@ io.on('connection', (socket) => {
      * Also the data is store in the mongodb database
      */
     socket.on('data', (data) => {
-        io.to('website').emit('copter-data', data);
-        io.to('android').emit('copter-data', {
+        io.to('android').to('website').emit('copter-data', {
             lat: data.lat,
             lng: data.lng,
             altr: data.altr,
@@ -103,7 +103,8 @@ io.on('connection', (socket) => {
             ekf: data.ekf,
             status: data.status,
             lidar: data.lidar,
-            volt: data.volt
+            volt: data.volt,
+            conn: data.conn
         });
 
         lat = data.lat;
@@ -157,8 +158,11 @@ io.on('connection', (socket) => {
      * the file called 'actualmissionfile'
      */
     socket.on('waypoints', (waypoints) => {
-        io.to('website').emit('Mission', waypoints);
-        io.to('android').emit('Mission', waypoints);
+        if (deviceMission == "android") {
+            io.to('android').emit('Mission',waypoints);
+        } else if (deviceMission == "website") {
+            io.to('website').emit('Mission',waypoints);
+        }
         fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
             if (err) {
                 return console.log('File cannot be created');
@@ -174,14 +178,16 @@ io.on('connection', (socket) => {
      * so to differentiate the new and old mission file.
      * And the request is emitted to the pi socket
      */
-    socket.on('getMission', (msg) => {
+    socket.on('getMission', (data) => {
+        console.log(JSON.parse(data).device);
+        deviceMission = JSON.parse(data).device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
-                console.log('rename done');
+                return console.log('rename done');
             }
             console.log('No actual mission file present');
         });
-        io.to('pi').emit('mission_download', msg);
+        io.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
     /********************************************************************/
 
@@ -218,6 +224,7 @@ io.on('connection', (socket) => {
                 /**
                  * data format needed to send to the client when pi disconnect
                  */
+
                 conn: 'False',
                 fix: 0,
                 numSat: 0,
