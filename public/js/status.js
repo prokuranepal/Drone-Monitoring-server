@@ -297,10 +297,7 @@ function addLine(flightPathCoordinates,color) {
  * Download mission from the copter
  */
 function ReadMission() {
-    socket.emit('getMission',{
-        mission: 1,
-        device : 'website'
-    });
+    socket.emit('getMission',"{\"mission\": \"1\",\"device\": \"website\"}");
 }
 
 /**
