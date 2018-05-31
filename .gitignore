@@ -1,7 +1,13 @@
 .idea/
 node_modules/
-public/js/files/mission.txt
-public/js/files/oldmission.txt
+public/js/files/missions/mission.txt
+public/js/files/missions/oldmission.txt
 public/data.txt
+public/js/files/missions/missionNangi.txt
+public/js/files/missions/oldmissionNangi.txt
+public/dataNangi.txt
+public/js/files/missions/missionPulchowk.txt
+public/js/files/missions/oldmissionPulchowk.txt
+public/dataPulchowk.txt
 public/js/files/index.appcache
 public/js/files/status.appcache

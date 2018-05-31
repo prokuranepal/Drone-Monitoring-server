@@ -34,9 +34,9 @@ const path = require('path');
 /**
  * The path constant for required files
  */
-const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/mission.txt'),
-    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/oldmission.txt'),
-    datafile = path.join(__dirname, '../..', '/public/data.txt');
+const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/missionPulchowk.txt'),
+    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/oldmissionPulchowk.txt'),
+    datafile = path.join(__dirname, '../..', '/public/dataPulchowk.txt');
 /********************************************************************/
 
 /**
@@ -46,22 +46,26 @@ const pulchowk = io.of('/pulchowk');
 
 pulchowk.on('connection', (socket) => {
 
-    socket.on('joinPiPulchowk', () => {
+    socket.on('joinPi', () => {
         Pi1.push(socket.id);
         socket.join('pi');
         console.log(`${socket.id} (Pi Pulchowk) connected`);
     });
 
-    socket.on('joinAndroidPulchowk', () => {
+    socket.on('joinAndroid', () => {
         Android1.push(socket.id);
         socket.join('android');
         console.log(`${socket.id} (Android Pulchowk) connected`);
     });
 
-    socket.on('joinWebsitePulchowk', () => {
+    socket.on('joinWebsite', () => {
         Website1.push(socket.id);
         socket.join('website');
         console.log(`${socket.id} (Website Pulchowk) connected`);
+    });
+
+    socket.on('success', (msg) => {
+        pulchowk.to('android').emit('success', msg);
     });
 
     socket.on('data', (data) => {
@@ -82,6 +86,7 @@ pulchowk.on('connection', (socket) => {
             status: data.status,
             lidar: data.lidar,
             volt: data.volt,
+            est: data.est,
             conn: data.conn
         });
         lat1 = data.lat;
@@ -98,7 +103,7 @@ pulchowk.on('connection', (socket) => {
         pulchowk.to('website').emit('homePosition', homeLocation);
     });
 
-    socket.on('error', (error) => {
+    socket.on('errors', (error) => {
         pulchowk.to('website').emit('error', error.msg);
         if (error.context === 'GPS/Mission') {
             fs.readFile(renamedmissionfile, (err, waypoints) => {
@@ -127,14 +132,14 @@ pulchowk.on('connection', (socket) => {
     });
 
     socket.on('getMission', (data) => {
-        deviceMission1 = data.device;
+        deviceMission1 = JSON.parse(data).device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
                 console.log('rename done');
             }
             console.log('No actual mission file present');
         });
-        pulchowk.to('pi').emit('mission_download', data.mission);
+        pulchowk.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
 
     socket.on('fly', (msg) => {
@@ -148,11 +153,11 @@ pulchowk.on('connection', (socket) => {
 
         if (indexWebsite1 > -1) {
             Website1.splice(indexWebsite1, 1);
-            console.log(`${socket.id} (Website) disconnected`);
+            console.log(`${socket.id} (Website Pulchowk) disconnected`);
         }
         if (indexAndroid1 > -1) {
             Android1.splice(indexAndroid1, 1);
-            console.log(`${socket.id} (Android device) disconnected`);
+            console.log(`${socket.id} (Android device Pulchowk) disconnected`);
         }
         if (indexPi1 > -1) {
             Pi1.splice(indexPi1, 1);
@@ -179,7 +184,7 @@ pulchowk.on('connection', (socket) => {
                 lat: lat1,
                 lng: lng1
             });
-            console.log(`${socket.id} (Pi) disconnected`);
+            console.log(`${socket.id} (Pi Pulchowk) disconnected`);
 
             let fileStream = fs.createWriteStream(datafile);
             // access the mongodb native driver and its functions
@@ -196,7 +201,7 @@ pulchowk.on('connection', (socket) => {
                     fileStream.end();
                     // check if collection exists and then dropped
                     db_native.listCollections({
-                        name: 'dronedats'
+                        name: 'pulchowkdronedatas'
                     })
                         .next(function (err, collinfo) {
                             if (collinfo) {

@@ -34,9 +34,9 @@ const path = require('path');
 /**
  * The path constant for required files
  */
-const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/mission.txt'),
-    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/oldmission.txt'),
-    datafile = path.join(__dirname, '../..', '/public/data.txt');
+const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/missionNangi.txt'),
+    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/oldmissionNangi.txt'),
+    datafile = path.join(__dirname, '../..', '/public/dataNangi.txt');
 /********************************************************************/
 
 /**
@@ -46,22 +46,26 @@ const nangi = io.of('/nangi');
 
 nangi.on('connection', (socket) => {
 
-    socket.on('joinPiNangi', () => {
+    socket.on('joinPi', () => {
         Pi2.push(socket.id);
         socket.join('pi');
         console.log(`${socket.id} (Pi Nangi) connected`);
     });
 
-    socket.on('joinAndroidNangi', () => {
+    socket.on('joinAndroid', () => {
         Android2.push(socket.id);
         socket.join('android');
         console.log(`${socket.id} (Android Nangi) connected`);
     });
 
-    socket.on('joinWebsiteNangi', () => {
+    socket.on('joinWebsite', () => {
         Website2.push(socket.id);
         socket.join('website');
         console.log(`${socket.id} (Website Nangi) connected`);
+    });
+
+    socket.on('success', (msg) => {
+        nangi.to('android').emit('success',msg);
     });
 
     socket.on('data', (data) => {
@@ -82,6 +86,7 @@ nangi.on('connection', (socket) => {
             status: data.status,
             lidar: data.lidar,
             volt: data.volt,
+            est: data.est,
             conn: data.conn
         });
         lat2 = data.lat;
@@ -98,7 +103,7 @@ nangi.on('connection', (socket) => {
         nangi.to('website').emit('homePosition', homeLocation);
     });
 
-    socket.on('error', (error) => {
+    socket.on('errors', (error) => {
         nangi.to('website').emit('error', error.msg);
         if (error.context === 'GPS/Mission') {
             fs.readFile(renamedmissionfile, (err, waypoints) => {
@@ -128,14 +133,14 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('getMission', (data) => {
-        deviceMission2 = data.device;
+        deviceMission2 = JSON.parse(data).device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
                 console.log('rename done');
             }
             console.log('No actual mission file present');
         });
-        nangi.to('pi').emit('mission_download', data.mission);
+        nangi.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
 
     socket.on('fly', (msg) => {
@@ -149,11 +154,11 @@ nangi.on('connection', (socket) => {
 
         if (indexWebsite2 > -1) {
             Website2.splice(indexWebsite2, 1);
-            console.log(`${socket.id} (Website) disconnected`);
+            console.log(`${socket.id} (Website Nangi) disconnected`);
         }
         if (indexAndroid2 > -1) {
             Android2.splice(indexAndroid2, 1);
-            console.log(`${socket.id} (Android device) disconnected`);
+            console.log(`${socket.id} (Android device Nangi) disconnected`);
         }
         if (indexPi2 > -1) {
             Pi2.splice(indexPi2, 1);
@@ -180,7 +185,7 @@ nangi.on('connection', (socket) => {
                 lat: lat2,
                 lng: lng2
             });
-            console.log(`${socket.id} (Pi) disconnected`);
+            console.log(`${socket.id} (Pi Nangi) disconnected`);
 
             let fileStream = fs.createWriteStream(datafile);
             // access the mongodb native driver and its functions
@@ -197,7 +202,7 @@ nangi.on('connection', (socket) => {
                     fileStream.end();
                     // check if collection exists and then dropped
                     db_native.listCollections({
-                        name: 'dronedats'
+                        name: 'nangidronedata'
                     })
                         .next(function (err, collinfo) {
                             if (collinfo) {

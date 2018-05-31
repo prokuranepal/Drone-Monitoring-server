@@ -6,6 +6,7 @@
  * configuration of database is stored in config file
  */
 require('./config/config');
+global.deviceNames = 4;
 
 /**
  * server require

@@ -34,8 +34,8 @@ const path = require('path');
 /**
  * The path constant for required files
  */
-const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/mission.txt'),
-    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/oldmission.txt'),
+const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/mission.txt'),
+    renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/oldmission.txt'),
     datafile = path.join(__dirname, '../..', '/public/data.txt');
 /********************************************************************/
 
@@ -104,9 +104,9 @@ io.on('connection', (socket) => {
             status: data.status,
             lidar: data.lidar,
             volt: data.volt,
+            est: data.est,
             conn: data.conn
         });
-
         lat = data.lat;
         lng = data.lng;
         let droneData = new DroneData(data);
@@ -135,7 +135,7 @@ io.on('connection', (socket) => {
      * The error message is send to the website and the context is used
      * for determining the task to be done before sending to the website
      */
-    socket.on('error', (error) => {
+    socket.on('errors', (error) => {
         io.to('website').emit('error', error.msg);
         if (error.context === 'GPS/Mission') {
             fs.readFile(renamedmissionfile, (err, waypoints) => {
@@ -179,7 +179,6 @@ io.on('connection', (socket) => {
      * And the request is emitted to the pi socket
      */
     socket.on('getMission', (data) => {
-        console.log(JSON.parse(data).device);
         deviceMission = JSON.parse(data).device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
@@ -273,7 +272,7 @@ io.on('connection', (socket) => {
                     fileStream.end();
                     // check if collection exists and then dropped
                     db_native.listCollections({
-                        name: 'dronedats'
+                        name: 'dronedatas'
                     })
                         .next(function (err, collinfo) {
                             if (collinfo) {

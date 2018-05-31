@@ -37,7 +37,7 @@ const publicPath = path.join(__dirname, '../..', '/public'),
 
 /**
  * setting up middleware at public directory which is displayed in browser
- * in the main directory '/' file should be index.html
+ * in the main directory '/' file should be index.ejs
  */
 app.use(express.static(publicPath));
 
@@ -47,14 +47,9 @@ app.use(express.static(publicPath));
 app.set('views', views);
 
 /**
- * TODO: comment required for ejs
- */
-app.engine('html', require('ejs').renderFile);
-
-/**
  * TODO: comment required for view engine
  */
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 
 /**
  * to parse json objects
@@ -75,25 +70,35 @@ const server = http.createServer(app);
 
 /**
  * get and post route of '/'
- * get is used for rendering the index.html file
+ * get is used for rendering the index.ejs file
  * post is used for authenticating of the user for login
  * and redirect to '/status' if success or to '/' if
  * failed
  */
 
 app.get('/', (req, res) => {
-    res.status(200).render('index.html');
+    res.status(200).render('index',{title:'Drone | login'});
 });
 
 app.post('/', (req, res) => {
-    User.find({
+    User.findOne({
         username: req.body.username
     }, {
-        _id: 0,
-        password: 1
+        _id: 1,
+        password: 1,
+        location:1,
+        noOfUsers:1
     }).then((user) => {
-        if ((user.length != 0) && (user[0].password === req.body.password)) {
-            return res.status(200).redirect('/status');
+        console.log(user);
+        if ((user.length != 0) && (user.password === req.body.password) && (user.location === req.body.location)) {
+            user.noOfUsers=1;
+            user.save((err) => {
+                if (err) {
+                    return console.log("error in updating the number of users : " + err);
+                }
+                console.log("user successfully updated");
+            });
+            return res.status(200).redirect('/'+req.body.location);
         } else {
             console.log(`username or password incorrect`);
             return res.status(404).redirect('/');
@@ -103,19 +108,52 @@ app.post('/', (req, res) => {
 /********************************************************************/
 
 /**
+ * to render the status.ejs in /status
+ */
+app.get('/default', (req, res) => {
+    res.render('status');
+});
+/********************************************************************/
+
+/**
+ * to render the status.ejs in /status
+ */
+app.get('/nangi', (req, res) => {
+    res.render('nangi');
+});
+/********************************************************************/
+
+/**
+ * to render the status.ejs in /status
+ */
+app.get('/pulchowk', (req, res) => {
+    res.render('pulchowk');
+});
+/********************************************************************/
+
+/**
  * for login in android
  */
 app.post('/android', (req, res) => {
-    User.find({
+    console.log(req.body);
+    User.findOne({
         username: req.body.username
     }, {
-        _id: 0,
-        password: 1
+        _id: 1,
+        password: 1,
+        noOfUsers:1
     }).then((user) => {
-        if ((user.length != 0) && (user[0].password === req.body.password) && (user[0].noOfUsers === 0)) {
-            /**
-             * TODO: query to update the noOfUsers to 1 of userSchema
-             */
+        if ((user.length != 0) && (user.password === req.body.password)) {
+            if (user.noOfUsers === 0) {
+                user.noOfUsers=1;
+                user.save((err) => {
+                    if (err) {
+                        return console.log("error in updating the number of users");
+                    }
+                    console.log("user successfully updated");
+                });
+                global.deviceNames = req.body.deviceName;
+            }
             return res.send('OK');
         } else {
             console.log(`username or password incorrect`);
@@ -125,13 +163,5 @@ app.post('/android', (req, res) => {
 });
 /********************************************************************/
 
-/**
- * to render the status.html in /status
- */
-app.get('/status', (req, res) => {
-    res.render('status.html');
-    res.end();
-});
-/********************************************************************/
 
 module.exports = server;
