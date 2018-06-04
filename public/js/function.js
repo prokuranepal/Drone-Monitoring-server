@@ -12,8 +12,8 @@ function distanceLatLng (lat1,lng1,lat2,lng2) {
         dLng = toRad(lng2-lng1),
         latt1 = toRad(lat1),
         latt2 = toRad(lat2),
-        a = math.square(math.sin(dLat/2)) + math.square(math.sin(dLng/2))*math.cos(latt1)*math.cos(latt2),
-        c = 2 * math.atan2(math.sqrt(a),math.sqrt(1-a));
+        a = Math.pow(Math.sin(dLat/2),2) + Math.pow(Math.sin(dLng/2),2)*Math.cos(latt1)*Math.cos(latt2),
+        c = 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 
     return c*earthRadius;
 }
@@ -25,8 +25,8 @@ function distanceLatLng (lat1,lng1,lat2,lng2) {
  */
 function timeConversion(millisec) {
 
-    let seconds = math.floor((millisec / 1000)%60),
-        minutes = math.floor(millisec / (1000 * 60));
+    let seconds = Math.floor((millisec / 1000)%60),
+        minutes = Math.floor(millisec / (1000 * 60));
 
     return `${minutes}:${seconds}`;
 }

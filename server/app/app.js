@@ -111,7 +111,7 @@ app.post('/', (req, res) => {
  * to render the status.ejs in /status
  */
 app.get('/default', (req, res) => {
-    res.render('status');
+    res.render('status',{href:"../datadefault.txt"});
 });
 /********************************************************************/
 
@@ -119,7 +119,7 @@ app.get('/default', (req, res) => {
  * to render the status.ejs in /status
  */
 app.get('/nangi', (req, res) => {
-    res.render('nangi');
+    res.render('status', {href:"../dataNangi.txt"});
 });
 /********************************************************************/
 
@@ -127,7 +127,7 @@ app.get('/nangi', (req, res) => {
  * to render the status.ejs in /status
  */
 app.get('/pulchowk', (req, res) => {
-    res.render('pulchowk');
+    res.render('status', {href: "../dataPulchowk.txt"});
 });
 /********************************************************************/
 

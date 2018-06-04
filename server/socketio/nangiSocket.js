@@ -202,7 +202,7 @@ nangi.on('connection', (socket) => {
                     fileStream.end();
                     // check if collection exists and then dropped
                     db_native.listCollections({
-                        name: 'nangidronedata'
+                        name: 'nangidronedatas'
                     })
                         .next(function (err, collinfo) {
                             if (collinfo) {

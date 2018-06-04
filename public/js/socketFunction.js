@@ -1,33 +1,18 @@
-let map,
-    marker = "undefined",
-    StartOfFlight,
-    prev_lat,
-    prev_lng,
-    armedCheck = 'True',
-    Home= {lat:parseFloat('27.686331'), lng:parseFloat('85.317652')},
-    markers=[],
-    flightPathCoordinate= [],
-    dC=[],
-    line1= [],
-    line2= [],
-    flightArray =[],
-    flag1= 'False';
-
-const socket = io('/pulchowk');
-
 /**
- * to check connection status with the server
+ * connect to the sever using socket
+ * @param socket
  */
-socket.on('connect', function () {
-    console.log('connected successfully with the server');
+function joinSocket(socket) {
+    console.log('connected succesfully with the server.');
     socket.emit('joinWebsite');
-});
+}
 
 /**
- * to listens to the server socket and renders the data and map as required
+ * this function renders all the data in the page
+ * @param data consists of all data sends by the server
+ * @return returns the value of different variable need to be updated
  */
-socket.on('copter-data', function (data) {
-
+function copterData(data) {
     let imageString,
         is_armed = String(data.arm).toUpperCase() || "FALSE",
         _lat = parseFloat(data.lat) || 0,
@@ -101,16 +86,6 @@ socket.on('copter-data', function (data) {
     prev_lat = _lat;
     prev_lng = _lng;
 
-   /* var infowindow = new google.maps.InfoWindow({
-        content: "clicked"
-    });
-
-    map.addListener('click', function (e) {
-        console.log(distanceLatLng(marker.getPosition().lat(),marker.getPosition().lng(),e.latLng.lat(),e.latLng.lng()));
-        infowindow.open(distanceLatLng(Home.lat,Home.lng,e.latLng.lat(),e.latLng.lng()).toFixed(2),marker);
-    });*/
-
-
     /**
      * marker is updated with the new gps position and other other parameters.
      */
@@ -129,36 +104,51 @@ socket.on('copter-data', function (data) {
             map.panTo(myLatLng);
         }
     }
-});
+
+    return {
+        StartOfFlight : StartOfFlight,
+        prev_lng: prev_lng,
+        prev_lat:prev_lat,
+        armedCheck: armedCheck,
+        flag1: flag1,
+        map : map,
+        marker : marker
+    };
+}
 
 /**
- * Socket to obtain the home loaction
+ * it is the function to make the home json object right
+ * @param homeLocation it consists of lat and lng of the home location
+ * @return home location lat and lng
  */
-socket.on('homePosition', function (homeLocation) {
-    Home = {lat:parseFloat(homeLocation.lat),lng:parseFloat(homeLocation.lng)}
-});
+function homePositionData(homeLocation) {
+    return {lat:parseFloat(homeLocation.lat),lng:parseFloat(homeLocation.lng)};
+}
 
 /**
- * Socket to display the error message for 3 second in the
- * base to the website
+ * it is the function to display the errors in the page for certain time
+ * @param msg holds the error message to be displayed
  */
-socket.on('error', function (msg)  {
+function snackBar(msg) {
     var x = document.getElementById("snackbar");
     x.innerHTML = msg;
     x.className = "show";
     setTimeout(function() {
         x.className = x.className.replace("show", "");
     }, 3000);
-});
+}
 
 /**
- * to read mission from the companion computer
+ * it is the function to display the mission on the map
+ * @param waypoints it consists of json array of mission waypoint
+ * @return Home it returns the home location according to the mission
  */
-socket.on('Mission',function (waypoints) {
+function missionWaypoints(waypoints) {
+    let Home;
     if (typeof (flightPathCoordinate[1]) == "undefined") {
         let a= 1;
 
-        Home  = {lat : parseFloat(waypoints[0].lat),lng: parseFloat(waypoints[0].lng)};
+        Home  = homePositionData(waypoints[0]);
 
         addMarker(Home,`H`);
 
@@ -179,37 +169,71 @@ socket.on('Mission',function (waypoints) {
         // creating the line with the adjacent position according to the flightPathCoordinate
         addLine(flightPathCoordinate,'#FF0000');
     }
-});
+    return Home;
+}
 
 /**
- * initmap update the map with the initial map google map.
+ * To draw circle of radius provided by the user
  */
-function initmap() {
-    while(Home.lat == null);
-    let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: pos,
-        mapTypeId: 'hybrid',
-        disableDefaultUI: true,
-        zoomControl: true,
-        disableDoubleClickZoom: true,
-        fullscreenControl : false,
-        maxZoom:20,
-        minZoom: 10,
-        rotateControl: false,
-        scaleControl: false
+function DrawCircle() {
+    deleteCircle();
+    let radius = document.getElementById('data').value;
+    console.log(radius);
+    for (let i = 1 ; i <= 10; i++) {
+        let radius1 = radius*i,
+            drawCircle = new google.maps.Circle({
+                strokeColor: '#C0C0C0',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillOpacity: 0,
+                map: map,
+                center: Home,
+                radius: radius1
+            });
+        dC.push(drawCircle);
+    }
+    DrawPlusLineFromCenter(Home.lat,Home.lng,radius*10);
+}
+
+/**
+ * To draw plus line from the center
+ * @param centerLat [ center Latitude ]
+ * @param centerLng [ center Longitude ]
+ * @param radius [ Radius to draw line ]
+ */
+function DrawPlusLineFromCenter(centerLat,centerLng,radius) {
+    let line1 =[],
+        line2 = [],
+        angle =[0,90,180,270],
+        north = destVincenty(centerLat,centerLng,angle[0],radius),
+        south = destVincenty(centerLat,centerLng,angle[2],radius),
+        east = destVincenty(centerLat,centerLng,angle[1],radius),
+        west = destVincenty(centerLat,centerLng,angle[3],radius);
+
+    line1.push(north);
+    line1.push(south);
+    addLine(line1,'#C0C0C0');
+    line2.push(east);
+    line2.push(west);
+    addLine(line2,'#C0C0C0');
+}
+
+/**
+ * to draw line between to latitude and longitude position
+ * @param flightPathCoordinates [latitude and longitude object to draw the line]
+ * @param color [color of the path]
+ */
+function addLine(flightPathCoordinates,color) {
+    let flightPath = new google.maps.Polyline ({
+        path: flightPathCoordinates,
+        geodesic: true,
+        clickable: false,
+        strokeColor: color,
+        strokeOpacity: 1.0,
+        strokeWeight: 2
     });
-    map.setTilt(45);
-    marker = new google.maps.Marker ({
-        position: pos,
-        icon: {
-            url: location.origin+ "/js/files/red.svg",
-            scale: 6,
-            rotation: 0
-        },
-        map: map
-    });
+    flightPath.setMap(map);
+    flightArray.push(flightPath);
 }
 
 /**
@@ -276,76 +300,44 @@ function ClearMission() {
 }
 
 /**
- * to draw line between to latitude and longitude position
- * @param flightPathCoordinates [latitude and longitude object to draw the line]
- * @param color [color of the path]
+ * to read from the pixhawk
  */
-function addLine(flightPathCoordinates,color) {
-    let flightPath = new google.maps.Polyline ({
-        path: flightPathCoordinates,
-        geodesic: true,
-        clickable: false,
-        strokeColor: color,
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
-    flightPath.setMap(map);
-    flightArray.push(flightPath);
-}
-
-/**
- * Download mission from the copter
- */
-function ReadMission() {
+function readMission(socket) {
     socket.emit('getMission',"{\"mission\": \"1\",\"device\": \"website\"}");
 }
 
 /**
- * To draw circle of radius provided by the user
+ * helps to create the map
+ * @param Home it is the home location containing lat and lng of the position
+ * @param map it is the map variable the holds the map information
+ * @param marker it is the marker variable that holds the marker information
+ * @return map,marker it returns the map and marker data
  */
-function DrawCircle() {
-    deleteCircle();
-    let radius = document.getElementById('data').value;
-    for (let i = 1 ; i <= 10; i++) {
-        let radius1 = radius*i,
-            drawCircle = new google.maps.Circle({
-                strokeColor: '#C0C0C0',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillOpacity: 0,
-                map: map,
-                center: Home,
-                radius: radius1
-            });
-        dC.push(drawCircle);
-    }
-    DrawPlusLineFromCenter(Home.lat,Home.lng,radius*10);
+function initialMap(Home,map,marker) {
+    while(Home.lat == null);
+    let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 16,
+        center: pos,
+        mapTypeId: 'hybrid',
+        disableDefaultUI: true,
+        zoomControl: true,
+        disableDoubleClickZoom: true,
+        fullscreenControl : false,
+        maxZoom:20,
+        minZoom: 10,
+        rotateControl: false,
+        scaleControl: false
+    });
+    map.setTilt(45);
+    marker = new google.maps.Marker ({
+        position: pos,
+        icon: {
+            url: location.origin+ "/js/files/red.svg",
+            scale: 6,
+            rotation: 0
+        },
+        map: map
+    });
+    return {map : map,marker: marker};
 }
-
-/**
- * To draw plus line from the center
- * @param centerLat [ center Latitude ]
- * @param centerLng [ center Longitude ]
- * @param radius [ Radius to draw line ]
- */
-function DrawPlusLineFromCenter(centerLat,centerLng,radius) {
-    let angle =[0,90,180,270],
-        north = destVincenty(centerLat,centerLng,angle[0],radius),
-        south = destVincenty(centerLat,centerLng,angle[2],radius),
-        east = destVincenty(centerLat,centerLng,angle[1],radius),
-        west = destVincenty(centerLat,centerLng,angle[3],radius);
-
-    line1.push(north);
-    line1.push(south);
-    addLine(line1,'#C0C0C0');
-    line2.push(east);
-    line2.push(west);
-    addLine(line2,'#C0C0C0');
-}
-
-/**
- * to check disconnect status
- */
-socket.on('disconnect', function () {
-    console.log('disconneted from the server');
-});

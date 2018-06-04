@@ -2,7 +2,7 @@
 node_modules/
 public/js/files/missions/mission.txt
 public/js/files/missions/oldmission.txt
-public/data.txt
+public/datadefault.txt
 public/js/files/missions/missionNangi.txt
 public/js/files/missions/oldmissionNangi.txt
 public/dataNangi.txt
