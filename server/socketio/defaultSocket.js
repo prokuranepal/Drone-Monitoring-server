@@ -87,7 +87,7 @@ io.on('connection', (socket) => {
      * Also the data is store in the mongodb database
      */
     socket.on('data', (data) => {
-        io.to('android').to('website').emit('copter-data', {
+        let dataArranged = {
             lat: data.lat,
             lng: data.lng,
             altr: data.altr,
@@ -106,10 +106,11 @@ io.on('connection', (socket) => {
             volt: data.volt,
             est: data.est,
             conn: data.conn
-        });
+        };
+        io.to('android').to('website').emit('copter-data',dataArranged);
         lat = data.lat;
         lng = data.lng;
-        let droneData = new DroneData(data);
+        let droneData = new DroneData(dataArranged);
         droneData.save().then(() => {
             //console.log('data has been saved.');
         }, (e) => {
