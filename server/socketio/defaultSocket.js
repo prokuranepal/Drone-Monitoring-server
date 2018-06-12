@@ -23,7 +23,8 @@ let Android = [],
     Pi = [],
     lat,
     lng,
-    deviceMission;
+    deviceMission,
+    setTimeoutObject= [];
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -54,7 +55,6 @@ io.on('connection', (socket) => {
         Pi.push(socket.id);
         socket.join('pi');
         console.log(`${socket.id} (Pi) connected`);
-
     });
 
     socket.on('joinWebsite', () => {
@@ -104,7 +104,7 @@ io.on('connection', (socket) => {
             status: data.status,
             lidar: data.lidar,
             volt: data.volt,
-            est: data.est,
+            est: data.est || 0,
             conn: data.conn
         };
         io.to('android').to('website').emit('copter-data',dataArranged);
@@ -159,9 +159,9 @@ io.on('connection', (socket) => {
      * the file called 'actualmissionfile'
      */
     socket.on('waypoints', (waypoints) => {
-        if (deviceMission == "android") {
+        if (deviceMission === "android") {
             io.to('android').emit('Mission',waypoints);
-        } else if (deviceMission == "website") {
+        } else if (deviceMission === "website") {
             io.to('website').emit('Mission',waypoints);
         }
         fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
@@ -203,6 +203,41 @@ io.on('connection', (socket) => {
     /********************************************************************/
 
     /**
+     * This socket is used for sending the position from android to the
+     * pixhawk for loading the mission to the particular area.
+     */
+    socket.on('positions', (data) => {
+        io.to('pi').emit('positions',JSON.parse(data).file+'.txt');
+    });
+
+    /**
+     * TO simulate the previous mission
+     */
+    socket.on('simulate',() => {
+        fs.readFile(datafile,(err,data) => {
+            if (err) {
+                console.log('error in simulate readfile ' +err);
+            }
+            let datas = data.toString();
+            let splittedData = datas.split('\n');
+            for (let i=0; i<splittedData.length-1; i++) {
+                setTimeoutObject.push(setTimeout(sendData, 300*(i+1), socket,splittedData[i]));
+            }
+        });
+    });
+
+    socket.on('cancelSimulate', ()=> {
+        clearTimeout(setTimeoutObject);
+    });
+
+    /**
+     * Socket errors
+     */
+    socket.on('error', (error) => {
+        console.log('Socket error : '+ JSON.stringify(error,undefined,2));
+    });
+
+    /**
      * to confirm the disconnected status with the client
      */
     socket.on('disconnect', () => {
@@ -224,7 +259,6 @@ io.on('connection', (socket) => {
                 /**
                  * data format needed to send to the client when pi disconnect
                  */
-
                 conn: 'False',
                 fix: 0,
                 numSat: 0,
@@ -268,18 +302,16 @@ io.on('connection', (socket) => {
                     _id: 0,
                     __v: 0
                 }).cursor().on('data', function (doc) {
-                    fileStream.write(doc.toString() + '\n');
+                    fileStream.write(JSON.stringify(doc)+ '\n');
                 }).on('end', function () {
                     fileStream.end();
                     // check if collection exists and then dropped
                     db_native.listCollections({
                         name: 'dronedatas'
-                    })
-                        .next(function (err, collinfo) {
+                    }).next(function (err, collinfo) {
                             if (collinfo) {
                                 // The collection exists
                                 DroneData.collection.drop();
-
                             }
                         });
                     console.log('********** the file has been written and db is dropped.');
@@ -289,3 +321,8 @@ io.on('connection', (socket) => {
     });
 
 });
+
+function sendData(socket,data) {
+    console.log(data);
+    socket.emit('simulateData',data);
+}
