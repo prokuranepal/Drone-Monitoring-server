@@ -226,8 +226,13 @@ io.on('connection', (socket) => {
         });
     });
 
+    /**
+     * To cancel the simulation
+     */
     socket.on('cancelSimulate', ()=> {
-        clearTimeout(setTimeoutObject);
+        for (let i= 0; i<setTimeoutObject.length-1; i++){
+            clearTimeout(setTimeoutObject[i]);
+        }
     });
 
     /**
