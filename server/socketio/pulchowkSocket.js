@@ -70,24 +70,24 @@ pulchowk.on('connection', (socket) => {
 
     socket.on('data', (data) => {
         pulchowk.to('android').to('website').emit('copter-data', {
-            lat: data.lat,
-            lng: data.lng,
-            altr: data.altr,
-            alt: data.alt,
-            numSat: data.numSat,
-            hdop: data.hdop,
-            fix: data.fix,
-            head: data.head,
-            gs: data.gs,
-            as: data.as,
-            mode: data.mode,
-            arm: data.arm,
-            ekf: data.ekf,
-            status: data.status,
-            lidar: data.lidar,
-            volt: data.volt,
-            est: data.est,
-            conn: data.conn
+            lat: data.lat || 0,
+            lng: data.lng || 0,
+            altr: data.altr || 0,
+            alt: data.alt || 0,
+            numSat: data.numSat || 0,
+            hdop: data.hdop || 0,
+            fix: data.fix || 0,
+            head: data.head || 0,
+            gs: data.gs || 0,
+            as: data.as || 0,
+            mode: data.mode || "UNKNOWN",
+            arm: data.arm || "FALSE",
+            ekf: data.ekf || "FALSE",
+            status: data.status || "UNKNOWN",
+            lidar: data.lidar || 0,
+            volt: data.volt || 0,
+            est: data.est || 0,
+            conn: data.conn || "FALSE"
         });
         lat1 = data.lat;
         lng1 = data.lng;

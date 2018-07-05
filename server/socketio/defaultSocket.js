@@ -88,24 +88,24 @@ io.on('connection', (socket) => {
      */
     socket.on('data', (data) => {
         let dataArranged = {
-            lat: data.lat,
-            lng: data.lng,
-            altr: data.altr,
-            alt: data.alt,
-            numSat: data.numSat,
-            hdop: data.hdop,
-            fix: data.fix,
-            head: data.head,
-            gs: data.gs,
-            as: data.as,
-            mode: data.mode,
-            arm: data.arm,
-            ekf: data.ekf,
-            status: data.status,
-            lidar: data.lidar,
-            volt: data.volt,
+            lat: data.lat || 0,
+            lng: data.lng || 0,
+            altr: data.altr || 0,
+            alt: data.alt || 0,
+            numSat: data.numSat || 0,
+            hdop: data.hdop || 0,
+            fix: data.fix || 0,
+            head: data.head || 0,
+            gs: data.gs || 0,
+            as: data.as || 0,
+            mode: data.mode || "UNKNOWN",
+            arm: data.arm || "FALSE",
+            ekf: data.ekf || "FALSE",
+            status: data.status || "UNKNOWN",
+            lidar: data.lidar || 0,
+            volt: data.volt || 0,
             est: data.est || 0,
-            conn: data.conn
+            conn: data.conn || "FALSE"
         };
         io.to('android').to('website').emit('copter-data',dataArranged);
         lat = data.lat;
@@ -159,6 +159,7 @@ io.on('connection', (socket) => {
      * the file called 'actualmissionfile'
      */
     socket.on('waypoints', (waypoints) => {
+        console.log(waypoints);
         if (deviceMission === "android") {
             io.to('android').emit('Mission',waypoints);
         } else if (deviceMission === "website") {
@@ -180,6 +181,7 @@ io.on('connection', (socket) => {
      * And the request is emitted to the pi socket
      */
     socket.on('getMission', (data) => {
+        console.log(data);
         deviceMission = JSON.parse(data).device;
         fs.rename(actualmissionfile, renamedmissionfile, (err) => {
             if (!err) {
