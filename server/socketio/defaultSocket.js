@@ -194,6 +194,26 @@ io.on('connection', (socket) => {
     /********************************************************************/
 
     /**
+     * This socket is listening to android socket which initiates the RTL
+     * flight mode in the copter.
+     * The command received from the android socket is emitted to the pi
+     * socket for initiating the RTL
+     */
+    socket.on('RTL', (rtl) => {
+        io.to('pi').emit('RTL',rtl);
+    });
+
+    /**
+     * This socket is listening to android socket which initiates the LAND
+     * flight mode in the copter.
+     * The command received from the android socket is emitted to the pi
+     * socket for initiating the LAND
+     */
+    socket.on('LAND', (land) => {
+        io.to('pi').emit('LAND',land);
+    });
+
+    /**
      * This socket is listening to android socket which initiates the auto
      * flight mode in the copter.
      * The command received from the android socket is emitted to the pi

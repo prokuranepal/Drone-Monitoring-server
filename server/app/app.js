@@ -132,6 +132,14 @@ app.get('/pulchowk', (req, res) => {
 /********************************************************************/
 
 /**
+ * to render the statusall.ejs in /stautsall
+ */
+app.get('/all', (req, res) => {
+    res.render('statusall', {href: "../dataPulchowk.txt"});
+});
+/********************************************************************/
+
+/**
  * for login in android
  */
 app.post('/android', (req, res) => {

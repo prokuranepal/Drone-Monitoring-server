@@ -12,7 +12,7 @@ function joinSocket(socket) {
  * @param data consists of all data sends by the server
  * @return returns the value of different variable need to be updated
  */
-function copterData(data) {
+function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
     let imageString,
         is_armed = String(data.arm).toUpperCase() || "FALSE",
         _lat = parseFloat(data.lat) || 0,
@@ -33,45 +33,48 @@ function copterData(data) {
         imageString = location.origin+ "/js/files/red.svg";
     }
 
-    if (is_armed == 'TRUE' && armedCheck == 'True') {
-        StartOfFlight = new Date().getTime();
-        armedCheck = 'False';
-    }
+    if (type = 0) {
+        if (is_armed == 'TRUE' && armedCheck == 'True') {
+            StartOfFlight = new Date().getTime();
+            armedCheck = 'False';
+        }
 
-    if (data.fix === 2){
-        Sfix = "2D FIX";
-    } else if (data.fix === 3){
-        Sfix = "3D FIX";
-    } else {
-        Sfix = "NO FIX";
-    }
+        if (data.fix === 2) {
+            Sfix = "2D FIX";
+        } else if (data.fix === 3) {
+            Sfix = "3D FIX";
+        } else {
+            Sfix = "NO FIX";
+        }
 
-    /**
-     * following document update the data in div of the html file
-     */
-    document.getElementById("mode-data").innerHTML = data.mode;
-    document.getElementById("arm-data").innerHTML = is_armed;
-    document.getElementById("ekf-data").innerHTML = String(data.ekf).toUpperCase();
-    document.getElementById("status-data").innerHTML = data.status;
-    document.getElementById("lidar-data").innerHTML = (parseFloat(data.lidar)).toFixed(2);
-    document.getElementById("volt-data").innerHTML = parseFloat(data.volt);
-    document.getElementById("gs-data").innerHTML = (parseFloat(data.gs)).toFixed(2);
-    document.getElementById("air-data").innerHTML = (parseFloat(data.as)).toFixed(2);
-    document.getElementById("altr-data").innerHTML = (parseFloat(data.altr)).toFixed(2);
-    document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)).toFixed(2);
-    document.getElementById("head-data").innerHTML = heading;
-    document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
-    document.getElementById("lng-data").innerHTML = _lng.toFixed(6);
-    document.getElementById("numSat-data").innerHTML = data.numSat;
-    document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop)/100);
-    document.getElementById("fix-data").innerHTML = Sfix;
-    document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
-    document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat,Home.lng,_lat,_lng).toFixed(2);
+        /**
+         * following document update the data in div of the html file
+         */
+        document.getElementById("mode-data").innerHTML = data.mode;
+        document.getElementById("arm-data").innerHTML = is_armed;
+        document.getElementById("ekf-data").innerHTML = String(data.ekf).toUpperCase();
+        document.getElementById("status-data").innerHTML = data.status;
+        document.getElementById("lidar-data").innerHTML = (parseFloat(data.lidar)).toFixed(2);
+        document.getElementById("volt-data").innerHTML = parseFloat(data.volt);
+        document.getElementById("gs-data").innerHTML = (parseFloat(data.gs)).toFixed(2);
+        document.getElementById("air-data").innerHTML = (parseFloat(data.as)).toFixed(2);
+        document.getElementById("altr-data").innerHTML = (parseFloat(data.altr)).toFixed(2);
+        document.getElementById("altitude-data").innerHTML = (parseFloat(data.alt)).toFixed(2);
+        document.getElementById("head-data").innerHTML = heading;
+        document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
+        document.getElementById("lng-data").innerHTML = _lng.toFixed(6);
+        document.getElementById("numSat-data").innerHTML = data.numSat;
+        document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop) / 100);
+        document.getElementById("fix-data").innerHTML = Sfix;
+        document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
+        document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat, Home.lng, _lat, _lng).toFixed(2);
 
-    if (is_armed == 'TRUE') {
-        document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime()-StartOfFlight);
-    } else {
-        armedCheck = 'True';
+        if (is_armed == 'TRUE') {
+            document.getElementById("TOF-data").innerHTML = timeConversion(new Date().getTime() - StartOfFlight);
+        } else {
+            armedCheck = 'True';
+        }
+
     }
 
     if (flag1= 'True') {
@@ -96,24 +99,36 @@ function copterData(data) {
             url: imageString
         });
 
-        $('img[src= "'+imageString+'"]').css({
+        $('img[src= "' + imageString + '"]').css({
             'transform': 'rotate(' + heading + 'deg)'
         });
-
-        if(!map.getBounds().contains(marker.getPosition())) {
-            map.panTo(myLatLng);
+        if (type === 0) {
+            if (!map.getBounds().contains(marker.getPosition())) {
+                map.panTo(myLatLng);
+            }
         }
     }
 
-    return {
-        StartOfFlight : StartOfFlight,
-        prev_lng: prev_lng,
-        prev_lat:prev_lat,
-        armedCheck: armedCheck,
-        flag1: flag1,
-        map : map,
-        marker : marker
-    };
+    if (type === 0 ) {
+        return {
+            StartOfFlight: StartOfFlight,
+            prev_lng: prev_lng,
+            prev_lat: prev_lat,
+            armedCheck: armedCheck,
+            flag1: flag1,
+            map: map,
+            marker: marker
+        };
+    } else {
+        return {
+            prev_lng: prev_lng,
+            prev_lat: prev_lat,
+            armedCheck: armedCheck,
+            flag1: flag1,
+            map: map,
+            marker: marker
+        };
+    }
 }
 
 /**
@@ -313,23 +328,35 @@ function readMission(socket) {
  * @param marker it is the marker variable that holds the marker information
  * @return map,marker it returns the map and marker data
  */
-function initialMap(Home,map,marker) {
+function initialMap(Home,map,marker,type) {
     while(Home.lat == null);
     let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: pos,
-        mapTypeId: 'hybrid',
-        disableDefaultUI: true,
-        zoomControl: true,
-        disableDoubleClickZoom: true,
-        fullscreenControl : false,
-        maxZoom:20,
-        minZoom: 10,
-        rotateControl: false,
-        scaleControl: false
-    });
-    map.setTilt(45);
+    if (type === 1) {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: pos,
+            mapTypeId: 'hybrid',
+            disableDefaultUI: true,
+            zoomControl: true,
+            disableDoubleClickZoom: true,
+            fullscreenControl : false,
+            maxZoom:20,
+            minZoom: 5,
+            rotateControl: false,
+            scaleControl: false
+        });
+        map.setTilt(45);
+        marker = new google.maps.Marker ({
+            position: pos,
+            icon: {
+                url: location.origin+ "/js/files/red.svg",
+                scale: 6,
+                rotation: 0
+            },
+            map: map
+        });
+        return {map : map,marker: marker};
+    }
     marker = new google.maps.Marker ({
         position: pos,
         icon: {
@@ -339,5 +366,5 @@ function initialMap(Home,map,marker) {
         },
         map: map
     });
-    return {map : map,marker: marker};
+    return {marker: marker};
 }
