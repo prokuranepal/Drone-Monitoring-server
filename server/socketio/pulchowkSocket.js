@@ -142,6 +142,14 @@ pulchowk.on('connection', (socket) => {
         pulchowk.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
 
+    socket.on('RTL', (rtl) => {
+        pulchowk.to('pi').emit('RTL',rtl);
+    });
+
+    socket.on('LAND', (land) => {
+        pulchowk.to('pi').emit('LAND',land);
+    });
+
     socket.on('fly', (msg) => {
         pulchowk.to('pi').emit('initiate_flight', msg);
     });

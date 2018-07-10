@@ -143,6 +143,14 @@ nangi.on('connection', (socket) => {
         nangi.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
 
+    socket.on('RTL', (rtl) => {
+        nangi.to('pi').emit('RTL',rtl);
+    });
+
+    socket.on('LAND', (land) => {
+        nangi.to('pi').emit('LAND',land);
+    });
+
     socket.on('fly', (msg) => {
         nangi.to('pi').emit('initiate_flight', msg);
     });
