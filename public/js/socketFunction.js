@@ -33,7 +33,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         imageString = location.origin+ "/js/files/red.svg";
     }
 
-    if (type = 0) {
+    if (type === 0) {
         if (is_armed == 'TRUE' && armedCheck == 'True') {
             StartOfFlight = new Date().getTime();
             armedCheck = 'False';
