@@ -64,7 +64,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
         document.getElementById("lng-data").innerHTML = _lng.toFixed(6);
         document.getElementById("numSat-data").innerHTML = data.numSat;
-        document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop) / 100);
+        document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop));
         document.getElementById("fix-data").innerHTML = Sfix;
         document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
         document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat, Home.lng, _lat, _lng).toFixed(2);
