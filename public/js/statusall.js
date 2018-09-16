@@ -109,6 +109,7 @@ socket3.on('homePosition', function (homeLocation) {
  * Socket to display the error message for 3 second in the
  * base to the website
  */
+/*
 socket1.on('error', function (msg)  {
     snackBar(msg);
 });
@@ -120,11 +121,12 @@ socket2.on('error', function (msg)  {
 socket3.on('error', function (msg)  {
     snackBar(msg);
 });
+*/
 
 /**
  * to read mission from the companion computer
  */
-socket1.on('Mission',function (waypoints) {
+/*socket1.on('Mission',function (waypoints) {
     Home1 = missionWaypoints(waypoints);
 });
 
@@ -134,7 +136,7 @@ socket2.on('Mission',function (waypoints) {
 
 socket3.on('Mission',function (waypoints) {
     Home3 = missionWaypoints(waypoints);
-});
+});*/
 
 /**
  * initmap update the map with the initial map google map.
@@ -155,11 +157,11 @@ function initmap() {
 /**
  * read mission from the pi
  */
-function ReadMission() {
+/*function ReadMission() {
     readMission(socket1);
     readMission(socket2);
     readMission(socket3);
-}
+}*/
 
 /**
  * to check disconnect status

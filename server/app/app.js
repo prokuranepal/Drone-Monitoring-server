@@ -13,6 +13,7 @@ const http = require('http');
  * setting up express app
  */
 const app = express();
+
 /**
  * import user model and mongoose
  */
@@ -90,7 +91,7 @@ app.post('/', (req, res) => {
         noOfUsers:1
     }).then((user) => {
         console.log(user);
-        if ((user.length != 0) && (user.password === req.body.password) && (user.location === req.body.location)) {
+        if ((user.length !== 0) && (user.password === req.body.password) && (user.location === req.body.location)) {
             user.noOfUsers=1;
             user.save((err) => {
                 if (err) {
@@ -135,7 +136,7 @@ app.get('/pulchowk', (req, res) => {
  * to render the statusall.ejs in /stautsall
  */
 app.get('/all', (req, res) => {
-    res.render('statusall', {href: "../dataPulchowk.txt"});
+    res.render('statusall');
 });
 /********************************************************************/
 
@@ -151,7 +152,7 @@ app.post('/android', (req, res) => {
         password: 1,
         noOfUsers:1
     }).then((user) => {
-        if ((user.length != 0) && (user.password === req.body.password)) {
+        if ((user.length !== 0) && (user.password === req.body.password)) {
             if (user.noOfUsers === 0) {
                 user.noOfUsers=1;
                 user.save((err) => {

@@ -23,7 +23,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
     /**
      * the red and green gps pointer is defined according to the connection status.
      */
-    if (data.conn != undefined) {
+    if (data.conn !== undefined) {
         if ((data.conn).toUpperCase() === 'TRUE'){
             imageString = location.origin+ "/js/files/green.svg";
         } else {
@@ -34,7 +34,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
     }
 
     if (type === 0) {
-        if (is_armed == 'TRUE' && armedCheck == 'True') {
+        if (is_armed === 'TRUE' && armedCheck === 'TRUE') {
             StartOfFlight = new Date().getTime();
             armedCheck = 'False';
         }
@@ -249,6 +249,11 @@ function addLine(flightPathCoordinates,color) {
     });
     flightPath.setMap(map);
     flightArray.push(flightPath);
+    if (flightArray.length > 20) {
+        for(let i = 0; i < 3 ; i++) {
+            flightArray[i].setMap(null);
+        }
+    }
 }
 
 /**
