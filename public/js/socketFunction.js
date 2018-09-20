@@ -85,9 +85,12 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         addLine(pos,'#FFFF00');
     }
 
-    flag1 = 'True';
-    prev_lat = _lat;
-    prev_lng = _lng;
+    if (is_armed === 'TRUE') {
+        flag1 = 'True';
+        prev_lat = _lat;
+        prev_lng = _lng;
+    }
+
 
     /**
      * marker is updated with the new gps position and other other parameters.
