@@ -133,10 +133,26 @@ app.get('/pulchowk', (req, res) => {
 /********************************************************************/
 
 /**
+ * to render the status.ejs in /status
+ */
+app.get('/dharan', (req, res) => {
+    res.render('status', {href: "../dataDharan.txt"});
+});
+/********************************************************************/
+
+/**
+ * to render the status.ejs in /status
+ */
+app.get('/dhangadi', (req, res) => {
+    res.render('status', {href: "../dataDhangadi.txt"});
+});
+/********************************************************************/
+
+/**
  * to render the statusall.ejs in /stautsall
  */
 app.get('/all', (req, res) => {
-    res.render('statusall', {href: "../dataPulchowk.txt"});
+    res.render('statusall');
 });
 /********************************************************************/
 

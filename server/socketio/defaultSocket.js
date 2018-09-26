@@ -24,7 +24,9 @@ let Android = [],
     lat,
     lng,
     deviceMission,
-    setTimeoutObject= [];
+    setTimeoutObject= [],
+    droneOnlineStatus= setTimeout(() => {},1000);
+
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -87,6 +89,9 @@ io.on('connection', (socket) => {
      * Also the data is store in the mongodb database
      */
     socket.on('data', (data) => {
+
+        clearTimeout(droneOnlineStatus);
+
         let dataArranged = {
             lat: data.lat || 0,
             lng: data.lng || 0,
@@ -116,6 +121,71 @@ io.on('connection', (socket) => {
         }, (e) => {
             console.log('data cannot be saved :' + e );
         });
+
+        droneOnlineStatus  = setTimeout(() => {
+            io.to('website').emit('copter-data', {
+                /**
+                 * data format needed to send to the client when pi disconnect
+                 */
+                conn: 'False',
+                fix: 0,
+                numSat: 0,
+                hdop: 10000,
+                arm: 'False',
+                head: 0,
+                ekf: 'False',
+                mode: 'UNKNOWN',
+                status: 'UNKNOWN',
+                volt: 0,
+                gs: 0,
+                as: 0,
+                altr: 0,
+                alt: 0,
+                est: 0,
+                lidar: 0,
+                lat: lat,
+                lng: lng
+            });
+            console.log(`${socket.id} (Pi) disconnected`);
+
+            /*// backup({
+            //   uri: process.env.MONGODB_URI,
+            //   root: './',
+            //   collection: ['dronedats'],
+            //   parser: 'json'
+            // });
+            // the above method saves all fields and also saves each document to separate json file
+
+            // find method doesn't return the fields mentioned
+            // in second bracket called projections
+            // the fields whose value are 0 are not included*/
+
+            let fileStream = fs.createWriteStream(datafile);
+            // access the mongodb native driver and its functions
+            let db_native = mongoose.connection.db;
+            fileStream.once('open', (no_need) => {
+                DroneData.find({}, {
+                    tokens: 0,
+                    __id: 0,
+                    _id: 0,
+                    __v: 0
+                }).cursor().on('data', function (doc) {
+                    fileStream.write(JSON.stringify(doc)+ '\n');
+                }).on('end', function () {
+                    fileStream.end();
+                    // check if collection exists and then dropped
+                    db_native.listCollections({
+                        name: 'dronedatas'
+                    }).next(function (err, collinfo) {
+                        if (collinfo) {
+                            // The collection exists
+                            DroneData.collection.drop();
+                        }
+                    });
+                    console.log('********** the file has been written and db is dropped.');
+                });
+            });
+        },6000);
     });
     /********************************************************************/
 

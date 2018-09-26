@@ -23,6 +23,8 @@ const port = process.env.PORT || 8081;
 require('./socketio/defaultSocket');
 require('./socketio/pulchowkSocket');
 require('./socketio/nangiSocket');
+require('./socketio/dharanSocket');
+require('./socketio/dhangadiSocket');
 /********************************************************************/
 
 /**

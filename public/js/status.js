@@ -1,5 +1,5 @@
 let map,
-    marker = "undefined",
+    markerx = "undefined",
     StartOfFlight,
     prev_lat,
     prev_lng,
@@ -32,14 +32,14 @@ socket.on('connect', function () {
  */
 socket.on('copter-data', function (data) {
 
-    let copterdata = copterData(data,0,armedCheck,prev_lat,prev_lng,flag1,marker);
+    let copterdata = copterData(data,0,armedCheck,prev_lat,prev_lng,flag1,markerx);
     StartOfFlight = copterdata.StartOfFlight;
     prev_lat = copterdata.prev_lat;
     prev_lng = copterdata.prev_lng;
     armedCheck = copterdata.armedCheck;
     flag1 = copterdata.flag1;
-    map = copterdata.map;
-    marker = copterdata.marker;
+    markerx = copterdata.marker;
+    this.map = copterdata.map;
 });
 
 /**
@@ -68,9 +68,9 @@ socket.on('Mission',function (waypoints) {
  * initmap update the map with the initial map google map.
  */
 function initmap() {
-   let data = initialMap(Home,map,marker,1);
+   let data = initialMap(Home,map,markerx,1);
    map = data.map;
-   marker = data.marker;
+   markerx = data.marker;
 }
 
 /**

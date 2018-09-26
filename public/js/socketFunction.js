@@ -2,9 +2,9 @@
  * connect to the sever using socket
  * @param socket
  */
-function joinSocket(socket) {
+function joinSocket(socketx) {
     console.log('connected succesfully with the server.');
-    socket.emit('joinWebsite');
+    socketx.emit('joinWebsite');
 }
 
 /**
@@ -85,11 +85,11 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         addLine(pos,'#FFFF00');
     }
 
-    if (is_armed === 'TRUE') {
+  //  if (is_armed === 'TRUE') {
         flag1 = 'True';
         prev_lat = _lat;
         prev_lng = _lng;
-    }
+   //  }
 
 
     /**
@@ -99,15 +99,22 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         let myLatLng = {lat: _lat, lng: _lng};
         marker.setPosition(myLatLng);
         marker.setIcon({
-            url: imageString
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            fillColor: "#00FF00",
+            fillOpacity: 10,
+            strokeColor: "#00FF00",
+            rotation: heading,
+            scale:6
         });
 
-        $('img[src= "' + imageString + '"]').css({
+
+        /*$('img[src= "' + imageString + '"]').css({
             'transform': 'rotate(' + heading + 'deg)'
-        });
+        });*/
+
         if (type === 0) {
             if (!map.getBounds().contains(marker.getPosition())) {
-                map.panTo(myLatLng);
+               map.panTo(myLatLng);
             }
         }
     }
@@ -325,8 +332,8 @@ function ClearMission() {
 /**
  * to read from the pixhawk
  */
-function readMission(socket) {
-    socket.emit('getMission',"{\"mission\": \"1\",\"device\": \"website\"}");
+function readMission(socketx) {
+    socketx.emit('getMission',"{\"mission\": \"1\",\"device\": \"website\"}");
 }
 
 /**
@@ -341,7 +348,7 @@ function initialMap(Home,map,marker,type) {
     let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
     if (type === 1) {
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 16,
+            zoom: 10,
             center: pos,
             mapTypeId: 'hybrid',
             disableDefaultUI: true,
@@ -351,28 +358,39 @@ function initialMap(Home,map,marker,type) {
             maxZoom:20,
             minZoom: 5,
             rotateControl: false,
-            scaleControl: false
+            scaleControl: false,
+            streetViewControl:false
         });
         map.setTilt(45);
-        marker = new google.maps.Marker ({
-            position: pos,
-            icon: {
-                url: location.origin+ "/js/files/red.svg",
-                scale: 6,
-                rotation: 0
-            },
-            map: map
-        });
-        return {map : map,marker: marker};
     }
     marker = new google.maps.Marker ({
         position: pos,
         icon: {
-            url: location.origin+ "/js/files/red.svg",
-            scale: 6,
-            rotation: 0
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            fillColor: "#FF0000",
+            fillOpacity: 10,
+            strokeColor: "#FF0000",
+            rotation: 0,
+            scale: 6
         },
         map: map
     });
-    return {marker: marker};
+    return {map: map,marker: marker};
+}
+
+function createMarker(Home,marker,map) {
+    let pos = {lat:parseFloat(Home.lat), lng:parseFloat(Home.lng)};
+    marker = new google.maps.Marker ({
+        position: pos,
+        icon: {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            fillColor: "#FF0000",
+            fillOpacity: 10,
+            strokeColor: "#FF0000",
+            rotation: 0,
+            scale: 6
+        },
+        optimized: false,
+        map: map
+    });
 }
