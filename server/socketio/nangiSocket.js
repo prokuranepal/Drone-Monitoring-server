@@ -23,7 +23,8 @@ let lat2,
     Pi2 = [],
     Website2 = [],
     Android2 = [],
-    deviceMission2;
+    deviceMission2,
+    droneOnlineStatus2= setTimeout(() => {},1000);
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -69,6 +70,9 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('data', (data) => {
+
+        clearTimeout(droneOnlineStatus2);
+
         nangi.to('android').to('website').emit('copter-data', {
             lat: data.lat || 0,
             lng: data.lng || 0,
@@ -97,6 +101,60 @@ nangi.on('connection', (socket) => {
         }, (e) => {
             console.log('data cannot be saved. : ' + e);
         });
+
+        droneOnlineStatus2 = setTimeout(() => {
+            nangi.to('website').emit('copter-data', {
+                /**
+                 * data format needed to send to the client when pi disconnect
+                 */
+                conn: 'False',
+                fix: 0,
+                numSat: 0,
+                hdop: 10000,
+                arm: 'False',
+                head: 0,
+                ekf: 'False',
+                mode: 'UNKNOWN',
+                status: 'UNKNOWN',
+                volt: 0,
+                gs: 0,
+                as: 0,
+                altr: 0,
+                alt: 0,
+                est: 0,
+                lidar: 0,
+                lat: lat2,
+                lng: lng2
+            });
+            console.log(`${socket.id} (Pi Nangi) disconnected`);
+
+            let fileStream = fs.createWriteStream(datafile);
+            // access the mongodb native driver and its functions
+            let db_native = mongoose.connection.db;
+            fileStream.once('open', (no_need) => {
+                NangiDroneData.find({}, {
+                    tokens: 0,
+                    __id: 0,
+                    _id: 0,
+                    __v: 0
+                }).cursor().on('data', function (doc) {
+                    fileStream.write(doc.toString() + '\n');
+                }).on('end', function () {
+                    fileStream.end();
+                    // check if collection exists and then dropped
+                    db_native.listCollections({
+                        name: 'nangidronedatas'
+                    })
+                        .next(function (err, collinfo) {
+                            if (collinfo) {
+                                // The collection exists
+                                NangiDroneData.collection.drop();
+                            }
+                        });
+                    console.log('********** the file has been written and db is dropped.');
+                });
+            });
+        } , 6000);
     });
 
     socket.on('homePosition', (homeLocation) => {
@@ -153,6 +211,10 @@ nangi.on('connection', (socket) => {
 
     socket.on('fly', (msg) => {
         nangi.to('pi').emit('initiate_flight', msg);
+    });
+
+    socket.on('error', (error) => {
+        console.log('Socket error in nangi: '+ JSON.stringify(error,undefined,2));
     });
 
     socket.on('disconnect', () => {

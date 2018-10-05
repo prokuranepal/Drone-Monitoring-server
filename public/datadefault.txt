@@ -1,4 +1,0 @@
-{"lat":0,"lng":0,"altr":0,"alt":0,"numSat":0,"hdop":0,"fix":0,"head":0,"gs":0,"as":0,"mode":"UNKNOWN","arm":"FALSE","ekf":"FALSE","status":"UNKNOWN","lidar":0,"volt":0,"est":0,"conn":"FALSE"}
-{"lat":0,"lng":0,"altr":0,"alt":0,"numSat":0,"hdop":0,"fix":0,"head":0,"gs":0,"as":0,"mode":"UNKNOWN","arm":"FALSE","ekf":"FALSE","status":"UNKNOWN","lidar":0,"volt":0,"est":0,"conn":"FALSE"}
-{"lat":0,"lng":0,"altr":0,"alt":0,"numSat":0,"hdop":0,"fix":0,"head":0,"gs":0,"as":0,"mode":"UNKNOWN","arm":"FALSE","ekf":"FALSE","status":"UNKNOWN","lidar":0,"volt":0,"est":0,"conn":"FALSE"}
-{"lat":0,"lng":0,"altr":0,"alt":0,"numSat":0,"hdop":0,"fix":0,"head":0,"gs":0,"as":0,"mode":"UNKNOWN","arm":"FALSE","ekf":"FALSE","status":"UNKNOWN","lidar":0,"volt":0,"est":0,"conn":"FALSE"}
