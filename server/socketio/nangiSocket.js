@@ -215,6 +215,7 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('positions', (data) => {
+        console.log((JSON.parse(data).file));
         nangi.to('pi').emit('positions',JSON.parse(data).file+'.txt');
     });
 

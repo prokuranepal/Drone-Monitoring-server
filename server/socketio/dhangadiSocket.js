@@ -215,6 +215,7 @@ dhangadi.on('connection', (socket) => {
     });
 
     socket.on('positions',(data) => {
+        console.log((JSON.parse(data).file));
         dhangadi.to('pi').emit('positions',JSON.parse(data).file+'.txt');
     });
 

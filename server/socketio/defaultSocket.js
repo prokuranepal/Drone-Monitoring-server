@@ -299,6 +299,7 @@ io.on('connection', (socket) => {
      * pixhawk for loading the mission to the particular area.
      */
     socket.on('positions', (data) => {
+        console.log((JSON.parse(data).file));
         io.to('pi').emit('positions',JSON.parse(data).file+'.txt');
     });
 

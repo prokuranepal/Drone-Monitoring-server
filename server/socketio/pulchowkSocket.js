@@ -214,6 +214,7 @@ pulchowk.on('connection', (socket) => {
     });
 
     socket.on('positions',(data) => {
+        console.log(JSON.parse(data).file);
         pulchowk.to('pi').emit('positions',JSON.parse(data).file+'.txt');
     });
 
