@@ -123,7 +123,7 @@ UserSchema.statics.findByCredentialsAndroid = function (username,password) {
             }
 
             return new Promise((resolve,reject) => {
-                bcrypt.compare(password, user[0].password, (err, res) => {
+                bcrypt.compare(password, user.password, (err, res) => {
                     if(res) {
                         resolve();
                     } else {

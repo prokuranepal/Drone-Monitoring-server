@@ -169,8 +169,8 @@ app.post('/android', (req, res) => {
             return res.send('OK');
         })
         .catch((e) => {
-            console.log(`username or password incorrect`);
-            return res.send('login failed');;
+            console.log(`username or password incorrect ${e}`);
+            return res.send('login failed');
         });
 });
 /********************************************************************/
