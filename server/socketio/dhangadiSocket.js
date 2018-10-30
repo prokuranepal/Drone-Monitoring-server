@@ -24,6 +24,7 @@ let lat4,
     Website4 = [],
     Android4 = [],
     deviceMission4,
+    setTimeoutObject4=[],
     droneOnlineStatus4 = setTimeout(() => {},1000);
 
 /**
@@ -41,7 +42,7 @@ const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missio
 /********************************************************************/
 
 /**
- * Nangi namespace
+ * Dhangadi namespace
  */
 const dhangadi = io.of('/dhangadi');
 
@@ -213,6 +214,29 @@ dhangadi.on('connection', (socket) => {
         dhangadi.to('pi').emit('initiate_flight', msg);
     });
 
+    socket.on('positions',(data) => {
+        dhangadi.to('pi').emit('positions',JSON.parse(data).file+'.txt');
+    });
+
+    socket.on('simulate',() => {
+        fs.readFile(datafile,(err,data) => {
+            if(err) {
+                console.log('error in simulate readfile' +err);
+            }
+            let datas = data.toString();
+            let splittedData = datas.split('\n');
+            for (let i = 0; i<splittedData.length-1; i++) {
+                setTimeoutObject4.push(setTimeout(sendData4,300*(i+1),dhangadi,splittedData[i]));
+            }
+        })
+    });
+
+    socket.on('cancelSimulate',() => {
+        for (let i= 0; i<setTimeoutObject4.length-1; i++){
+            clearTimeout(setTimeoutObject4[i]);
+        }
+    });
+
     socket.on('error', (error) => {
         console.log('Socket error in dhangadi: '+ JSON.stringify(error,undefined,2));
     });
@@ -287,3 +311,8 @@ dhangadi.on('connection', (socket) => {
     });
 
 });
+
+function sendData4(socket,data) {
+    console.log(data);
+    socket.emit('simulateData',data);
+}

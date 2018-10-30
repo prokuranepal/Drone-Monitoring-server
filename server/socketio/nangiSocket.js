@@ -24,6 +24,7 @@ let lat2,
     Website2 = [],
     Android2 = [],
     deviceMission2,
+    setTimeoutObject2= [],
     droneOnlineStatus2= setTimeout(() => {},1000);
 
 /**
@@ -213,6 +214,29 @@ nangi.on('connection', (socket) => {
         nangi.to('pi').emit('initiate_flight', msg);
     });
 
+    socket.on('positions', (data) => {
+        nangi.to('pi').emit('positions',JSON.parse(data).file+'.txt');
+    });
+
+    socket.on('simulate',() => {
+        fs.readFile(datafile,(err,data) => {
+            if(err) {
+                console.log('error in simulate readfile' +err);
+            }
+            let datas = data.toString();
+            let splittedData = datas.split('\n');
+            for (let i = 0; i<splittedData.length-1; i++) {
+                setTimeoutObject2.push(setTimeout(sendData2,300*(i+1),nangi,splittedData[i]));
+            }
+        })
+    });
+
+    socket.on('cancelSimulate', () => {
+        for (let i= 0; i<setTimeoutObject2.length-1; i++){
+            clearTimeout(setTimeoutObject2[i]);
+        }
+    });
+
     socket.on('error', (error) => {
         console.log('Socket error in nangi: '+ JSON.stringify(error,undefined,2));
     });
@@ -287,3 +311,8 @@ nangi.on('connection', (socket) => {
     });
 
 });
+
+function sendData2(socket,data) {
+    console.log(data);
+    socket.emit('simulateData',data);
+}

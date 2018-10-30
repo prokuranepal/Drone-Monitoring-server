@@ -24,6 +24,7 @@ let lat3,
     Website3 = [],
     Android3 = [],
     deviceMission3,
+    setTimeoutObject3=[],
     droneOnlineStatus3= setTimeout(() => {},1000);
 
 /**
@@ -213,6 +214,29 @@ dharan.on('connection', (socket) => {
         dharan.to('pi').emit('initiate_flight', msg);
     });
 
+    socket.on('positions', (data) => {
+        dharan.to('pi').emit('positions',JSON.parse(data).file+'.txt');
+    });
+
+    socket.on('simulate',() => {
+        fs.readFile(datafile,(err,data) => {
+            if(err) {
+                console.log('error in simulate readfile' +err);
+            }
+            let datas = data.toString();
+            let splittedData = datas.split('\n');
+            for (let i = 0; i<splittedData.length-1; i++) {
+                setTimeoutObject3.push(setTimeout(sendData3,300*(i+1),dharan,splittedData[i]));
+            }
+        })
+    });
+
+    socket.on('cancelSimulate', () => {
+        for (let i= 0; i<setTimeoutObject3.length-1; i++){
+            clearTimeout(setTimeoutObject3[i]);
+        }
+    });
+
     socket.on('error', (error) => {
         console.log('Socket error in dharan: '+ JSON.stringify(error,undefined,2));
     });
@@ -287,3 +311,8 @@ dharan.on('connection', (socket) => {
     });
 
 });
+
+function sendData3(socket,data) {
+    console.log(data);
+    socket.emit('simulateData',data);
+}

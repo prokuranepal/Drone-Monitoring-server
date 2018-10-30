@@ -24,6 +24,7 @@ let lat1,
     Website1 = [],
     Android1 = [],
     deviceMission1,
+    setTimeoutObject1=[],
     droneOnlineStatus1= setTimeout(() => {},1000);
 
 /**
@@ -212,6 +213,29 @@ pulchowk.on('connection', (socket) => {
         pulchowk.to('pi').emit('initiate_flight', msg);
     });
 
+    socket.on('positions',(data) => {
+        pulchowk.to('pi').emit('positions',JSON.parse(data).file+'.txt');
+    });
+
+    socket.on('simulate',() => {
+        fs.readFile(datafile,(err,data) => {
+            if(err) {
+                console.log('error in simulate readfile' +err);
+            }
+            let datas = data.toString();
+            let splittedData = datas.split('\n');
+            for (let i = 0; i<splittedData.length-1; i++) {
+                setTimeoutObject1.push(setTimeout(sendData1,300*(i+1),pulchowk,splittedData[i]));
+            }
+        })
+    });
+
+    socket.on('cancelSimulate',() => {
+        for (let i= 0; i<setTimeoutObject1.length-1; i++){
+            clearTimeout(setTimeoutObject1[i]);
+        }
+    });
+
     socket.on('error', (error) => {
         console.log('Socket error in pulchowk: '+ JSON.stringify(error,undefined,2));
     });
@@ -286,3 +310,8 @@ pulchowk.on('connection', (socket) => {
     });
 
 });
+
+function sendData1(socket,data) {
+    console.log(data);
+    socket.emit('simulateData',data);
+}

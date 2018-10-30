@@ -4,6 +4,11 @@
 const express = require('express');
 
 /**
+ * importing lodash
+ */
+const _ = require('lodash');
+
+/**
  * it is used so that both socketIO and express can run simultaneously
  * it is available in core library.
  */
@@ -18,6 +23,11 @@ const app = express();
  * import user model and mongoose
  */
 let {User} = require('../models/user');
+
+/**
+ * requiring the authenticate middleware
+ */
+let {authenticate} = require('../auth/authenticate');
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -82,36 +92,27 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    User.findOne({
-        username: req.body.username
-    }, {
-        _id: 1,
-        password: 1,
-        location:1,
-        noOfUsers:1
-    }).then((user) => {
-        console.log(user);
-        if ((user.length !== 0) && (user.password === req.body.password) && (user.location === req.body.location)) {
-            user.noOfUsers=1;
-            user.save((err) => {
-                if (err) {
-                    return console.log("error in updating the number of users : " + err);
-                }
-                console.log("user successfully updated");
+    let body = _.pick(req.body,['username','password','location']);
+
+    User.findByCredentialsWebsite(body.username,body.password,body.location)
+        .then((user) => {
+            return user.generateAuthToken().then((token) => {
+                console.log(`login successful`);
+                return  res.header('x-auth',token).status(200).redirect('/'+body.location);
             });
-            return res.status(200).redirect('/'+req.body.location);
-        } else {
-            console.log(`username or password incorrect`);
+        })
+        .catch((e) => {
+            console.log(`username or password incorrect ${e}`);
             return res.status(404).redirect('/');
-        }
-    });
+        });
 });
 /********************************************************************/
 
 /**
  * to render the status.ejs in /status
  */
-app.get('/default', (req, res) => {
+app.get('/default',(req, res) => {
+    //console.log(req)
     res.render('status',{href:"../datadefault.txt"});
 });
 /********************************************************************/
@@ -127,7 +128,7 @@ app.get('/nangi', (req, res) => {
 /**
  * to render the status.ejs in /status
  */
-app.get('/pulchowk', (req, res) => {
+app.get('/pulchowk',(req, res) => {
     res.render('status', {href: "../dataPulchowk.txt"});
 });
 /********************************************************************/
@@ -135,7 +136,7 @@ app.get('/pulchowk', (req, res) => {
 /**
  * to render the status.ejs in /status
  */
-app.get('/dharan', (req, res) => {
+app.get('/dharan',(req, res) => {
     res.render('status', {href: "../dataDharan.txt"});
 });
 /********************************************************************/
@@ -143,7 +144,7 @@ app.get('/dharan', (req, res) => {
 /**
  * to render the status.ejs in /status
  */
-app.get('/dhangadi', (req, res) => {
+app.get('/dhangadi',(req, res) => {
     res.render('status', {href: "../dataDhangadi.txt"});
 });
 /********************************************************************/
@@ -151,7 +152,7 @@ app.get('/dhangadi', (req, res) => {
 /**
  * to render the statusall.ejs in /stautsall
  */
-app.get('/all', (req, res) => {
+app.get('/all',(req, res) => {
     res.render('statusall');
 });
 /********************************************************************/
@@ -160,30 +161,46 @@ app.get('/all', (req, res) => {
  * for login in android
  */
 app.post('/android', (req, res) => {
-    console.log(req.body);
-    User.findOne({
-        username: req.body.username
-    }, {
-        _id: 1,
-        password: 1,
-        noOfUsers:1
-    }).then((user) => {
-        if ((user.length !== 0) && (user.password === req.body.password)) {
-            if (user.noOfUsers === 0) {
-                user.noOfUsers=1;
-                user.save((err) => {
-                    if (err) {
-                        return console.log("error in updating the number of users");
-                    }
-                    console.log("user successfully updated");
-                });
-                global.deviceNames = req.body.deviceName;
-            }
+
+    let body = _.pick(req.body,['username','password']);
+
+    User.findByCredentialsAndroid(body.username,body.password)
+        .then((user) => {
             return res.send('OK');
-        } else {
+        })
+        .catch((e) => {
             console.log(`username or password incorrect`);
-            return res.send('login failed');
-        }
+            return res.send('login failed');;
+        });
+});
+/********************************************************************/
+
+/**
+ * for creating user
+ */
+app.post('/login',(req,res) => {
+    let body = _.pick(req.body,['username','password','location']);
+    let user = new User(body);
+
+    user.save().then((user) => {
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth',token).send(user);
+    }).catch((err) => {
+        res.status(400).send(err);
+    })
+});
+/********************************************************************/
+
+/**
+ * to delete the token
+ * only done using postman
+ */
+app.delete('/token',(req,res) => {
+    req.user.removeToken(req.token).then(() => {
+        res.status(200).send();
+    }, () => {
+        res.status(400).send();
     });
 });
 /********************************************************************/
