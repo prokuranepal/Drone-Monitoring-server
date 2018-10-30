@@ -23,7 +23,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
     /**
      * the red and green gps pointer is defined according to the connection status.
      */
-    if (data.conn !== undefined) {
+    /*if (data.conn !== undefined) {
         if ((data.conn).toUpperCase() === 'TRUE'){
             imageString = location.origin+ "/js/files/green.svg";
         } else {
@@ -31,7 +31,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         }
     } else {
         imageString = location.origin+ "/js/files/red.svg";
-    }
+    }*/
 
     if (type === 0) {
         if (is_armed === 'TRUE' && armedCheck === 'TRUE') {
@@ -98,15 +98,25 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
     if(marker !== "undefined") {
         let myLatLng = {lat: _lat, lng: _lng};
         marker.setPosition(myLatLng);
-        marker.setIcon({
-            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            fillColor: "#00FF00",
-            fillOpacity: 10,
-            strokeColor: "#00FF00",
-            rotation: heading,
-            scale:6
-        });
-
+        if((data.conn).toUpperCase() === 'TRUE'){
+            marker.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                fillColor: "#00FF00",
+                fillOpacity: 10,
+                strokeColor: "#00FF00",
+                rotation: heading,
+                scale:6
+            });
+        } else {
+            marker.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                fillColor: "#ff0000",
+                fillOpacity: 10,
+                strokeColor: "#FF0000",
+                rotation: heading,
+                scale:6
+            });
+        }
 
         /*$('img[src= "' + imageString + '"]').css({
             'transform': 'rotate(' + heading + 'deg)'
