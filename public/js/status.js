@@ -80,6 +80,15 @@ function ReadMission() {
     readMission(socket);
 }
 
+function validates() {
+    let xht = new XMLHttpRequest();
+    xht.open("GET","/default",false);
+    console.log("here");
+    xht.setRequestHeader("Content-type","application/json");
+    xht.setRequestHeader("x-auth",window.localStorage['x-auth']);
+    xht.send();
+}
+
 /**
  * to check disconnect status
  */

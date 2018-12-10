@@ -38,7 +38,7 @@ const path = require('path');
  */
 const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/missionDharan.txt'),
     renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/oldmissionDharan.txt'),
-    datafile = path.join(__dirname, '../..', '/public/dataDharan.txt');
+    datafile = path.join(__dirname, '../..', '/public/data/dataDharan.txt');
 /********************************************************************/
 
 /**

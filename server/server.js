@@ -20,6 +20,11 @@ const server = require('./app/app');
  */
 const port = process.env.PORT || 8081;
 
+/**
+ * setting the hostname at which the server run
+ */
+const hostname = process.env.HOSTNAME || 'localhost';
+
 require('./socketio/defaultSocket');
 require('./socketio/pulchowkSocket');
 require('./socketio/nangiSocket');
@@ -28,8 +33,9 @@ require('./socketio/dhangadiSocket');
 /********************************************************************/
 
 /**
- * setting up a server at port 3000 or describe by process.env.PORT
+ * setting up a server at port 3000 or describe by process.env.PORT and host localhost or described by
+ * process.env.HOSTNAME
  */
-server.listen(port, () => {
-    console.log(`Server running at ${port}`);
+server.listen(port,hostname, () => {
+    console.log(`Server running at https://${hostname}:${port}`);
 });

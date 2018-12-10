@@ -6,7 +6,7 @@ var connectPath = process.env.MONGODB_URI;
 var options = {};
 
 mongoose.connect(connectPath, options).then(
-  () => console.log('sucessfully connected'),
+  () => console.log('sucessfully connected with the database '),
   (e) => {
     console.log('authentication error');
   });
