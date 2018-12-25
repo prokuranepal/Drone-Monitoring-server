@@ -1,12 +1,12 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-var connectPath = process.env.MONGODB_URI;
-var options = {};
+const connectPath = process.env.MONGODB_URI;
+const options = {};
 
 mongoose.connect(connectPath, options).then(
-  () => console.log('sucessfully connected with the database '),
+  () => console.log('successfully connected with the database '),
   (e) => {
     console.log('authentication error');
   });

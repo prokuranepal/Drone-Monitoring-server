@@ -18,7 +18,7 @@ const server = require('./app/app');
 /**
  * setting the port at which the server run
  */
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 3000;
 
 /**
  * setting the hostname at which the server run
