@@ -6,7 +6,6 @@
  * configuration of database is stored in config file
  */
 require('./config/config');
-global.deviceNames = 4;
 
 /**
  * server require
@@ -36,10 +35,11 @@ require('./socketio/dhangadiSocket');
  * setting up a server at port 3000 or describe by process.env.PORT and host localhost or described by
  * process.env.HOSTNAME
  */
-/*server.listen(port,hostname, () => {
+server.listen(port,hostname, () => {
     console.log(`Server running at http://${hostname}:${port}`);
-});*/
+});
 
+/*
 server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
-});
+});*/
