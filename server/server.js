@@ -36,6 +36,10 @@ require('./socketio/dhangadiSocket');
  * setting up a server at port 3000 or describe by process.env.PORT and host localhost or described by
  * process.env.HOSTNAME
  */
-server.listen(port,hostname, () => {
-    console.log(`Server running at https://${hostname}:${port}`);
+/*server.listen(port,hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}`);
+});*/
+
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });

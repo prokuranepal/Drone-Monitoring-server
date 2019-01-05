@@ -1,6 +1,6 @@
 .idea/
 node_modules/
-public/js/files/missions/
+public/js/files/missions
 public/data
 server/socketio/test.js
 server/config/

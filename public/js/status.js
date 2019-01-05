@@ -12,13 +12,22 @@ let map,
     line2= [],
     flightArray =[],
     flag1= 'False',
-    socket;
+    socket,
+    startTime;
 
 if (location.pathname === "/default") {
     socket = io();
 } else {
-    socket = io(location.pathname);
+    socket = io(location.pathname,{
+        transports: ['websocket']
+    });
 }
+
+// on reconnection, reset the transports option, as the Websocket
+// connection may have failed (caused by proxy, firewall, browser, ...)
+socket.on('reconnect_attempt', () => {
+    socket.io.opts.transports = ['polling', 'websocket'];
+});
 
 /**
  * to check connection status with the server
@@ -79,6 +88,20 @@ function initmap() {
 function ReadMission() {
     readMission(socket);
 }
+
+/**
+ * Below functions are made to check latency
+ */
+setInterval(function() {
+    startTime = Date.now();
+    socket.emit('ping');
+}, 2000);
+
+socket.on('pong',function () {
+    let latency = (Date.now() - startTime);
+    document.getElementById("Latency-data").innerHTML = latency + 'ms';
+});
+/*******************************/
 
 /**
  * to check disconnect status

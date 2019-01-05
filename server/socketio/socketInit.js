@@ -18,6 +18,12 @@ const server = require('../app/app');
 /**
  * io for accessing the socket functionality
  */
+/*
 let io = socketIO(server);
+*/
+let io = socketIO(server,{
+    pingInterval: 10000,
+    pingTimeout: 5000,
+});
 
 module.exports = io;

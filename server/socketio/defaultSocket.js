@@ -1,23 +1,24 @@
-/**
+/*
+/!**
  * import mongoose to connect database
  * Dorne database schema
- */
-let {mongoose} = require('../db/mongoose');
+ *!/
+let mongoose = require('../db/mongoose');
 let {DroneData} = require('../models/droneData');
 
-/**
+/!**
  * require io
- */
+ *!/
 const io = require('./socketInit');
 
-/**
+/!**
  * It is used for accessing the file to preform read,write and other file system operations
- */
+ *!/
 const fs = require('fs');
 
-/**
+/!**
  * local variables
- */
+ *!/
 let Android = [],
     Website = [],
     Pi = [],
@@ -28,31 +29,31 @@ let Android = [],
     droneOnlineStatus= setTimeout(() => {},1000);
 
 
-/**
+/!**
  * it is used in-order to create the path towards the folder or file nice and readable
  * it is available in core library.
- */
+ *!/
 const path = require('path');
 
-/**
+/!**
  * The path constant for required files
- */
+ *!/
 const actualmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/mission.txt'),
     renamedmissionfile = path.join(__dirname, '../..', '/public/js/files/missions/oldmission.txt'),
     datafile = path.join(__dirname, '../..', '/public/data/datadefault.txt');
-/********************************************************************/
+/!********************************************************************!/
 
-/**
+/!**
  * to confirm the connection status with the client
- */
+ *!/
 io.on('connection', (socket) => {
 
-    /**
+    /!**
      * to join the particular devices
      * joinPi to join the socket of pi
      * joinWebsite to join the socket of website
      * joinAndroid to join the socket of android
-     */
+     *!/
     socket.on('joinPi', () => {
         Pi.push(socket.id);
         socket.join('pi');
@@ -71,23 +72,23 @@ io.on('connection', (socket) => {
         socket.join('android');
         console.log(`${socket.id} (Android device) connected`);
     });
-    /******************** Join device completed *************************/
+    /!******************** Join device completed *************************!/
 
-    /**
+    /!**
      * This socket is listening to pi socket which relayed the message
      * to android socket about the success of auto arm of copter.
-     */
+     *!/
     socket.on('success', (msg) => {
         io.to('android').emit('success', msg);
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening to pi socket for the continuous data of
      * copter about the state and positions.
      * And the received data are relayed to the website for Graphical view
      * Also the data is store in the mongodb database
-     */
+     *!/
     socket.on('data', (data) => {
 
         clearTimeout(droneOnlineStatus);
@@ -124,9 +125,9 @@ io.on('connection', (socket) => {
 
         droneOnlineStatus  = setTimeout(() => {
             io.to('website').emit('copter-data', {
-                /**
+                /!**
                  * data format needed to send to the client when pi disconnect
-                 */
+                 *!/
                 conn: 'False',
                 fix: 0,
                 numSat: 0,
@@ -147,18 +148,6 @@ io.on('connection', (socket) => {
                 lng: lng
             });
             console.log(`${socket.id} (Pi) disconnected`);
-
-            /*// backup({
-            //   uri: process.env.MONGODB_URI,
-            //   root: './',
-            //   collection: ['dronedats'],
-            //   parser: 'json'
-            // });
-            // the above method saves all fields and also saves each document to separate json file
-
-            // find method doesn't return the fields mentioned
-            // in second bracket called projections
-            // the fields whose value are 0 are not included*/
 
             let fileStream = fs.createWriteStream(datafile);
             // access the mongodb native driver and its functions
@@ -187,25 +176,25 @@ io.on('connection', (socket) => {
             });
         },6000);
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening to pi socket for the home lat and lng of
      * the copter after the gps lock has been established in the copter.
      * And the received home location is emitted to the website
-     */
+     *!/
     socket.on('homePosition', (homeLocation) => {
         io.to('website').emit('homePosition', homeLocation);
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening for the error messages send by the clients
      * (pi and android) the error message is received in the format of
      * {'context': 'something', 'msg':'something'}
      * The error message is send to the website and the context is used
      * for determining the task to be done before sending to the website
-     */
+     *!/
     socket.on('errors', (error) => {
         io.to('website').emit('error', error.msg);
         if (error.context === 'GPS/Mission') {
@@ -221,13 +210,13 @@ io.on('connection', (socket) => {
             io.to('android').emit('success', error.msg);
         }
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening to pi for the way-points of mission
      * and the way-points are send to the website for display and save to
      * the file called 'actualmissionfile'
-     */
+     *!/
     socket.on('waypoints', (waypoints) => {
         console.log(waypoints);
         if (deviceMission === "android") {
@@ -241,15 +230,15 @@ io.on('connection', (socket) => {
             }
         });
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening to website client for requesting the pi to
      * download the mission file.
      * In the process the actualmissionfile is renamed to renamedmissionfile
      * so to differentiate the new and old mission file.
      * And the request is emitted to the pi socket
-     */
+     *!/
     socket.on('getMission', (data) => {
         console.log(data);
         deviceMission = JSON.parse(data).device;
@@ -261,51 +250,51 @@ io.on('connection', (socket) => {
         });
         io.to('pi').emit('mission_download', JSON.parse(data).mission);
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is listening to android socket which initiates the RTL
      * flight mode in the copter.
      * The command received from the android socket is emitted to the pi
      * socket for initiating the RTL
-     */
+     *!/
     socket.on('RTL', (rtl) => {
         io.to('pi').emit('RTL',rtl);
     });
 
-    /**
+    /!**
      * This socket is listening to android socket which initiates the LAND
      * flight mode in the copter.
      * The command received from the android socket is emitted to the pi
      * socket for initiating the LAND
-     */
+     *!/
     socket.on('LAND', (land) => {
         io.to('pi').emit('LAND',land);
     });
 
-    /**
+    /!**
      * This socket is listening to android socket which initiates the auto
      * flight mode in the copter.
      * The command received from the android socket is emitted to the pi
      * socket for initiating the flight
-     */
+     *!/
     socket.on('fly', (msg) => {
         io.to('pi').emit('initiate_flight', msg);
     });
-    /********************************************************************/
+    /!********************************************************************!/
 
-    /**
+    /!**
      * This socket is used for sending the position from android to the
      * pixhawk for loading the mission to the particular area.
-     */
+     *!/
     socket.on('positions', (data) => {
         console.log((JSON.parse(data).file));
         io.to('pi').emit('positions',JSON.parse(data).file+'.txt');
     });
 
-    /**
+    /!**
      * TO simulate the previous mission
-     */
+     *!/
     socket.on('simulate',() => {
         fs.readFile(datafile,(err,data) => {
             if (err) {
@@ -319,25 +308,25 @@ io.on('connection', (socket) => {
         });
     });
 
-    /**
+    /!**
      * To cancel the simulation
-     */
+     *!/
     socket.on('cancelSimulate', ()=> {
         for (let i= 0; i<setTimeoutObject.length-1; i++){
             clearTimeout(setTimeoutObject[i]);
         }
     });
 
-    /**
+    /!**
      * Socket errors
-     */
+     *!/
     socket.on('error', (error) => {
         console.log('Socket error : '+ JSON.stringify(error,undefined,2));
     });
 
-    /**
+    /!**
      * to confirm the disconnected status with the client
-     */
+     *!/
     socket.on('disconnect', () => {
         let indexWebsite = Website.indexOf(socket.id),
             indexAndroid = Android.indexOf(socket.id),
@@ -354,9 +343,9 @@ io.on('connection', (socket) => {
         if (indexPi > -1) {
             Pi.splice(indexPi, 1);
             io.to('website').emit('copter-data', {
-                /**
+                /!**
                  * data format needed to send to the client when pi disconnect
-                 */
+                 *!/
                 conn: 'False',
                 fix: 0,
                 numSat: 0,
@@ -378,7 +367,7 @@ io.on('connection', (socket) => {
             });
             console.log(`${socket.id} (Pi) disconnected`);
 
-            /*// backup({
+            /!*!// backup({
             //   uri: process.env.MONGODB_URI,
             //   root: './',
             //   collection: ['dronedats'],
@@ -388,7 +377,7 @@ io.on('connection', (socket) => {
 
             // find method doesn't return the fields mentioned
             // in second bracket called projections
-            // the fields whose value are 0 are not included*/
+            // the fields whose value are 0 are not included*!/
 
             let fileStream = fs.createWriteStream(datafile);
             // access the mongodb native driver and its functions
@@ -412,7 +401,7 @@ io.on('connection', (socket) => {
                                 DroneData.collection.drop();
                             }
                         });
-                    console.log('********** the file has been written and db is dropped.');
+                    console.log('********** the file has been written and db is dropped(disconnected).');
                 });
             });
         }
@@ -423,4 +412,4 @@ io.on('connection', (socket) => {
 function sendData(socket,data) {
     console.log(data);
     socket.emit('simulateData',data);
-}
+}*/

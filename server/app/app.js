@@ -10,7 +10,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const mongoStore = require('connect-mongo')(session);
-
+const fs = require('fs');
 /**
  * requiring the authenticate middleware
  */
@@ -135,9 +135,8 @@ app.post('/', (req, res, next) => {
  * for login in android
  */
 app.post('/android', passport.authenticate('local'), (req, res) => {
-
     let body = _.pick(req.body,['username','password']);
-
+      
     res.statusCode = 200;
     res.setHeader('Content-Type','text/plain');
     res.send('OK');
@@ -232,6 +231,7 @@ app.get('/nangi', (req, res) => {
  */
 app.get('/pulchowk',(req, res) => {
     User.findById(req.session.passport.user,(err,user) => {
+        let href=[];
         if (err) {
             return res.redirect('/');
         }
@@ -240,7 +240,13 @@ app.get('/pulchowk',(req, res) => {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        res.render('status', {href: "../dataPulchowk.txt"});
+        fs.readdir(path.join(__dirname,'../..','/public/data/pulchowk'),{withFileTypes:true},(err,files) => {
+            for (let i in files) {
+                href[i]= '../pulchowk/'+files[i];
+            }
+            res.render('status', {href: href});
+        });
+
     });
 });
 /********************************************************************/

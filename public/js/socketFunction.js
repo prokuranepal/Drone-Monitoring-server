@@ -64,7 +64,7 @@ function copterData(data,type,armedCheck,prev_lat,prev_lng,flag1,marker) {
         document.getElementById("lat-data").innerHTML = _lat.toFixed(7);
         document.getElementById("lng-data").innerHTML = _lng.toFixed(6);
         document.getElementById("numSat-data").innerHTML = data.numSat;
-        document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop));
+        document.getElementById("hdop-data").innerHTML = (parseFloat(data.hdop)/100);
         document.getElementById("fix-data").innerHTML = Sfix;
         document.getElementById("EST-data").innerHTML = timeConversion(parseFloat(data.est) * 1000);
         document.getElementById("DFH-data").innerHTML = distanceLatLng(Home.lat, Home.lng, _lat, _lng).toFixed(2);
@@ -213,7 +213,6 @@ function missionWaypoints(waypoints) {
 function DrawCircle() {
     deleteCircle();
     let radius = document.getElementById('data').value;
-    console.log(radius);
     for (let i = 1 ; i <= 10; i++) {
         let radius1 = radius*i,
             drawCircle = new google.maps.Circle({
