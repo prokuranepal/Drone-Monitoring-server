@@ -251,6 +251,7 @@ app.get('/pulchowk',(req, res) => {
 });
 /********************************************************************/
 
+
 /**
  * to render the status.ejs in /status
  */

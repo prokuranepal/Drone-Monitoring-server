@@ -1,5 +1,5 @@
 .idea/
 node_modules/
-public/js/files/missions
-public/data
+public/js/files/missions/*.txt
+public/data/**/*.txt
 server/socketio/test.js
