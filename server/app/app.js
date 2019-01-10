@@ -221,7 +221,41 @@ app.get('/nangi', (req, res) => {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        res.render('status', {href:"../dataNangi.txt"});
+        res.render('status', {href:"/nangidata"});
+    });
+});
+/********************************************************************/
+
+/**
+ * to render the file.ejs to show data that can be downloaded by the user
+ */
+app.get('/nangidata',(req, res) => {
+    User.findById(req.session.passport.user,(err,user) => {
+        let href=[];
+        let status = [];
+        let i = 0;
+        if (err) {
+            return res.redirect('/');
+        }
+        let urlString = '/'+user.location+'data';
+        if (urlString != req.url){
+            res.statusCode = 401;
+            return res.redirect('/');
+        }
+        let nangipath = path.join(__dirname,'../..','/public/data/nangi/');
+        let files = fs.readdirSync(nangipath);
+        files = files.splice(1);
+        files.forEach( file => {
+            let data = {
+                fileName: '../data/nangi/'+file,
+                fileTime: fs.statSync(path.join(nangipath, file)).birthtime.toUTCString()
+            };
+            href.push(data);
+        });
+        res.render('file',{
+            title: "data of nangi",
+            data: href
+        });
     });
 });
 /********************************************************************/
@@ -231,7 +265,6 @@ app.get('/nangi', (req, res) => {
  */
 app.get('/pulchowk',(req, res) => {
     User.findById(req.session.passport.user,(err,user) => {
-        let href=[];
         if (err) {
             return res.redirect('/');
         }
@@ -240,17 +273,44 @@ app.get('/pulchowk',(req, res) => {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        fs.readdir(path.join(__dirname,'../..','/public/data/pulchowk'),{withFileTypes:true},(err,files) => {
-            for (let i in files) {
-                href[i]= '../pulchowk/'+files[i];
-            }
-            res.render('status', {href: href});
-        });
-
+        res.render('status', {href: "/pulchowkdata"});
     });
 });
 /********************************************************************/
 
+/**
+ * to render the file.ejs to show data that can be downloaded by the user
+ */
+app.get('/pulchowkdata',(req, res) => {
+    User.findById(req.session.passport.user,(err,user) => {
+        let href=[];
+        let status = [];
+        let i = 0;
+        if (err) {
+            return res.redirect('/');
+        }
+        let urlString = '/'+user.location+'data';
+        if (urlString != req.url){
+            res.statusCode = 401;
+            return res.redirect('/');
+        }
+        let pulchowkpath = path.join(__dirname,'../..','/public/data/pulchowk/');
+        let files = fs.readdirSync(pulchowkpath);
+        files = files.splice(1);
+        files.forEach( file => {
+            let data = {
+                fileName: '../data/pulchowk/'+file,
+                fileTime: fs.statSync(path.join(pulchowkpath, file)).birthtime.toUTCString()
+            };
+            href.push(data);
+        });
+        res.render('file',{
+            title: "data of Pulchowk",
+            data: href
+        });
+    });
+});
+/********************************************************************/
 
 /**
  * to render the status.ejs in /status
@@ -265,7 +325,41 @@ app.get('/dharan',(req, res) => {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        res.render('status', {href: "../dataDharan.txt"});
+        res.render('status', {href: "/dharandata"});
+    });
+});
+/********************************************************************/
+
+/**
+ * to render the file.ejs to show data that can be downloaded by the user
+ */
+app.get('/dharandata',(req, res) => {
+    User.findById(req.session.passport.user,(err,user) => {
+        let href=[];
+        let status = [];
+        let i = 0;
+        if (err) {
+            return res.redirect('/');
+        }
+        let urlString = '/'+user.location+'data';
+        if (urlString != req.url){
+            res.statusCode = 401;
+            return res.redirect('/');
+        }
+        let dharanpath = path.join(__dirname,'../..','/public/data/dharan/');
+        let files = fs.readdirSync(dharanpath);
+        files = files.splice(1);
+        files.forEach( file => {
+            let data = {
+                fileName: '../data/dharan/'+file,
+                fileTime: fs.statSync(path.join(dharanpath, file)).birthtime.toUTCString()
+            };
+            href.push(data);
+        });
+        res.render('file',{
+            title: "data of Dharan",
+            data: href
+        });
     });
 });
 /********************************************************************/
@@ -283,7 +377,41 @@ app.get('/dhangadi',(req, res) => {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        res.render('status', {href: "../dataDhangadi.txt"});
+        res.render('status', {href: "/dhangadidata"});
+    });
+});
+/********************************************************************/
+
+/**
+ * to render the file.ejs to show data that can be downloaded by the user
+ */
+app.get('/dhangadidata',(req, res) => {
+    User.findById(req.session.passport.user,(err,user) => {
+        let href=[];
+        let status = [];
+        let i = 0;
+        if (err) {
+            return res.redirect('/');
+        }
+        let urlString = '/'+user.location+'data';
+        if (urlString != req.url){
+            res.statusCode = 401;
+            return res.redirect('/');
+        }
+        let dhangadipath = path.join(__dirname,'../..','/public/data/dhangadi/');
+        let files = fs.readdirSync(dhangadipath);
+        files = files.splice(1);
+        files.forEach( file => {
+            let data = {
+                fileName: '../data/dhangadi/'+file,
+                fileTime: fs.statSync(path.join(dhangadipath, file)).birthtime.toUTCString()
+            };
+            href.push(data);
+        });
+        res.render('file',{
+            title: "data of Dhangadi",
+            data: href
+        });
     });
 });
 /********************************************************************/
