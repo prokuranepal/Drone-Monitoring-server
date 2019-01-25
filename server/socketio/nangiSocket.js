@@ -278,8 +278,6 @@ nangi.on('connection', (socket) => {
             } else {
                 console.log(`${socket.id} disconnected`);
             }
-        },(err) => {
-            console.log(err + " in client find one");
         });
 
     });
