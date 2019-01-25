@@ -103,19 +103,8 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('errors', (error) => {
-        nangi.to('website').emit('error', error.msg);
-        if (error.context === 'GPS/Mission') {
-            fs.readFile(renamedmissionfile, (err, waypoints) => {
-                if (err) {
-                    return console.log('no mission file ');
-                }
-                nangi.to('website').emit('Mission', JSON.parse(waypoints));
-            });
-        } else if (error.context === 'Prearm') {
-            nangi.to('android').emit('success', error.msg);
-        } else if (error.context === 'Connection') {
-            nangi.to('android').emit('success', error.msg);
-        }
+        nangi.to('website').to('android').emit('error', error);
+        
     });
 
     socket.on('waypoints', (waypoints) => {
@@ -289,6 +278,8 @@ nangi.on('connection', (socket) => {
             } else {
                 console.log(`${socket.id} disconnected`);
             }
+        },(err) => {
+            console.log(err + " in client find one");
         });
 
     });

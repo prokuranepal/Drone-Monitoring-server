@@ -102,19 +102,7 @@ pulchowk.on('connection', (socket) => {
     });
 
     socket.on('errors', (error) => {
-        pulchowk.to('website').emit('error', error.msg);
-        if (error.context === 'GPS/Mission') {
-            fs.readFile(renamedmissionfile, (err, waypoints) => {
-                if (err) {
-                    return console.log('no mission file ');
-                }
-                pulchowk.to('website').emit('Mission', JSON.parse(waypoints));
-            });
-        } else if (error.context === 'Prearm') {
-            pulchowk.to('android').emit('success', error.msg);
-        } else if (error.context === 'Connection') {
-            pulchowk.to('android').emit('success', error.msg);
-        }
+        pulchowk.to('website').to('android').emit('error', error);
     });
 
     socket.on('waypoints', (waypoints) => {
@@ -288,6 +276,8 @@ pulchowk.on('connection', (socket) => {
             } else {
                 console.log(`${socket.id} disconnected`);
             }
+        },(err) => {
+            console.log(err + " in client find one");
         });
     });
 

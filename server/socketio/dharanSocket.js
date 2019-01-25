@@ -104,19 +104,7 @@ dharan.on('connection', (socket) => {
     });
 
     socket.on('errors', (error) => {
-        dharan.to('website').emit('error', error.msg);
-        if (error.context === 'GPS/Mission') {
-            fs.readFile(renamedmissionfile, (err, waypoints) => {
-                if (err) {
-                    return console.log('no mission file ');
-                }
-                dharan.to('website').emit('Mission', JSON.parse(waypoints));
-            });
-        } else if (error.context === 'Prearm') {
-            dharan.to('android').emit('success', error.msg);
-        } else if (error.context === 'Connection') {
-            dharan.to('android').emit('success', error.msg);
-        }
+        dharan.to('website').to('android').emit('error', error);
     });
 
     socket.on('waypoints', (waypoints) => {
@@ -290,6 +278,8 @@ dharan.on('connection', (socket) => {
             } else {
                 console.log(`${socket.id} disconnected`);
             }
+        },(err) => {
+            console.log(err + " in client find one");
         });
     });
 
