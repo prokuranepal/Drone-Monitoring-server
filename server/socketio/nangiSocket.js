@@ -108,18 +108,18 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('waypoints', (waypoints) => {
-        Client.find({missionRequest: true,socketName:'nangi'},(err,data) => {
-            if (err) {
-                console.log('Cannot find user');
-            }
-            for (let id in data) {
-                nangi.to(`${data[id].clientId}`).emit('Mission',waypoints);
-                Client.update({clientId:data[id].clientId,socketName:'nangi'},{$set:{missionRequest:false}},(err,obj) => {
-                    if(err) console.log('error while updating data');
-                });
-            }
-
-        });
+        Client.find({missionRequest: true,socketName:'nangi'}).exec()
+            .then((data) => {
+                for (let id in data) {
+                    nangi.to(`${data[id].clientId}`).emit('Mission',waypoints);
+                    Client.update({clientId:data[id].clientId,socketName:'nangi'},{$set:{missionRequest:false}},(err,obj) => {
+                        if(err) console.log('error while updating data');
+                    });
+                }
+            })
+            .catch((err) => {
+                if (err) console.log('Cannot find user');
+            });
         fs.writeFile(actualmissionfile, JSON.stringify(waypoints, undefined, 2), (err) => {
             if (err) {
                 return console.log('File cannot be created');
@@ -127,21 +127,22 @@ nangi.on('connection', (socket) => {
         });
     });
 
-    socket.on('getMission', async (data) => {
+    socket.on('getMission', (data) => {
         //data = {mission:1,device:devicename}
-        await Client.updateOne({clientId:socket.id,socketName:'nangi'},{$set:{missionRequest : true}},(err,data)=> {
-            if (err) {
-                return console.log('Cannot update data');
-            }
+        Client.updateOne({clientId:socket.id,socketName:'nangi'},{$set:{missionRequest : true}}).exec()
+        .then((updated)=> {
+            fs.rename(actualmissionfile, renamedmissionfile, (err) => {
+                if (err) {
+                    console.log('No actual mission file present');
+                } else {
+                    console.log('rename done');
+                }
+            });
+            nangi.to('pi').emit('mission_download', JSON.parse(data).mission);
+        }).catch((err) => {
+            if (err) console.log('Cannot update data');
         });
-        fs.rename(actualmissionfile, renamedmissionfile, (err) => {
-            if (err) {
-                console.log('No actual mission file present');
-            } else {
-                console.log('rename done');
-            }
-        });
-        nangi.to('pi').emit('mission_download', JSON.parse(data).mission);
+        
     });
 
     socket.on('RTL', (rtl) => {
@@ -165,20 +166,21 @@ nangi.on('connection', (socket) => {
     });
 
     socket.on('simulate',() => {
-        Count.find({}).then(async (data) => {
-            let fileNo = await data.nangiNo;
-            fileNo = fileNo -1;
-            fs.readFile(path.join(datafile, fileNo+'.txt'), (err, data) => {
-                if (err) {
-                    console.log('error in simulate readfile' + err);
-                }
-                let datas = data.toString();
-                let splittedData = datas.split('}');
-                for (let i = 0; i < splittedData.length - 1; i++) {
-                    setTimeoutObject2.push(setTimeout(sendData2, 300 * (i + 1), nangi, splittedData[i] + '}'));
-                }
-            });
-        });
+        Count.find({}).exec()
+            .then((data) => {
+                let fileNo = data.nangiNo;
+                fileNo = fileNo -1;
+                fs.readFile(path.join(datafile, fileNo+'.txt'), (err, data) => {
+                    if (err) {
+                        console.log('error in simulate readfile' + err);
+                    }
+                    let datas = data.toString();
+                    let splittedData = datas.split('}');
+                    for (let i = 0; i < splittedData.length - 1; i++) {
+                        setTimeoutObject2.push(setTimeout(sendData2, 300 * (i + 1), nangi, splittedData[i] + '}'));
+                    }
+                });
+            }).catch((err) => console.log(err));
     });
 
     socket.on('cancelSimulate', () => {
@@ -197,87 +199,84 @@ nangi.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         //we can know the reason of disconnect by adding variable in above function of listener
-        Client.findOne({clientId:socket.id,socketName:'nangi'},async (err,data) => {
-            if (err) {
-                return console.log('Cannot find user');
-            }
-            var data1 = await data;
-            Client.deleteOne({clientId :socket.id,socketName:'nangi'},(err,obj) => {
-                if (err) {
-                    return console.log('Cannot delete');
-                }
-            });
-            if (data.deviceName === 'website'){
-                console.log(`${socket.id} (Website Nangi) disconnected`);
-            } else if(data.deviceName === 'android') {
-                console.log(`${socket.id} (Android device Nangi) disconnected`);
-            } else if(data.deviceName === 'pi') {
-                Count.find({}).then(async (data) => {
-                    var fileNo = await data[0].nangiNo;
-
-                    nangi.to('website').emit('error','Drone disconnected from server');
-                    nangi.to('website').emit('copter-data', {
-                        /**
-                         * data format needed to send to the client when pi disconnect
-                         */
-                        conn: 'False',
-                        fix: 0,
-                        numSat: 0,
-                        hdop: 10000,
-                        arm: 'False',
-                        head: 0,
-                        ekf: 'False',
-                        mode: 'UNKNOWN',
-                        status: 'UNKNOWN',
-                        volt: 0,
-                        gs: 0,
-                        as: 0,
-                        altr: 0,
-                        alt: 0,
-                        est: 0,
-                        lidar: 0,
-                        lat: lat2 || 0,
-                        lng: lng2 || 0
-                    });
-
-                    let fileStream = fs.createWriteStream(path.join(datafile ,fileNo+'.txt'));
-                    // access the mongodb native driver and its functions
-                    let db_native = mongoose.connection.db;
-                    fileStream.once('open', (no_need) => {
-                        NangiDroneData.find({}, {
-                            tokens: 0,
-                            __id: 0,
-                            _id: 0,
-                            __v: 0
-                        }).cursor().on('data', function (doc) {
-                            fileStream.write(doc.toString() + '\n');
-                        }).on('end', function () {
-                            fileStream.end();
-                            // check if collection exists and then dropped
-                            db_native.listCollections({
-                                name: 'nangidronedatas'
-                            })
-                                .next(function (err, collinfo) {
-                                    if (collinfo) {
-                                        // The collection exists
-                                        NangiDroneData.collection.drop();
-                                    }
-                                });
-                            console.log('********** the file has been written and db is dropped.');
-                        });
-                    });
-
-                    Count.updateOne({},{$set:{nangiNo: fileNo+1}},(err,obj) => {
-                        if (err) console.log(err);
-                    });
-
-                },(err) => {
-                    console.log(err);
+        Client.findOne({clientId:socket.id,socketName:'nangi'}).exec()
+        .then((data) => {
+            Client.deleteOne({clientId :socket.id, socketName: 'nangi'}).exec()
+                .catch((err) => {
+                    if (err) console.log("Cannot Delete the user");
                 });
-                console.log(`${socket.id} (Pi device Nangi) disconnected`);
-            } else {
-                console.log(`${socket.id} disconnected`);
+            if (data.deviceName === 'website') {
+                console.log(`${socket.id} (Website Nangi) disconnected`);
+            } else if (data.deviceName === 'android') {
+                console.log(`${socket.id} (Android device Nangi) disconnected`);
+            } else if (data.deviceName === 'pi') {
+                Count.find({}).exec()
+                    .then((data) => {
+                        var fileNo = data[0].nangiNo;
+                        nangi.to('website').emit('error','Drone disconnected from server');
+                        nangi.to('website').emit('copter-data', {
+                            /**
+                             * data format needed to send to the client when pi disconnect
+                             */
+                            conn: 'False',
+                            fix: 0,
+                            numSat: 0,
+                            hdop: 10000,
+                            arm: 'False',
+                            head: 0,
+                            ekf: 'False',
+                            mode: 'UNKNOWN',
+                            status: 'UNKNOWN',
+                            volt: 0,
+                            gs: 0,
+                            as: 0,
+                            altr: 0,
+                            alt: 0,
+                            est: 0,
+                            lidar: 0,
+                            lat: lat2 || 0,
+                            lng: lng2 || 0
+                        });
+
+                        let fileStream = fs.createWriteStream(path.join(datafile ,fileNo+'.txt'));
+                        // access the mongodb native driver and its functions
+                        let db_native = mongoose.connection.db;
+                        fileStream.once('open', (no_need) => {
+                            NangiDroneData.find({}, {
+                                tokens: 0,
+                                __id: 0,
+                                _id: 0,
+                                __v: 0
+                            }).cursor().on('data', function (doc) {
+                                fileStream.write(doc.toString() + '\n');
+                            }).on('end', function () {
+                                fileStream.end();
+                                // check if collection exists and then dropped
+                                db_native.listCollections({
+                                    name: 'nangidronedatas'
+                                })
+                                    .next(function (err, collinfo) {
+                                        if (collinfo) {
+                                            // The collection exists
+                                            NangiDroneData.collection.drop();
+                                        }
+                                    });
+                                console.log('********** the file has been written and db is dropped.');
+                            });
+                        });
+
+                        Count.updateOne({},{$set:{nangiNo: fileNo+1}}).exec()
+                            .catch((err) => {
+                                if (err) console.log(err);
+                            });
+                    })
+                    .catch((err) => {
+                        if (err) console.log("Error in count find" + err);
+                    });
             }
+        })
+        .catch((err) => {
+            if (err) console.log("Error in find one: " +err);
         });
 
     });
