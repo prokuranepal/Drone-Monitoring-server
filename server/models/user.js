@@ -19,16 +19,7 @@ let User = new Schema({
     }
 });
 
-User.methods.validLocation = function(location) {
-    if (location == this.location){
-        return true;
-    } else {
-        return false;
-    }
-};
-
 User.plugin(passportLocalMongoose);
 
 // creating model with Schema
 module.exports = mongoose.model('User', User);
-

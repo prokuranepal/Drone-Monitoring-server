@@ -5,6 +5,7 @@
 /**
  * configuration of database is stored in config file
  */
+
 require('./config/config');
 
 /**
@@ -25,10 +26,10 @@ const port = process.env.PORT || 3000;
 const hostname = process.env.HOSTNAME || 'localhost';
 
 require('./socketio/defaultSocket');
-require('./socketio/pulchowkSocket');
-require('./socketio/nangiSocket');
-require('./socketio/dharanSocket');
-require('./socketio/dhangadiSocket');
+require('./socketio/JT601Socket');
+require('./socketio/JT602Socket');
+require('./socketio/JT603Socket');
+require('./socketio/JT604Socket');
 /********************************************************************/
 
 /**

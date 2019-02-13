@@ -36,12 +36,9 @@
         <div class="form-field">
             <label for="location">Location</label>
             <select name="location" id="location">
-                <option value="default">default</option>
-                <option value="nangi">nangi</option>
-                <option value="pulchowk">pulchowk</option>
-                <option value="dharan">dharan</option>
-                <option value="dhangadi">dhangadi</option>
-                <option value="all">all</option>
+                <% for (var i=0; i < drones.length; i++) { %>
+                    <option value="<%= drones[i].drone_name %>"><%= drones[i].drone_name %>,<%= drones[i].drone_location %></option>
+                <% } %>
             </select>
         </div>
         <div class="form-field">

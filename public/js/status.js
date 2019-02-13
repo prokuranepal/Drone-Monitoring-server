@@ -63,7 +63,7 @@ socket.on('homePosition', function (homeLocation) {
  * base to the website
  */
 socket.on('error', function (msg)  {
-    snackBar(msg);
+    snackBar(msg.msg);
 });
 
 /**

@@ -31,6 +31,7 @@ const app = express();
  * import user model and mongoose
  */
 let User = require('../models/user');
+let DroneName = require('../models/drone');
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -104,7 +105,17 @@ const server = http.createServer(app);
  * failed
  */
 app.get('/', (req, res) => {
-    res.status(200).render('index',{title:'Drone | login'});
+    DroneName.find({}).select('drone_name drone_location -_id').exec()
+        .then((drones) => {
+            res.status(200).render('index',{
+                title:'Drone | login',
+                drones:drones
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    
 });
 
 app.post('/', (req, res, next) => {
@@ -116,9 +127,9 @@ app.post('/', (req, res, next) => {
         if (!user) {
             return res.redirect('/');
         }
-        if (!user.validLocation(body.location)){
-            return res.redirect('/');
-        }
+        user.location = body.location;
+        user.save().catch((err) => console.log('cannot save user'));
+
         req.logIn(user, function(err) {
             if (err) {
                 return res.redirect('/');
@@ -191,6 +202,24 @@ function auth (req, res, next)  {
 app.use(auth);
 
 /**
+ * to render the statusall.ejs in /stautsall
+ */
+app.get('/all',(req, res) => {
+    User.findById(req.session.passport.user,(err,user) => {
+        if (err) {
+            return res.redirect('/');
+        }
+        var urlString = '/'+user.location;
+        if (urlString != req.url){
+            res.statusCode = 401;
+            return res.redirect('/');
+        }
+        res.render('statusall');
+    });
+});
+/********************************************************************/
+
+/**
  * to render the status.ejs in /status
  */
 app.get('/default',(req, res) => {
@@ -208,230 +237,59 @@ app.get('/default',(req, res) => {
 });
 /********************************************************************/
 
-/**
- * to render the status.ejs in /status
- */
-app.get('/nangi', (req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        if (err) {
+app.get('/:droneName', (req, res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.location === req.params.droneName) {
+                DroneName.findOne({drone_name:req.params.droneName}).select('drone_name drone_location -_id').exec()
+                    .then((drone) => {
+                        res.render('status', {href:"/"+drone.drone_name+"/data"});
+                    })
+                    .catch((err) => {
+                        return res.redirect('/');
+                    });
+            } else {
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
             return res.redirect('/');
-        }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        res.render('status', {href:"/nangidata"});
-    });
-});
-/********************************************************************/
+        })
+})
 
 /**
  * to render the file.ejs to show data that can be downloaded by the user
  */
-app.get('/nangidata',(req, res) => {
+app.get('/:droneName/data',(req, res) => {
+    
     User.findById(req.session.passport.user,(err,user) => {
         let href=[];
         let status = [];
         let i = 0;
         if (err) {
+            console.log('error in finding user');
             return res.redirect('/');
         }
-        let urlString = '/'+user.location+'data';
+        let urlString = '/'+user.location+'/data';
         if (urlString != req.url){
             res.statusCode = 401;
             return res.redirect('/');
         }
-        let nangipath = path.join(__dirname,'../..','/public/data/nangi/');
-        let files = fs.readdirSync(nangipath);
+        let droneDataPath = path.join(__dirname,'../..','/public/data/'+user.location+'/');
+        let files = fs.readdirSync(droneDataPath);
         files = files.splice(1);
         files.forEach( file => {
             let data = {
-                fileName: '../data/nangi/'+file,
-                fileTime: fs.statSync(path.join(nangipath, file)).birthtime.toUTCString()
+                fileName: '../data/'+user.location+'/'+file,
+                fileTime: fs.statSync(path.join(droneDataPath, file)).birthtime.toUTCString()
             };
             href.push(data);
         });
         res.render('file',{
-            title: "data of nangi",
+            title: "data of " + user.location,
             data: href
         });
     });
 });
-/********************************************************************/
-
-/**
- * to render the status.ejs in /status
- */
-app.get('/pulchowk',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        res.render('status', {href: "/pulchowkdata"});
-    });
-});
-/********************************************************************/
-
-/**
- * to render the file.ejs to show data that can be downloaded by the user
- */
-app.get('/pulchowkdata',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        let href=[];
-        let status = [];
-        let i = 0;
-        if (err) {
-            return res.redirect('/');
-        }
-        let urlString = '/'+user.location+'data';
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        let pulchowkpath = path.join(__dirname,'../..','/public/data/pulchowk/');
-        let files = fs.readdirSync(pulchowkpath);
-        files = files.splice(1);
-        files.forEach( file => {
-            let data = {
-                fileName: '../data/pulchowk/'+file,
-                fileTime: fs.statSync(path.join(pulchowkpath, file)).birthtime.toUTCString()
-            };
-            href.push(data);
-        });
-        res.render('file',{
-            title: "data of Pulchowk",
-            data: href
-        });
-    });
-});
-/********************************************************************/
-
-/**
- * to render the status.ejs in /status
- */
-app.get('/dharan',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        res.render('status', {href: "/dharandata"});
-    });
-});
-/********************************************************************/
-
-/**
- * to render the file.ejs to show data that can be downloaded by the user
- */
-app.get('/dharandata',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        let href=[];
-        let status = [];
-        let i = 0;
-        if (err) {
-            return res.redirect('/');
-        }
-        let urlString = '/'+user.location+'data';
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        let dharanpath = path.join(__dirname,'../..','/public/data/dharan/');
-        let files = fs.readdirSync(dharanpath);
-        files = files.splice(1);
-        files.forEach( file => {
-            let data = {
-                fileName: '../data/dharan/'+file,
-                fileTime: fs.statSync(path.join(dharanpath, file)).birthtime.toUTCString()
-            };
-            href.push(data);
-        });
-        res.render('file',{
-            title: "data of Dharan",
-            data: href
-        });
-    });
-});
-/********************************************************************/
-
-/**
- * to render the status.ejs in /status
- */
-app.get('/dhangadi',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        res.render('status', {href: "/dhangadidata"});
-    });
-});
-/********************************************************************/
-
-/**
- * to render the file.ejs to show data that can be downloaded by the user
- */
-app.get('/dhangadidata',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        let href=[];
-        let status = [];
-        let i = 0;
-        if (err) {
-            return res.redirect('/');
-        }
-        let urlString = '/'+user.location+'data';
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        let dhangadipath = path.join(__dirname,'../..','/public/data/dhangadi/');
-        let files = fs.readdirSync(dhangadipath);
-        files = files.splice(1);
-        files.forEach( file => {
-            let data = {
-                fileName: '../data/dhangadi/'+file,
-                fileTime: fs.statSync(path.join(dhangadipath, file)).birthtime.toUTCString()
-            };
-            href.push(data);
-        });
-        res.render('file',{
-            title: "data of Dhangadi",
-            data: href
-        });
-    });
-});
-/********************************************************************/
-
-/**
- * to render the statusall.ejs in /stautsall
- */
-app.get('/all',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
-            res.statusCode = 401;
-            return res.redirect('/');
-        }
-        res.render('statusall');
-    });
-});
-/********************************************************************/
 
 module.exports = server;

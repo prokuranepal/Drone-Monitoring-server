@@ -39,10 +39,10 @@ let marker4 = "undefined",
     prev_lng4,
     flag14 = 'False';
 
-socket1 = io("/nangi");
-socket2 = io("/pulchowk");
-socket3 = io("/dharan");
-socket4 = io("/dhangadi");
+socket1 = io("/JT601");
+socket2 = io("/JT602");
+socket3 = io("/JT603");
+socket4 = io("/JT604");
 /**
  * to check connection status with the server
  */
