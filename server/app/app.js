@@ -141,6 +141,14 @@ app.post('/', (req, res, next) => {
 });
 /********************************************************************/
 
+app.get('/create_user',(req, res) => {
+    res.status(200).render('signupPage', {
+        title: 'Signup Page',
+        error:''
+    });
+});
+
+
 /**
  * TODO: need to upgrade according to the app
  * for login in android
@@ -158,34 +166,41 @@ app.post('/android', passport.authenticate('local'), (req, res) => {
  * for creating user
  */
 app.post('/signup',(req,res) => {
-    User.register(new User({username: req.body.username}),
-        req.body.password,(err,user)=> {
-            if (err) {
-                res.statusCode = 500;
-                res.setHeader('Content-Type',
-                    'application/json');
-                res.json({err: err});
-            } else {
-                if (req.body.location)
-                    user.location = req.body.location;
-                user.save((err,user) => {
-                    if (err) {
-                        res.statusCode = 500;
-                        res.setHeader('Content-Type','application/json');
-                        res.json({err:err});
-                        return;
-                    }
-                    passport.authenticate('local')
-                    (req, res, () => {
-                        res.statusCode = 200;
-                        res.setHeader('Content-Type',
-                            'application/json');
-                        res.json({success: true,
-                            status: 'Registration Successful'});
+    if (req.body.password === req.body.password1) {
+        User.register(new User({username: req.body.username}),
+            req.body.password,(err,user)=> {
+                if (err) {
+                    res.statusCode = 500;
+                    res.setHeader('Content-Type',
+                        'application/json');
+                    res.json({err: err});
+                } else {
+                    if (req.body.location)
+                        user.location = req.body.location;
+                    user.save((err,user) => {
+                        if (err) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type','application/json');
+                            res.json({err:err});
+                            return;
+                        }
+                        passport.authenticate('local')
+                        (req, res, () => {
+                            res.statusCode = 200;
+                            res.setHeader('Content-Type',
+                                'application/json');
+                            res.json({success: true,
+                                status: 'Registration Successful'});
+                        });
                     });
-                });
-            }
+                }
+            });
+    } else {
+        res.status(400).render('signupPage', {
+            title: 'Signup Page',
+            error: 'password doesnot match'
         });
+    }
 });
 /********************************************************************/
 
