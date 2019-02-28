@@ -28,7 +28,7 @@ const http = require('http');
 const app = express();
 
 /**
- * import user model and mongoose
+ * import user model and droneName model
  */
 let User = require('../models/user');
 let DroneName = require('../models/drone');
@@ -68,9 +68,7 @@ app.use(bodyparser.json());
 /**
  * to parse post request or urlencoded data
  */
-app.use(bodyparser.urlencoded({
-    extended: true
-}));
+app.use(bodyparser.urlencoded({ extended: true }));
 
 /**
  * Session based login middleware and the data is stored in mongodb
@@ -107,20 +105,19 @@ const server = http.createServer(app);
 app.get('/', (req, res) => {
     DroneName.find({}).select('drone_name drone_location -_id').exec()
         .then((drones) => {
-            res.status(200).render('index',{
-                title:'Drone | login',
-                drones:drones
+            res.status(200).render('index', {
+                title: 'Drone | login',
+                drones: drones
             });
         })
         .catch((err) => {
             console.log(err);
         });
-    
 });
 
 app.post('/', (req, res, next) => {
-    let body = _.pick(req.body,['location']);
-    passport.authenticate('local', function(err, user, info) {
+    let body = _.pick(req.body, ['location']);
+    passport.authenticate('local', function (err, user, info) {
         if (err) {
             return res.redirect('/');
         }
@@ -130,68 +127,57 @@ app.post('/', (req, res, next) => {
         user.location = body.location;
         user.save().catch((err) => console.log('cannot save user'));
 
-        req.logIn(user, function(err) {
+        req.logIn(user, function (err) {
             if (err) {
                 return res.redirect('/');
             }
             res.statusCode = 200;
-            return res.redirect('/'+ body.location);
+            return res.redirect('/' + body.location);
         });
     })(req, res, next);
 });
 /********************************************************************/
 
-app.get('/create_user',(req, res) => {
+app.get('/create_user', (req, res) => {
     res.status(200).render('signupPage', {
         title: 'Signup Page',
-        error:''
+        error: ''
     });
 });
 
 
 /**
- * TODO: need to upgrade according to the app
- * for login in android
- */
-app.post('/android', passport.authenticate('local'), (req, res) => {
-    let body = _.pick(req.body,['username','password']);
-      
-    res.statusCode = 200;
-    res.setHeader('Content-Type','text/plain');
-    res.send('OK');
-});
-/********************************************************************/
-
-/**
  * for creating user
  */
-app.post('/signup',(req,res) => {
+app.post('/signup', (req, res) => {
     if (req.body.password === req.body.password1) {
-        User.register(new User({username: req.body.username}),
-            req.body.password,(err,user)=> {
+        User.register(new User({ username: req.body.username }),
+            req.body.password, (err, user) => {
                 if (err) {
                     res.statusCode = 500;
                     res.setHeader('Content-Type',
                         'application/json');
-                    res.json({err: err});
+                    res.json({ err: err });
                 } else {
                     if (req.body.location)
                         user.location = req.body.location;
-                    user.save((err,user) => {
+                    user.save((err, user) => {
                         if (err) {
                             res.statusCode = 500;
-                            res.setHeader('Content-Type','application/json');
-                            res.json({err:err});
+                            res.setHeader('Content-Type', 'application/json');
+                            res.json({ err: err });
                             return;
                         }
                         passport.authenticate('local')
-                        (req, res, () => {
-                            res.statusCode = 200;
-                            res.setHeader('Content-Type',
-                                'application/json');
-                            res.json({success: true,
-                                status: 'Registration Successful'});
-                        });
+                            (req, res, () => {
+                                res.statusCode = 200;
+                                res.setHeader('Content-Type',
+                                    'application/json');
+                                res.json({
+                                    success: true,
+                                    status: 'Registration Successful'
+                                });
+                            });
                     });
                 }
             });
@@ -204,7 +190,20 @@ app.post('/signup',(req,res) => {
 });
 /********************************************************************/
 
-function auth (req, res, next)  {
+/**
+ * TODO: need to upgrade according to the app
+ * for login in android
+ */
+app.post('/android', passport.authenticate('local'), (req, res) => {
+    let body = _.pick(req.body, ['username', 'password']);
+    console.log(body);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.send('OK');
+});
+/********************************************************************/
+
+function auth(req, res, next) {
     if (!req.user) {
         let err = new Error('You are not authenticated!');
         err.status = 403;
@@ -219,13 +218,13 @@ app.use(auth);
 /**
  * to render the statusall.ejs in /stautsall
  */
-app.get('/all',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
+app.get('/all', (req, res) => {
+    User.findById(req.session.passport.user, (err, user) => {
         if (err) {
             return res.redirect('/');
         }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
+        var urlString = '/' + user.location;
+        if (urlString != req.url) {
             res.statusCode = 401;
             return res.redirect('/');
         }
@@ -237,17 +236,17 @@ app.get('/all',(req, res) => {
 /**
  * to render the status.ejs in /status
  */
-app.get('/default',(req, res) => {
-    User.findById(req.session.passport.user,(err,user) => {
+app.get('/default', (req, res) => {
+    User.findById(req.session.passport.user, (err, user) => {
         if (err) {
             return res.redirect('/');
         }
-        var urlString = '/'+user.location;
-        if (urlString != req.url){
+        var urlString = '/' + user.location;
+        if (urlString != req.url) {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        res.render('status',{href:"../datadefault.txt"});
+        res.render('status', { href: "../datadefault.txt" });
     });
 });
 /********************************************************************/
@@ -256,9 +255,9 @@ app.get('/:droneName', (req, res) => {
     User.findById(req.session.passport.user).exec()
         .then((user) => {
             if (user.location === req.params.droneName) {
-                DroneName.findOne({drone_name:req.params.droneName}).select('drone_name drone_location -_id').exec()
+                DroneName.findOne({ drone_name: req.params.droneName }).select('drone_name drone_location -_id').exec()
                     .then((drone) => {
-                        res.render('status', {href:"/"+drone.drone_name+"/data"});
+                        res.render('status', { href: "/" + drone.drone_name + "/data" });
                     })
                     .catch((err) => {
                         return res.redirect('/');
@@ -270,37 +269,36 @@ app.get('/:droneName', (req, res) => {
         .catch((err) => {
             return res.redirect('/');
         })
-})
+});
 
 /**
  * to render the file.ejs to show data that can be downloaded by the user
  */
-app.get('/:droneName/data',(req, res) => {
-    
-    User.findById(req.session.passport.user,(err,user) => {
-        let href=[];
+app.get('/:droneName/data', (req, res) => {
+    User.findById(req.session.passport.user, (err, user) => {
+        let href = [];
         let status = [];
         let i = 0;
         if (err) {
             console.log('error in finding user');
             return res.redirect('/');
         }
-        let urlString = '/'+user.location+'/data';
-        if (urlString != req.url){
+        let urlString = '/' + user.location + '/data';
+        if (urlString != req.url) {
             res.statusCode = 401;
             return res.redirect('/');
         }
-        let droneDataPath = path.join(__dirname,'../..','/public/data/'+user.location+'/');
+        let droneDataPath = path.join(__dirname, '../..', '/public/data/' + user.location + '/');
         let files = fs.readdirSync(droneDataPath);
         files = files.splice(1);
-        files.forEach( file => {
+        files.forEach(file => {
             let data = {
-                fileName: '../data/'+user.location+'/'+file,
+                fileName: '../data/' + user.location + '/' + file,
                 fileTime: fs.statSync(path.join(droneDataPath, file)).birthtime.toUTCString()
             };
             href.push(data);
         });
-        res.render('file',{
+        res.render('file', {
             title: "data of " + user.location,
             data: href
         });

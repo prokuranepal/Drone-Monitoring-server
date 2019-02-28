@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const DroneSchema = new mongoose.Schema({}, {
-  strict: false
+	strict: false
 });
 
 const DroneCountSchema = new mongoose.Schema({
