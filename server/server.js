@@ -36,7 +36,7 @@ require('./socketio/JT604Socket');
  * setting up a server at port 3000 or describe by process.env.PORT and host localhost or described by
  * process.env.HOSTNAME for own server only
  */
-server.listen(port,'192.168.1.81', () => {
+server.listen(port,hostname, () => {
     console.log(`Server running at http://${hostname}:${port}`);
 });
 
