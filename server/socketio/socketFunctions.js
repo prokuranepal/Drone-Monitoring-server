@@ -235,7 +235,9 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                         PlaneCount.findOne({}).exec()
                             .then((data) => {
                                 var fileNo = data.count_value;
-                                plane.to('website').emit('error', `${planeName} disconnected from server`);
+                                plane.to('website').emit('error', {
+                                    msg:`${planeName} disconnected from server`
+                                });
                                 plane.to('website').emit('copter-data', {
                                     /**
                                      * data format needed to send to the client when pi disconnect
