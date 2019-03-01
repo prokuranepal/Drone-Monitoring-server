@@ -90,3 +90,4 @@ typings/
 Documentation.md
 *.txt
 test.*
+ecosystem.config.js
