@@ -5,6 +5,6 @@ let {JT601DroneData,JT601Count} = require('../models/droneData');
 
 const PlaneData = JT601DroneData;
 const PlaneCount = JT601Count;
-const DroneDatabaseName = 'jt601dronedatas';
+const DroneDatabaseName = `${planeName}dronedatas`.toLowerCase();
 
 work(planeName,PlaneData,PlaneCount,DroneDatabaseName);

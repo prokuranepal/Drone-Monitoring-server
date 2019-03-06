@@ -12,6 +12,8 @@ require('./config/config');
  * server require
  */
 const server = require('./app/app');
+const fs = require('fs');
+const path = require('path');
 
 /********************************************************************/
 
@@ -25,11 +27,22 @@ const port = process.env.PORT || 3000;
  */
 const hostname = 'localhost';
 
-require('./socketio/defaultSocket');
-require('./socketio/JT601Socket');
-require('./socketio/JT602Socket');
-require('./socketio/JT603Socket');
-require('./socketio/JT604Socket');
+/**
+ * require socket files automatically
+ */
+let requireDirectory = path.join(__dirname,'./socketio');
+
+fs.readdir(requireDirectory,(err,result) => {
+    if (err) {
+        return console.log(err);
+    }
+    result.forEach(sockets => {
+        if (sockets.match(/Socket.js/)) {
+            socket = sockets.replace('.js','');
+            require(`./socketio/${socket}`);
+        }
+    });      
+});
 /********************************************************************/
 
 /**

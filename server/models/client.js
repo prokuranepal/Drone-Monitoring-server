@@ -18,7 +18,13 @@ let Client = new Schema({
     socketName:{
         type: String,
         required: true
-    }
+    },
+    expireAt: {
+        type: Date,
+        default: Date.now,
+        index: { expires: '1d' },
+    },
+
 });
 
 module.exports = mongoose.model('Client',Client);

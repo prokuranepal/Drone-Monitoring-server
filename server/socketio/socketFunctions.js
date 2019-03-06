@@ -41,8 +41,24 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
         datafile = path.join(__dirname, '../..', `/public/data/${planeName}/`);
     /********************************************************************/
 
+
+    mongoose.connection.on('open',() => {
+        let db_native = mongoose.connection.db;
+        db_native.listCollections({name: `${planeName}Counts`.toLowerCase()}).toArray(function (err, names) {
+            if (err) {
+                return console.log(err);
+            }
+            if (names.length === 0) {
+                let count = new PlaneCount({});
+                count.save().catch((err) => {
+                    return console.log(err);
+                });
+            }
+        });
+    });
+
     /**
-     * JT601 namespace
+     * plane namespace
      */
 
     const plane = io.of(`/${planeName}`);

@@ -15,33 +15,29 @@ const DroneCountSchema = new mongoose.Schema({
 const DroneData = mongoose.model("DroneData", DroneSchema);
 const DroneCount = mongoose.model("DroneCount",DroneCountSchema);
 
+module.exports.DroneData = DroneData;
+module.exports.DroneCount = DroneCount;
+
 const JT601DroneData = mongoose.model("JT601DroneData",DroneSchema);
 const JT601Count = mongoose.model("JT601Count",DroneCountSchema);
+
+module.exports.JT601DroneData = JT601DroneData;
+module.exports.JT601Count = JT601Count;
 
 const JT602DroneData = mongoose.model("JT602DroneData",DroneSchema);
 const JT602Count = mongoose.model("JT602Count",DroneCountSchema);
 
+module.exports.JT602DroneData = JT602DroneData;
+module.exports.JT602Count = JT602Count;
+
 const JT603DroneData = mongoose.model("JT603DroneData",DroneSchema);
 const JT603Count = mongoose.model("JT603Count",DroneCountSchema);
+
+module.exports.JT603DroneData = JT603DroneData;
+module.exports.JT603Count = JT603Count;
 
 const JT604DroneData = mongoose.model("JT604DroneData",DroneSchema);
 const JT604Count = mongoose.model("JT604Count",DroneCountSchema);
 
-const JT605DroneData = mongoose.model("JT605DroneData",DroneSchema);
-const JT605Count = mongoose.model("JT605Count",DroneCountSchema);
-
-
-module.exports = {
-    DroneData,
-    JT601DroneData,
-    JT602DroneData,
-    JT603DroneData,
-    JT604DroneData,
-	JT605DroneData,
-	DroneCount,
-	JT601Count,
-	JT602Count,
-	JT603Count,
-	JT604Count,
-	JT605Count,
-};
+module.exports.JT604DroneData = JT604DroneData;
+module.exports.JT604Count = JT604Count;
