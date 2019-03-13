@@ -34,6 +34,7 @@ const app = express();
  */
 let User = require('../models/user');
 let DroneName = require('../models/drone');
+let Client = require('../models/client');
 
 /**
  * it is used in-order to create the path towards the folder or file nice and readable
@@ -88,6 +89,7 @@ app.use(session({
         autoRemove: 'native'
     })
 }));
+
 app.use(flash());
 
 app.use(passport.initialize());
@@ -108,8 +110,10 @@ const server = http.createServer(app);
 
 
 app.get('/', (req, res) => {
-    DroneName.find({}).select('drone_name drone_location -_id').exec()
+    DroneName.find({}).select('-_id -__v').sort({drone_name:'asc'}).exec()
         .then((drones) => {
+            let allAdd = {"drone_name":"all","drone_location":"all"};
+            drones[drones.length] = allAdd;
             res.status(200).render('index', {
                 title: 'Drone | login',
                 drones: drones,
@@ -149,6 +153,7 @@ app.post('/', (req, res, next) => {
                 return res.redirect('/');
             }
             res.statusCode = 200;
+            // res.cookie('user-id',user.username);
             return res.redirect('/' + body.location);
         });
     })(req, res, next);
@@ -180,7 +185,6 @@ app.post('/signup', (req, res) => {
                     req.flash('errorMessageSignUp','Sorry, User cannot be created');
                     res.redirect('/create_user');
                 } else {
-                    console.log(` ${req.body.email} ${req.body.fullname}`)
                     if (req.body.location) {
                         user.location = req.body.location;
                     }
@@ -189,7 +193,7 @@ app.post('/signup', (req, res) => {
                             console.log('Email sent: ' + info.response);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            return console.log(error);
                         });
 
                     user.save((err, user) => {
@@ -279,13 +283,220 @@ app.get('/default', (req, res) => {
 });
 /********************************************************************/
 
+/**
+ * Cpanel pages
+ */
+app.get('/cpanel',(req,res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.is_admin === true) {
+                User.find({}).select('-_id -noOfUsers -__v').sort({_id:'desc'}).exec()
+                    .then((user) => {
+                        res.render('cpanel/cpanelmain',{
+                            title:"Cpanel",
+                            users: user,
+                            companyName: "NIC"
+                        });
+                    })
+                    .catch((err) => {
+                        return console.log(err);
+                    });
+            } else {
+                res.statusCode = 401;
+                req.flash('errorMessageIndex','Sorry, You are not authorized');
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authorized');
+            return res.redirect('/');
+        });
+});
+
+app.post('/cpanel/update',(req,res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.is_admin === true) {
+                User.findOne({username:req.body.username,full_name: req.body.full_name,email:req.body.email}).exec()
+                    .then((user) => {
+                        user.is_valid = req.body.is_valid;
+                        user.is_admin = req.body.is_admin;
+                        user.save()
+                            .then((success) => {
+                                res.statusCode = 200;
+                                res.json("successfully update");
+                            })
+                            .catch((err) => {
+                                res.json("Cannot save user");
+                            });
+                    })
+                    .catch((err) => {
+                        res.json("Cannot find user");
+                    });
+            } else {
+                res.statusCode = 401;
+                req.flash('errorMessageIndex','Sorry, You are not authorized');
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authorized');
+            return res.redirect('/');
+        });
+});
+
+app.get('/cpanel/planes',(req,res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.is_admin === true) {
+                DroneName.find({}).select('drone_name drone_location -_id').sort({drone_name:'asc'}).exec()
+                    .then((drone) => {
+                        res.render('cpanel/cpanelplanes',{
+                            title:"Cpanel",
+                            planes: drone,
+                            companyName: "NIC"
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            } else {
+                res.statusCode = 401;
+                req.flash('errorMessageIndex','Sorry, You are not authorized');
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authorized');
+            return res.redirect('/');
+        });
+});
+
+app.post('/cpanel/planes/update',(req,res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.is_admin === true) {
+                let addDrone = new DroneName({drone_name: req.body.planeName,drone_location: req.body.planeLocation});
+                addDrone.save()
+                    .then((success) => {
+                        res.statusCode = 200;
+                        
+                        // create socket file by reading the socket file
+                        let writeFilePath = path.join(__dirname,`../socketio/${req.body.planeName}Socket.js`);
+                        let readFilePath = path.join(__dirname,'../socketio/JT601Socket.js');
+                        fs.readFile(readFilePath, 'utf8', function (err,data) {
+                            if (err) {
+                            return console.log(err);
+                            }
+                            var result = data;
+                            for (let i= 0; i<5; i++) {
+                                result = result.replace('JT601', req.body.planeName);
+                            }
+                            fs.writeFile(writeFilePath, result, 'utf8', function (err) {
+                            if (err) return console.log(err);
+                            });
+                        });
+                        //
+                        // to make directory to store files
+                        let dataFileDirectory = path.join(__dirname,'../..',`public/data/${req.body.planeName}`);
+                        fs.mkdir(dataFileDirectory,(err) => {
+                            if (err) {
+                                return console.log(err);
+                            }
+                            fs.closeSync(fs.openSync(path.join(dataFileDirectory,'/.gitkeep'), 'w'));
+                        });
+                        //
+                        // to create a database schema
+                        let databaseFilePath = path.join(__dirname,'../models/droneData.js');
+                        fs.appendFile(databaseFilePath, `\nconst ${req.body.planeName}DroneData = mongoose.model("${req.body.planeName}DroneData",DroneSchema);\nconst ${req.body.planeName}Count = mongoose.model("${req.body.planeName}Count",DroneCountSchema);\n\nmodule.exports.${req.body.planeName}DroneData = ${req.body.planeName}DroneData;\nmodule.exports.${req.body.planeName}Count = ${req.body.planeName}Count;\n`, (err) => {  
+                            if (err) {
+                                return console.log(err);
+                            };
+                        });
+
+                        res.json("successfully update");
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    });
+            } else {
+                res.statusCode = 401;
+                req.flash('errorMessageIndex','Sorry, You are not authorized');
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authorized');
+            return res.redirect('/');
+        });
+});
+
+app.get('/cpanel/users',(req,res) => {
+    User.findById(req.session.passport.user).exec()
+        .then((user) => {
+            if (user.is_admin === true) {
+                Client.find({}).select('-__v -_id').sort({_id:'desc'}).exec()
+                    .then((users) => {
+                        res.render('cpanel/cpanelusers',{
+                            title:"Cpanel",
+                            users: users,
+                            companyName: "NIC"
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            } else {
+                res.statusCode = 401;
+                req.flash('errorMessageIndex','Sorry, You are not authorized');
+                return res.redirect('/');
+            }
+        })
+        .catch((err) => {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authorized');
+            return res.redirect('/');
+        });
+});
+
+/**********************************************************************/
+
+// GET /logout
+app.get('/logout', function(req, res, next) {
+    User.findById(req.session.passport.user, (err, user) => {
+        if (err) {
+            res.statusCode = 401;
+            req.flash('errorMessageIndex','Sorry, You are not authenitcated');
+            return res.redirect('/');
+        }
+        if (req.session) {
+            // delete session object
+            req.session.destroy((err)  => {
+                if(err) {
+                    req.flash('errorMessageIndex','Sorry, Cannot logout');
+                    return res.redirect('/');
+                }
+                return res.redirect('/');
+            });
+        }
+    });
+  });
+
+  //////
 app.get('/:droneName', (req, res) => {
     User.findById(req.session.passport.user).exec()
         .then((user) => {
             if (user.location === req.params.droneName) {
                 DroneName.findOne({ drone_name: req.params.droneName }).select('drone_name drone_location -_id').exec()
                     .then((drone) => {
-                        res.render('status', { href: "/" + drone.drone_name + "/data" });
+                        if (user.is_admin === true) {
+                            return res.render('status',{ href: "/" + drone.drone_name + "/data",add_button:true});
+                        }
+                        return res.render('status', { href: "/" + drone.drone_name + "/data" ,add_button:false});
                     })
                     .catch((err) => {
                         res.statusCode = 401;
@@ -302,7 +513,7 @@ app.get('/:droneName', (req, res) => {
             res.statusCode = 401;
             req.flash('errorMessageIndex','Sorry, You are not authenitcated');
             return res.redirect('/');
-        })
+        });
 });
 
 /**
@@ -341,5 +552,6 @@ app.get('/:droneName/data', (req, res) => {
         });
     });
 });
+
 
 module.exports = server;

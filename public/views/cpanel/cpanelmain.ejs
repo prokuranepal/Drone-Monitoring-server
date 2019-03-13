@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link href="../../css/dashboard.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../../favicon.ico" type="image/x-icon">
+    <script src="../../js/cpaneljs/cpanelmain.js"></script>
+
+    <title><%= title %></title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><%= companyName %></a>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="javascript:getUrlLogout();">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="javascript:getUrlDashboard();">
+                  <span data-feather="home"></span>
+                  Dashboard <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="javascript:getUrlPlanes();">
+                  <span data-feather="shopping-cart"></span>
+                  Planes
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="javascript:getUrlUsers();">
+                  <span data-feather="users"></span>
+                  Users
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <h2>Users</h2>
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Full Name</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Valid</th>
+                  <th>Admin</th>
+                  <th>Update</th>
+                  <th>Success</th>
+                </tr>
+              </thead>
+              <tbody>
+                    <% if (users) { %>
+                        <% users.forEach(function(user, key) { %>
+                            <tr>
+                                <td><%= key+1 %></td>
+                                <td id="fullname<%= key+1 %>"><%= user.full_name %></td>
+                                <td id="username<%= key+1 %>"><%= user.username %></td>
+                                <td id="email<%= key+1 %>"><%= user.email %></td>
+                                <td >
+                                  <select id="valid<%= key+1 %>">
+                                    <% if (user.is_valid === false) { %>
+                                      <option value="false">false</option>
+                                      <option value="true">true</option>
+                                    <% } %>
+                                    <% if (user.is_valid === true) { %>
+                                      <option value="true">true</option>
+                                      <option value="false">false</option>
+                                    <% } %>
+                                  </select>
+                                </td>
+                                <td >
+                                  <select id="admin<%= key+1 %>">
+                                    <% if (user.is_admin === false) { %>
+                                      <option value="false">false</option>
+                                      <option value="true">true</option>
+                                    <% } %>
+                                    <% if (user.is_admin === true) { %>
+                                      <option value="true">true</option>
+                                      <option value="false">false</option>
+                                    <% } %>
+                                  </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-dark clear-mission" type="button" onclick="updateUser('<%= key+1 %>')">Update</button>
+                                </td>
+                                <td id="success<%= key+1 %>"></td>
+                            </tr>
+                        <% }); %>
+                    <% } %>
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../../../js/libs/jquery-3.2.1.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../js/libs/jquery-3.2.1.slim.min.js"><\/script>')</script>
+    <script src="../../../js/libs/popper.min.js"></script>
+    <script src="../../../js/libs/bootstrap.min.js"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
+</body>
+
+
+</html>

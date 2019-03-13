@@ -49,10 +49,10 @@ fs.readdir(requireDirectory,(err,result) => {
  * setting up a server at port 3000 or describe by process.env.PORT and host localhost or described by
  * process.env.HOSTNAME for own server only
  */
-server.listen(port,hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}`);
-});
+// server.listen(port,hostname, () => {
+//     console.log(`Server running at http://${hostname}:${port}`);
+// });
 
-/*server.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
-})*/
+})

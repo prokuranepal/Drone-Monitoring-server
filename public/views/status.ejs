@@ -47,6 +47,15 @@
 
         <button class="btn btn-dark clear-mission" type="button" onclick="ClearMission()">Clear Display</button>
 
+        <%if (add_button) { %>
+            <script>
+                function gotoCpanel() {
+                    window.location.href = window.location.origin +"/cpanel";
+                }
+            </script>
+            <button class="btn btn-dark clear-mission" type="button" onclick="gotoCpanel()">cpanel</button>
+        <% } %>
+
     </div>
 
     <div class="data-column">
