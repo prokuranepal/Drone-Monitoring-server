@@ -128,6 +128,7 @@ app.get('/', (req, res) => {
 app.post('/', (req, res, next) => {
     let body = _.pick(req.body, ['location']);
     passport.authenticate('local', function (err, user, info) {
+        console.log('Inside post request of /');
         if (err) {
             req.flash('errorMessageIndex','Sorry, User cannot be authenticated');
             res.statusCode = 401;
@@ -148,11 +149,13 @@ app.post('/', (req, res, next) => {
 
         req.logIn(user, function (err) {
             if (err) {
+                console.log('Inside post request of / with login error');
                 req.flash('errorMessageIndex','Sorry, User cannot be authenticated');
                 res.statusCode = 401;
                 return res.redirect('/');
             }
             res.statusCode = 200;
+            console.log('Inside post request of / with login succesfull');
             // res.cookie('user-id',user.username);
             return res.redirect('/' + body.location);
         });
