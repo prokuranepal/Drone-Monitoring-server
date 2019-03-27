@@ -118,7 +118,10 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                 lidar: data.lidar || 0,
                 volt: data.volt || 0,
                 est: data.est || 0,
-                conn: data.conn || "FALSE"
+                conn: data.conn || "FALSE",
+                roll: data.roll || 0,
+                pitch: data.pitch || 0,
+                yaw: data.yaw || 0
             };
 
             plane.to('android').to('website').emit('copter-data', datas);
@@ -275,7 +278,10 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                                     est: 0,
                                     lidar: 0,
                                     lat: lat || 0,
-                                    lng: lng || 0
+                                    lng: lng || 0,
+                                    roll: 0,
+                                    pitch: 0,
+                                    yaw: 0
                                 });
 
                                 let fileStream = fs.createWriteStream(path.join(datafile ,fileNo+'.txt'));
