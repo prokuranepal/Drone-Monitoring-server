@@ -6,7 +6,7 @@ STEP-1
 
     To create the user you should go to the link (drone.nicnepal.org/create_user) which displays the following page.
 
-    ![Signuppage](/image/Signuppage.png)
+![Signuppage](/image/Signuppage.png)
 
     In which you should fill the requested data as seen in the above figure.
 
@@ -27,7 +27,7 @@ STEP-2
 
     If the username and password is validated by the admin user then the user can login into the drone monitoring page. To login you must goto the page.
 
-    ![loginpage](/image/loginpage.png)
+![loginpage](/image/loginpage.png)
 
     In which you should fill the requested data as seen in the above figure.
 
@@ -55,7 +55,7 @@ STEP-3
 
     After login into the system you will be taken to the respective drone page from where you can view the status of the drone. The page looks like below.
 
-    ![Monitoring System](/image/monitoring system.png)
+![Monitoring System](/image/monitoringsystem1.png)
 
     As you can see position of drone in the map indicated by the arrow.
 
@@ -66,16 +66,17 @@ STEP-3
     - Show
     By clicking the show button you can view different datas of the drone as shown in the figure below.
 
-    ![Drone Data](/image/dronedata.png)
+![Drone Data](/image/dronedata.png)
 
     - Read Mission
     By clicking the read mission button you can download the mission file present in the drone and is displayed in the map.
 
-    ![Read Mission](/image/dronemission.png)
+![Read Mission](/image/dronemission.png)
 
     - Download File
-    By clicking the download file button you will be redirected to the new page where you can view all the logs and by clicking them you can download to the local machine.        
-    ![Download File](/image/dronelogs.png)
+    By clicking the download file button you will be redirected to the new page where you can view all the logs and by clicking them you can download to the local machine.
+
+![Download File](/image/dronelogs.png)
 
     - Clear Display
     By clicking the clear display button, the screen will be cleared.
@@ -83,4 +84,4 @@ STEP-3
     - Draw Circle
     By clicking the draw circle button you will be able to draw 10 adjacent circle with radius provide by the user.
 
-    ![Draw Circle](/image/draw circle.png)
+![Draw Circle](/image/drawcircle.png)
