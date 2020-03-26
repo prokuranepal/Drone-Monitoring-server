@@ -386,7 +386,7 @@ app.post('/cpanel/planes/update',(req,res) => {
                 addDrone.save()
                     .then((success) => {
                         res.statusCode = 200;
-                        
+                        /*
                         // create socket file by reading the socket file
                         let writeFilePath = path.join(__dirname,`../socketio/${req.body.planeName}Socket.js`);
                         let readFilePath = path.join(__dirname,'../socketio/JT601Socket.js');
@@ -418,6 +418,15 @@ app.post('/cpanel/planes/update',(req,res) => {
                             if (err) {
                                 return console.log(err);
                             };
+                        });
+                        */
+                        // to make directory to store files
+                        let dataFileDirectory = path.join(__dirname,'../..',`public/data/${req.body.planeName}`);
+                        fs.mkdir(dataFileDirectory,(err) => {
+                            if (err) {
+                                return console.log(err);
+                            }
+                            fs.closeSync(fs.openSync(path.join(dataFileDirectory,'/.gitkeep'), 'w'));
                         });
 
                         res.json("successfully update");

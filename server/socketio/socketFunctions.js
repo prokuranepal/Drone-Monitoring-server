@@ -1,4 +1,4 @@
-module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
+module.exports =() => {
     /**
      * require io
      */
@@ -9,7 +9,8 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
      * Database schema
      */
     let mongoose = require('../db/mongoose');
-
+    
+    let {DroneData,DroneCount} = require('../models/droneData');
     /**
      * Imported client model to save and work with respect to connected client data.
      */
@@ -33,35 +34,32 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
      */
     const path = require('path');
 
-    /**
-     * The path constant for required files
-     */
-    const actualmissionfile = path.join(__dirname, '../..', `/public/js/files/missions/mission${planeName}.txt`),
-        renamedmissionfile = path.join(__dirname, '../..', `/public/js/files/missions/oldmission${planeName}.txt`),
-        datafile = path.join(__dirname, '../..', `/public/data/${planeName}/`);
+    
     /********************************************************************/
 
 
-    mongoose.connection.on('open',() => {
-        let db_native = mongoose.connection.db;
-        db_native.listCollections({name: `${planeName}Counts`.toLowerCase()}).toArray(function (err, names) {
-            if (err) {
-                return console.log(err);
-            }
-            if (names.length === 0) {
-                let count = new PlaneCount({});
-                count.save().catch((err) => {
-                    return console.log(err);
-                });
-            }
-        });
-    });
+    // mongoose.connection.on('open',() => {
+    //     let db_native = mongoose.connection.db;
+    //     db_native.listCollections({name: 'DroneCount'.toLowerCase()}).toArray(function (err, names) {
+    //         if (err) {
+    //             return console.log(err);
+    //         }
+    //         if (names.length === 0) {
+    //             let count = new DroneCount({});
+    //             count.save().catch((err) => {
+    //                 return console.log(err);
+    //             });
+    //         }
+    //     });
+    // });
 
     /**
      * plane namespace
      */
+    
+    const plane = io.of(/^\/JT\d+/);
 
-    const plane = io.of(`/${planeName}`);
+    // const plane = io.of(`/${planeName}`);
 
     /**
      * socket according to the namespace 
@@ -69,15 +67,35 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
      * functions
      * Socket listen to the 'connection' 
      */
-    plane.on('connection', (socket) => {
-
+    plane.on('connect', (socket) => {
+        let planeName = socket.nsp.name.replace('/','');
+        let drone_number;
+        
+        /**
+         * The path constant for required files
+         */
+        const actualmissionfile = path.join(__dirname, '../..', `/public/js/files/missions/mission${planeName}.txt`),
+        renamedmissionfile = path.join(__dirname, '../..', `/public/js/files/missions/oldmission${planeName}.txt`),
+        datafile = path.join(__dirname, '../..', `/public/data/${planeName}/`);
         /**
          * socket 
          */
         socket.on('joinPi', () => {
             let client = new Client({clientId: socket.id,deviceName: 'pi',socketName: planeName});
+            DroneCount.findOne({plane_name: planeName}).exec()
+                .then((data) => {
+                    if (data === null) {
+                        let plane_count = new DroneCount({plane_name: planeName});
+                        plane_count.save().catch((err) => console.log(`Cannot create plane count ${planeName}`));
+                    }
+                })
+                .catch((err) => {
+                    console.log(`Error in find one of palne count ${planeName}`)
+                });
+
             client.save().catch((err) => console.log(`Cannot create user of pi joinPi socket ${planeName}`));
             socket.join('pi');
+            drone_number = socket.id;
             console.log(`${socket.id} (Pi ${planeName}) connected`);
         });
 
@@ -121,14 +139,16 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                 conn: data.conn || "FALSE",
                 roll: data.roll || 0,
                 pitch: data.pitch || 0,
-                yaw: data.yaw || 0
+                yaw: data.yaw || 0,
+                plane_name: planeName,
+                drone_number : drone_number
             };
 
             plane.to('android').to('website').emit('copter-data', datas);
             lat = data.lat;
             lng = data.lng;
-            let DroneData = new PlaneData(datas);
-            DroneData.save().catch((err) => console.log(`data cannot be saved to database in socket data of plane ${planeName}`));
+            let drone_data = new DroneData(datas);
+            drone_data.save().catch((err) => console.log(`data cannot be saved to database in socket data of plane ${planeName}`));
         });
 
         socket.on('homePosition', (homeLocation) => {
@@ -205,7 +225,7 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
         });
 
         socket.on('simulate', () => {
-            PlaneCount.findOne({}).exec()
+            DroneCount.findOne({plane_name:planeName}).exec()
                 .then((data) => {
                     let fileNo = data.count_value;
                     fileNo = fileNo -1;
@@ -251,7 +271,7 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                         console.log(`${socket.id} (Android device ${planeName}) disconnected`);
                     } else if (data.deviceName === 'pi') {
                         console.log(`${socket.id} (Pi ${planeName}) disconnected`);
-                        PlaneCount.findOne({}).exec()
+                        DroneCount.findOne({plane_name:planeName}).exec()
                             .then((data) => {
                                 var fileNo = data.count_value;
                                 plane.to('website').emit('error', {
@@ -281,14 +301,16 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                                     lng: lng || 0,
                                     roll: 0,
                                     pitch: 0,
-                                    yaw: 0
+                                    yaw: 0,
+                                    plane_name: 'Unknown',
+                                    drone_number : 'Unknwon'
                                 });
 
                                 let fileStream = fs.createWriteStream(path.join(datafile ,fileNo+'.txt'));
                                 // access the mongodb native driver and its functions
                                 let db_native = mongoose.connection.db;
                                 fileStream.once('open', (no_need) => {
-                                    PlaneData.find({}, {
+                                    DroneData.find({}, {
                                         tokens: 0,
                                         __id: 0,
                                         _id: 0,
@@ -298,18 +320,18 @@ module.exports =(planeName,PlaneData,PlaneCount,DroneDatabaseName) => {
                                     }).on('end', function () {
                                         fileStream.end();
                                         // check if collection exists and then dropped
-                                        db_native.listCollections({name: `${DroneDatabaseName}`})
+                                        db_native.listCollections({name: 'dronedatas'})
                                             .next(function (err, collinfo) {
                                                 if (collinfo) {
                                                     // The collection exists
-                                                    PlaneData.collection.drop();
+                                                    DroneData.collection.drop();
                                                 }
                                             });
                                         console.log(`********** ${planeName} file has been written and db is dropped.`);
                                     });
                                 });
 
-                                PlaneCount.updateOne({}, {$set:{count_value: fileNo+1}}).exec()
+                                DroneCount.updateOne({plane_name:planeName}, {$set:{count_value: fileNo+1}}).exec()
                                     .catch((err) => console.log(`Cannot update count value in socket disconnect of plane ${planeName}`));
                             })
                             .catch((err) => console.log(`Error in count find of ${planeName}`));
