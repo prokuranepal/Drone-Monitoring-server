@@ -30,19 +30,20 @@ const hostname = 'localhost';
 /**
  * require socket files automatically
  */
-let requireDirectory = path.join(__dirname,'./socketio');
+// let requireDirectory = path.join(__dirname,'./socketio');
 
-fs.readdir(requireDirectory,(err,result) => {
-    if (err) {
-        return console.log(err);
-    }
-    result.forEach(sockets => {
-        if (sockets.match(/Socket.js/)) {
-            socket = sockets.replace('.js','');
-            require(`./socketio/${socket}`);
-        }
-    });      
-});
+// fs.readdir(requireDirectory,(err,result) => {
+//     if (err) {
+//         return console.log(err);
+//     }
+//     result.forEach(sockets => {
+//         if (sockets.match(/Socket.js/)) {
+//             socket = sockets.replace('.js','');
+//             require(`./socketio/${socket}`);
+//         }
+//     });      
+// });
+require('./socketio/JT601Socket');
 /********************************************************************/
 
 /**

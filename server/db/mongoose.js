@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const connectPath = process.env.MONGODB_URI;
-const options = {};
+const options = {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useCreateIndex: true,
+};
 
 mongoose.connect(connectPath, options)
 	.then(() => {
